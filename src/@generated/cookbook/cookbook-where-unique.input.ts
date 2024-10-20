@@ -1,0 +1,67 @@
+import { Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
+import { CookbookWhereInput } from './cookbook-where.input';
+import { Type } from 'class-transformer';
+import { StringFilter } from '../prisma/string-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { BoolFilter } from '../prisma/bool-filter.input';
+import { IntFilter } from '../prisma/int-filter.input';
+import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
+import { DateTimeFilter } from '../prisma/date-time-filter.input';
+import { UserRelationFilter } from '../user/user-relation-filter.input';
+import { RecipeListRelationFilter } from '../recipe/recipe-list-relation-filter.input';
+import { CommunityListRelationFilter } from '../community/community-list-relation-filter.input';
+
+@InputType()
+export class CookbookWhereUniqueInput {
+
+    @Field(() => Int, {nullable:true})
+    id?: number;
+
+    @Field(() => [CookbookWhereInput], {nullable:true})
+    @Type(() => CookbookWhereInput)
+    AND?: Array<CookbookWhereInput>;
+
+    @Field(() => [CookbookWhereInput], {nullable:true})
+    @Type(() => CookbookWhereInput)
+    OR?: Array<CookbookWhereInput>;
+
+    @Field(() => [CookbookWhereInput], {nullable:true})
+    @Type(() => CookbookWhereInput)
+    NOT?: Array<CookbookWhereInput>;
+
+    @Field(() => StringFilter, {nullable:true})
+    name?: StringFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    description?: StringNullableFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    isPublic?: BoolFilter;
+
+    @Field(() => IntFilter, {nullable:true})
+    userId?: IntFilter;
+
+    @Field(() => DecimalNullableFilter, {nullable:true})
+    @Type(() => DecimalNullableFilter)
+    rating?: DecimalNullableFilter;
+
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
+
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
+
+    @Field(() => UserRelationFilter, {nullable:true})
+    @Type(() => UserRelationFilter)
+    user?: UserRelationFilter;
+
+    @Field(() => RecipeListRelationFilter, {nullable:true})
+    @Type(() => RecipeListRelationFilter)
+    recipes?: RecipeListRelationFilter;
+
+    @Field(() => CommunityListRelationFilter, {nullable:true})
+    @Type(() => CommunityListRelationFilter)
+    communities?: CommunityListRelationFilter;
+}

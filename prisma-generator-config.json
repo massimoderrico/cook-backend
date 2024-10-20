@@ -1,0 +1,10 @@
+{
+    "output": "./src/generated",
+    "createDto": true,
+    "updateDto": true,
+    "controller": true,
+    "service": true,
+    "module": true,
+    "swagger": true
+  }
+  

@@ -1,0 +1,30 @@
+import { Field } from '@nestjs/graphql';
+import { ObjectType } from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
+import { PermissionLevel } from '../prisma/permission-level.enum';
+import { ResourceType } from '../prisma/resource-type.enum';
+
+@ObjectType()
+export class PermissionMinAggregate {
+
+    @Field(() => Int, {nullable:true})
+    id?: number;
+
+    @Field(() => PermissionLevel, {nullable:true})
+    permissionLevel?: keyof typeof PermissionLevel;
+
+    @Field(() => Int, {nullable:true})
+    userId?: number;
+
+    @Field(() => Int, {nullable:true})
+    resourceId?: number;
+
+    @Field(() => ResourceType, {nullable:true})
+    resourceType?: keyof typeof ResourceType;
+
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
+}

@@ -1,0 +1,23 @@
+import { Field } from '@nestjs/graphql';
+import { ArgsType } from '@nestjs/graphql';
+import { Prisma } from '@prisma/client';
+import { CommunityWhereUniqueInput } from './community-where-unique.input';
+import { Type } from 'class-transformer';
+import { CommunityCreateInput } from './community-create.input';
+import { CommunityUpdateInput } from './community-update.input';
+
+@ArgsType()
+export class UpsertOneCommunityArgs {
+
+    @Field(() => CommunityWhereUniqueInput, {nullable:false})
+    @Type(() => CommunityWhereUniqueInput)
+    where!: Prisma.AtLeast<CommunityWhereUniqueInput, 'id' | 'name'>;
+
+    @Field(() => CommunityCreateInput, {nullable:false})
+    @Type(() => CommunityCreateInput)
+    create!: CommunityCreateInput;
+
+    @Field(() => CommunityUpdateInput, {nullable:false})
+    @Type(() => CommunityUpdateInput)
+    update!: CommunityUpdateInput;
+}
