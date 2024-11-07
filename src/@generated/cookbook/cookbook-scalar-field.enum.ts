@@ -5,6 +5,7 @@ export enum CookbookScalarFieldEnum {
     name = "name",
     description = "description",
     isPublic = "isPublic",
+    isMainCookbook = "isMainCookbook",
     userId = "userId",
     rating = "rating",
     createdAt = "createdAt",

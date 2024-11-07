@@ -14,7 +14,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "mainCookbookId" INTEGER NOT NULL,
+    "mainCookbookId" INTEGER,
     "role" "Role" NOT NULL DEFAULT 'USER',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -28,8 +28,8 @@ CREATE TABLE "Cookbook" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "isPublic" BOOLEAN NOT NULL DEFAULT false,
+    "isMainCookbook" BOOLEAN NOT NULL DEFAULT false,
     "userId" INTEGER NOT NULL,
-    "username" TEXT NOT NULL,
     "rating" DECIMAL(3,2),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -48,7 +48,6 @@ CREATE TABLE "Recipe" (
     "cookTime" INTEGER,
     "isPublic" BOOLEAN NOT NULL DEFAULT false,
     "userId" INTEGER NOT NULL,
-    "username" TEXT NOT NULL,
     "cookbookId" INTEGER NOT NULL,
     "rating" DECIMAL(3,2),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -63,7 +62,6 @@ CREATE TABLE "Community" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "userId" INTEGER NOT NULL,
-    "username" TEXT NOT NULL,
 
     CONSTRAINT "Community_pkey" PRIMARY KEY ("id")
 );
@@ -74,7 +72,6 @@ CREATE TABLE "Comment" (
     "description" TEXT NOT NULL,
     "rating" DECIMAL(2,1),
     "userId" INTEGER NOT NULL,
-    "username" TEXT NOT NULL,
     "resourceId" INTEGER NOT NULL,
     "resourceType" "ResourceType" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -115,25 +112,22 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
-CREATE INDEX "User_id_name_email_username_idx" ON "User"("id", "name", "email", "username");
+CREATE INDEX "User_username_email_idx" ON "User"("username", "email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_id_username_key" ON "User"("id", "username");
+CREATE INDEX "Cookbook_name_userId_idx" ON "Cookbook"("name", "userId");
 
 -- CreateIndex
-CREATE INDEX "Cookbook_id_name_userId_idx" ON "Cookbook"("id", "name", "userId");
-
--- CreateIndex
-CREATE INDEX "Recipe_id_name_userId_prepTime_cookTime_idx" ON "Recipe"("id", "name", "userId", "prepTime", "cookTime");
+CREATE INDEX "Recipe_name_userId_prepTime_cookTime_idx" ON "Recipe"("name", "userId", "prepTime", "cookTime");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Community_name_key" ON "Community"("name");
 
 -- CreateIndex
-CREATE INDEX "Community_id_name_userId_idx" ON "Community"("id", "name", "userId");
+CREATE INDEX "Community_name_userId_idx" ON "Community"("name", "userId");
 
 -- CreateIndex
-CREATE INDEX "Comment_id_userId_resourceId_resourceType_idx" ON "Comment"("id", "userId", "resourceId", "resourceType");
+CREATE INDEX "Comment_userId_resourceId_resourceType_idx" ON "Comment"("userId", "resourceId", "resourceType");
 
 -- CreateIndex
 CREATE INDEX "Permission_userId_resourceId_resourceType_permissionLevel_idx" ON "Permission"("userId", "resourceId", "resourceType", "permissionLevel");
@@ -151,19 +145,19 @@ CREATE UNIQUE INDEX "_CommunityToCookbook_AB_unique" ON "_CommunityToCookbook"("
 CREATE INDEX "_CommunityToCookbook_B_index" ON "_CommunityToCookbook"("B");
 
 -- AddForeignKey
-ALTER TABLE "Cookbook" ADD CONSTRAINT "Cookbook_userId_username_fkey" FOREIGN KEY ("userId", "username") REFERENCES "User"("id", "username") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Cookbook" ADD CONSTRAINT "Cookbook_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Recipe" ADD CONSTRAINT "Recipe_userId_username_fkey" FOREIGN KEY ("userId", "username") REFERENCES "User"("id", "username") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Recipe" ADD CONSTRAINT "Recipe_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Recipe" ADD CONSTRAINT "Recipe_cookbookId_fkey" FOREIGN KEY ("cookbookId") REFERENCES "Cookbook"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Community" ADD CONSTRAINT "Community_userId_username_fkey" FOREIGN KEY ("userId", "username") REFERENCES "User"("id", "username") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Community" ADD CONSTRAINT "Community_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_username_fkey" FOREIGN KEY ("userId", "username") REFERENCES "User"("id", "username") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_CommunityToRecipe" ADD CONSTRAINT "_CommunityToRecipe_A_fkey" FOREIGN KEY ("A") REFERENCES "Community"("id") ON DELETE CASCADE ON UPDATE CASCADE;

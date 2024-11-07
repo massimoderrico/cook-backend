@@ -20,6 +20,9 @@ export class CookbookCreateWithoutUserInput {
     @Field(() => Boolean, {nullable:true})
     isPublic?: boolean;
 
+    @Field(() => Boolean, {nullable:true})
+    isMainCookbook?: boolean;
+
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)
     @Transform(transformToDecimal)

@@ -40,6 +40,9 @@ export class CookbookWhereUniqueInput {
     @Field(() => BoolFilter, {nullable:true})
     isPublic?: BoolFilter;
 
+    @Field(() => BoolFilter, {nullable:true})
+    isMainCookbook?: BoolFilter;
+
     @Field(() => IntFilter, {nullable:true})
     userId?: IntFilter;
 

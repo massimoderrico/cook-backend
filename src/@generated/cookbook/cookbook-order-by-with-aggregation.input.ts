@@ -25,6 +25,9 @@ export class CookbookOrderByWithAggregationInput {
     isPublic?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
+    isMainCookbook?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
     userId?: keyof typeof SortOrder;
 
     @Field(() => SortOrderInput, {nullable:true})

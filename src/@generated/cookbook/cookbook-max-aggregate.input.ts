@@ -17,6 +17,9 @@ export class CookbookMaxAggregateInput {
     isPublic?: true;
 
     @Field(() => Boolean, {nullable:true})
+    isMainCookbook?: true;
+
+    @Field(() => Boolean, {nullable:true})
     userId?: true;
 
     @Field(() => Boolean, {nullable:true})

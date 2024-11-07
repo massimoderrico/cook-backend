@@ -21,6 +21,9 @@ export class CookbookUpdateWithoutCommunitiesInput {
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     isPublic?: BoolFieldUpdateOperationsInput;
 
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    isMainCookbook?: BoolFieldUpdateOperationsInput;
+
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)
     rating?: NullableDecimalFieldUpdateOperationsInput;

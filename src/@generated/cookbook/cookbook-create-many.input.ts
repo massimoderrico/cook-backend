@@ -22,6 +22,9 @@ export class CookbookCreateManyInput {
     @Field(() => Boolean, {nullable:true})
     isPublic?: boolean;
 
+    @Field(() => Boolean, {nullable:true})
+    isMainCookbook?: boolean;
+
     @Field(() => Int, {nullable:false})
     userId!: number;
 

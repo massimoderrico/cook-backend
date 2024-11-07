@@ -24,6 +24,9 @@ export class CookbookGroupBy {
     @Field(() => Boolean, {nullable:false})
     isPublic!: boolean;
 
+    @Field(() => Boolean, {nullable:false})
+    isMainCookbook!: boolean;
+
     @Field(() => Int, {nullable:false})
     userId!: number;
 

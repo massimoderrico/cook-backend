@@ -24,6 +24,9 @@ export class CookbookUncheckedUpdateWithoutRecipesInput {
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     isPublic?: BoolFieldUpdateOperationsInput;
 
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    isMainCookbook?: BoolFieldUpdateOperationsInput;
+
     @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
     userId?: IntFieldUpdateOperationsInput;
 

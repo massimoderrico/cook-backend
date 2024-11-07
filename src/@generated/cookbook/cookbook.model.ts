@@ -24,6 +24,9 @@ export class Cookbook {
     @Field(() => Boolean, {nullable:false,defaultValue:false})
     isPublic!: boolean;
 
+    @Field(() => Boolean, {nullable:false,defaultValue:false})
+    isMainCookbook!: boolean;
+
     @Field(() => Int, {nullable:false})
     userId!: number;
 

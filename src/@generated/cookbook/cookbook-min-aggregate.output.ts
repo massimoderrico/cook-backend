@@ -19,6 +19,9 @@ export class CookbookMinAggregate {
     @Field(() => Boolean, {nullable:true})
     isPublic?: boolean;
 
+    @Field(() => Boolean, {nullable:true})
+    isMainCookbook?: boolean;
+
     @Field(() => Int, {nullable:true})
     userId?: number;
 

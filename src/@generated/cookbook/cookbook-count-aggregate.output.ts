@@ -18,6 +18,9 @@ export class CookbookCountAggregate {
     isPublic!: number;
 
     @Field(() => Int, {nullable:false})
+    isMainCookbook!: number;
+
+    @Field(() => Int, {nullable:false})
     userId!: number;
 
     @Field(() => Int, {nullable:false})

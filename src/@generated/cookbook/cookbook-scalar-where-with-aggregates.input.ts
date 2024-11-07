@@ -35,6 +35,9 @@ export class CookbookScalarWhereWithAggregatesInput {
     @Field(() => BoolWithAggregatesFilter, {nullable:true})
     isPublic?: BoolWithAggregatesFilter;
 
+    @Field(() => BoolWithAggregatesFilter, {nullable:true})
+    isMainCookbook?: BoolWithAggregatesFilter;
+
     @Field(() => IntWithAggregatesFilter, {nullable:true})
     userId?: IntWithAggregatesFilter;
 
