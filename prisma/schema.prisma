@@ -24,8 +24,8 @@ model User {
   comments          Comment[]
   mainCookbookId    Int?        // Made optional; consider adding a relation
   role              Role        @default(USER)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
   @@index([username, email])     // Removed id from the index for clarity
 }
 
@@ -34,13 +34,14 @@ model Cookbook {
   name              String
   description       String?
   isPublic          Boolean     @default(false)
-  userId           Int
-  user              User        @relation(fields: [userId], references: [id])  // Removed username from relation
+  isMainCookbook    Boolean     @default(false)
+  userId            Int
+  user              User        @relation(fields: [userId], references: [id])  
   recipes           Recipe[]
   communities       Community[]
   rating            Decimal?    @db.Decimal(3, 2)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
   @@index([name, userId])  // Removed id from the index for clarity
 }
 
@@ -53,14 +54,14 @@ model Recipe {
   prepTime          Int?
   cookTime          Int?
   isPublic          Boolean     @default(false)
-  userId           Int
+  userId            Int
   user              User        @relation(fields: [userId], references: [id])  // Removed username from relation
   cookbookId        Int      
   cookbook          Cookbook    @relation(fields: [cookbookId], references: [id])
   communities       Community[]
   rating            Decimal?    @db.Decimal(3, 2)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
   @@index([name, userId, prepTime, cookTime]) // Removed id from the index for clarity
 }
 
@@ -68,7 +69,7 @@ model Community {
   id                Int         @id @default(autoincrement())
   name              String      @unique
   description       String?
-  userId           Int
+  userId            Int
   user              User        @relation(fields: [userId], references: [id])  // Removed username from relation
   recipes           Recipe[]
   cookbooks         Cookbook[]
@@ -79,23 +80,23 @@ model Comment {
   id                Int         @id @default(autoincrement())
   description       String
   rating            Decimal?    @db.Decimal(2, 1)
-  userId           Int
+  userId            Int
   user              User        @relation(fields: [userId], references: [id])
-  resourceId       Int
-  resourceType     ResourceType
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  resourceId        Int
+  resourceType      ResourceType
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
   @@index([userId, resourceId, resourceType])
 }
 
 model Permission {
   id                Int         @id @default(autoincrement())
   permissionLevel   PermissionLevel
-  userId           Int
-  resourceId       Int
-  resourceType     ResourceType
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  userId            Int
+  resourceId        Int
+  resourceType      ResourceType
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
   @@index([userId, resourceId, resourceType, permissionLevel])
 }
 
