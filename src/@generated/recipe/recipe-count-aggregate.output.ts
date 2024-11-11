@@ -33,9 +33,6 @@ export class RecipeCountAggregate {
     userId!: number;
 
     @Field(() => Int, {nullable:false})
-    cookbookId!: number;
-
-    @Field(() => Int, {nullable:false})
     rating!: number;
 
     @Field(() => Int, {nullable:false})

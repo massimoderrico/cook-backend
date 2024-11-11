@@ -38,9 +38,6 @@ export class RecipeUncheckedUpdateManyWithoutUserInput {
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     isPublic?: BoolFieldUpdateOperationsInput;
 
-    @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
-    cookbookId?: IntFieldUpdateOperationsInput;
-
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)
     rating?: NullableDecimalFieldUpdateOperationsInput;

@@ -39,9 +39,6 @@ export class RecipeOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     userId?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    cookbookId?: keyof typeof SortOrder;
-
     @Field(() => SortOrderInput, {nullable:true})
     @Type(() => SortOrderInput)
     rating?: SortOrderInput;

@@ -52,9 +52,6 @@ export class RecipeScalarWhereInput {
     @Field(() => IntFilter, {nullable:true})
     userId?: IntFilter;
 
-    @Field(() => IntFilter, {nullable:true})
-    cookbookId?: IntFilter;
-
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)
     rating?: DecimalNullableFilter;

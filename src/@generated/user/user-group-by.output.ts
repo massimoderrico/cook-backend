@@ -26,8 +26,8 @@ export class UserGroupBy {
     @Field(() => String, {nullable:false})
     password!: string;
 
-    @Field(() => Int, {nullable:true})
-    mainCookbookId?: number;
+    @Field(() => Int, {nullable:false})
+    mainCookbookId!: number;
 
     @Field(() => Role, {nullable:false})
     role!: keyof typeof Role;

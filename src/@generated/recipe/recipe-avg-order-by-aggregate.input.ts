@@ -18,8 +18,5 @@ export class RecipeAvgOrderByAggregateInput {
     userId?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    cookbookId?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     rating?: keyof typeof SortOrder;
 }

@@ -39,9 +39,6 @@ export class Recipe {
     @Field(() => Int, {nullable:false})
     userId!: number;
 
-    @Field(() => Int, {nullable:false})
-    cookbookId!: number;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     rating!: Decimal | null;
 
@@ -54,8 +51,8 @@ export class Recipe {
     @Field(() => User, {nullable:false})
     user?: User;
 
-    @Field(() => Cookbook, {nullable:false})
-    cookbook?: Cookbook;
+    @Field(() => [Cookbook], {nullable:true})
+    cookbook?: Array<Cookbook>;
 
     @Field(() => [Community], {nullable:true})
     communities?: Array<Community>;

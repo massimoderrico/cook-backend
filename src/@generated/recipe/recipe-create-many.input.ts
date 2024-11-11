@@ -39,9 +39,6 @@ export class RecipeCreateManyInput {
     @Field(() => Int, {nullable:false})
     userId!: number;
 
-    @Field(() => Int, {nullable:false})
-    cookbookId!: number;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)
     @Transform(transformToDecimal)

@@ -52,9 +52,6 @@ export class RecipeScalarWhereWithAggregatesInput {
     @Field(() => IntWithAggregatesFilter, {nullable:true})
     userId?: IntWithAggregatesFilter;
 
-    @Field(() => IntWithAggregatesFilter, {nullable:true})
-    cookbookId?: IntWithAggregatesFilter;
-
     @Field(() => DecimalNullableWithAggregatesFilter, {nullable:true})
     @Type(() => DecimalNullableWithAggregatesFilter)
     rating?: DecimalNullableWithAggregatesFilter;

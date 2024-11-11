@@ -29,9 +29,6 @@ export class RecipeMaxAggregateInput {
     userId?: true;
 
     @Field(() => Boolean, {nullable:true})
-    cookbookId?: true;
-
-    @Field(() => Boolean, {nullable:true})
     rating?: true;
 
     @Field(() => Boolean, {nullable:true})

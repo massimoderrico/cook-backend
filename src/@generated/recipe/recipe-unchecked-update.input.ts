@@ -9,6 +9,7 @@ import { NullableIntFieldUpdateOperationsInput } from '../prisma/nullable-int-fi
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDecimalFieldUpdateOperationsInput } from '../prisma/nullable-decimal-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
+import { CookbookUncheckedUpdateManyWithoutRecipesNestedInput } from '../cookbook/cookbook-unchecked-update-many-without-recipes-nested.input';
 import { CommunityUncheckedUpdateManyWithoutRecipesNestedInput } from '../community/community-unchecked-update-many-without-recipes-nested.input';
 
 @InputType()
@@ -42,9 +43,6 @@ export class RecipeUncheckedUpdateInput {
     @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
     userId?: IntFieldUpdateOperationsInput;
 
-    @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
-    cookbookId?: IntFieldUpdateOperationsInput;
-
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)
     rating?: NullableDecimalFieldUpdateOperationsInput;
@@ -54,6 +52,10 @@ export class RecipeUncheckedUpdateInput {
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     updatedAt?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => CookbookUncheckedUpdateManyWithoutRecipesNestedInput, {nullable:true})
+    @Type(() => CookbookUncheckedUpdateManyWithoutRecipesNestedInput)
+    cookbook?: CookbookUncheckedUpdateManyWithoutRecipesNestedInput;
 
     @Field(() => CommunityUncheckedUpdateManyWithoutRecipesNestedInput, {nullable:true})
     @Type(() => CommunityUncheckedUpdateManyWithoutRecipesNestedInput)

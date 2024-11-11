@@ -7,6 +7,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
+import { CookbookUncheckedCreateNestedManyWithoutRecipesInput } from '../cookbook/cookbook-unchecked-create-nested-many-without-recipes.input';
 import { CommunityUncheckedCreateNestedManyWithoutRecipesInput } from '../community/community-unchecked-create-nested-many-without-recipes.input';
 
 @InputType()
@@ -37,9 +38,6 @@ export class RecipeUncheckedCreateWithoutUserInput {
     @Field(() => Boolean, {nullable:true})
     isPublic?: boolean;
 
-    @Field(() => Int, {nullable:false})
-    cookbookId!: number;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)
     @Transform(transformToDecimal)
@@ -50,6 +48,10 @@ export class RecipeUncheckedCreateWithoutUserInput {
 
     @Field(() => Date, {nullable:true})
     updatedAt?: Date | string;
+
+    @Field(() => CookbookUncheckedCreateNestedManyWithoutRecipesInput, {nullable:true})
+    @Type(() => CookbookUncheckedCreateNestedManyWithoutRecipesInput)
+    cookbook?: CookbookUncheckedCreateNestedManyWithoutRecipesInput;
 
     @Field(() => CommunityUncheckedCreateNestedManyWithoutRecipesInput, {nullable:true})
     @Type(() => CommunityUncheckedCreateNestedManyWithoutRecipesInput)

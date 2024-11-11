@@ -8,7 +8,7 @@ import { NullableIntFieldUpdateOperationsInput } from '../prisma/nullable-int-fi
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDecimalFieldUpdateOperationsInput } from '../prisma/nullable-decimal-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
-import { CookbookUpdateOneRequiredWithoutRecipesNestedInput } from '../cookbook/cookbook-update-one-required-without-recipes-nested.input';
+import { CookbookUpdateManyWithoutRecipesNestedInput } from '../cookbook/cookbook-update-many-without-recipes-nested.input';
 import { CommunityUpdateManyWithoutRecipesNestedInput } from '../community/community-update-many-without-recipes-nested.input';
 
 @InputType()
@@ -46,9 +46,9 @@ export class RecipeUpdateWithoutUserInput {
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => CookbookUpdateOneRequiredWithoutRecipesNestedInput, {nullable:true})
-    @Type(() => CookbookUpdateOneRequiredWithoutRecipesNestedInput)
-    cookbook?: CookbookUpdateOneRequiredWithoutRecipesNestedInput;
+    @Field(() => CookbookUpdateManyWithoutRecipesNestedInput, {nullable:true})
+    @Type(() => CookbookUpdateManyWithoutRecipesNestedInput)
+    cookbook?: CookbookUpdateManyWithoutRecipesNestedInput;
 
     @Field(() => CommunityUpdateManyWithoutRecipesNestedInput, {nullable:true})
     @Type(() => CommunityUpdateManyWithoutRecipesNestedInput)
