@@ -23,8 +23,8 @@ export class UserCreateInput {
     @Field(() => String, {nullable:false})
     password!: string;
 
-    @Field(() => Int, {nullable:true})
-    mainCookbookId?: number;
+    @Field(() => Int, {nullable:false})
+    mainCookbookId!: number;
 
     @Field(() => Role, {nullable:true})
     role?: keyof typeof Role;

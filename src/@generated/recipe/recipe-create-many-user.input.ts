@@ -36,9 +36,6 @@ export class RecipeCreateManyUserInput {
     @Field(() => Boolean, {nullable:true})
     isPublic?: boolean;
 
-    @Field(() => Int, {nullable:false})
-    cookbookId!: number;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)
     @Transform(transformToDecimal)

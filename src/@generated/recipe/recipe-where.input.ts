@@ -10,7 +10,7 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { UserRelationFilter } from '../user/user-relation-filter.input';
-import { CookbookRelationFilter } from '../cookbook/cookbook-relation-filter.input';
+import { CookbookListRelationFilter } from '../cookbook/cookbook-list-relation-filter.input';
 import { CommunityListRelationFilter } from '../community/community-list-relation-filter.input';
 
 @InputType()
@@ -55,9 +55,6 @@ export class RecipeWhereInput {
     @Field(() => IntFilter, {nullable:true})
     userId?: IntFilter;
 
-    @Field(() => IntFilter, {nullable:true})
-    cookbookId?: IntFilter;
-
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)
     rating?: DecimalNullableFilter;
@@ -72,9 +69,9 @@ export class RecipeWhereInput {
     @Type(() => UserRelationFilter)
     user?: UserRelationFilter;
 
-    @Field(() => CookbookRelationFilter, {nullable:true})
-    @Type(() => CookbookRelationFilter)
-    cookbook?: CookbookRelationFilter;
+    @Field(() => CookbookListRelationFilter, {nullable:true})
+    @Type(() => CookbookListRelationFilter)
+    cookbook?: CookbookListRelationFilter;
 
     @Field(() => CommunityListRelationFilter, {nullable:true})
     @Type(() => CommunityListRelationFilter)

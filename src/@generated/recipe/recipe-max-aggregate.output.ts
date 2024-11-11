@@ -31,9 +31,6 @@ export class RecipeMaxAggregate {
     @Field(() => Int, {nullable:true})
     userId?: number;
 
-    @Field(() => Int, {nullable:true})
-    cookbookId?: number;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
 

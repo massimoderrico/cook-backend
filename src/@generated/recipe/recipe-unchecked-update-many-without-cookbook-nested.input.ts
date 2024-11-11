@@ -4,7 +4,6 @@ import { RecipeCreateWithoutCookbookInput } from './recipe-create-without-cookbo
 import { Type } from 'class-transformer';
 import { RecipeCreateOrConnectWithoutCookbookInput } from './recipe-create-or-connect-without-cookbook.input';
 import { RecipeUpsertWithWhereUniqueWithoutCookbookInput } from './recipe-upsert-with-where-unique-without-cookbook.input';
-import { RecipeCreateManyCookbookInputEnvelope } from './recipe-create-many-cookbook-input-envelope.input';
 import { Prisma } from '@prisma/client';
 import { RecipeWhereUniqueInput } from './recipe-where-unique.input';
 import { RecipeUpdateWithWhereUniqueWithoutCookbookInput } from './recipe-update-with-where-unique-without-cookbook.input';
@@ -25,10 +24,6 @@ export class RecipeUncheckedUpdateManyWithoutCookbookNestedInput {
     @Field(() => [RecipeUpsertWithWhereUniqueWithoutCookbookInput], {nullable:true})
     @Type(() => RecipeUpsertWithWhereUniqueWithoutCookbookInput)
     upsert?: Array<RecipeUpsertWithWhereUniqueWithoutCookbookInput>;
-
-    @Field(() => RecipeCreateManyCookbookInputEnvelope, {nullable:true})
-    @Type(() => RecipeCreateManyCookbookInputEnvelope)
-    createMany?: RecipeCreateManyCookbookInputEnvelope;
 
     @Field(() => [RecipeWhereUniqueInput], {nullable:true})
     @Type(() => RecipeWhereUniqueInput)

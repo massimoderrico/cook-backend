@@ -13,90 +13,95 @@ datasource db {
 }
 
 model User {
-  id                Int         @id @default(autoincrement())
-  name              String?
-  email             String      @unique
-  username          String      @unique 
-  password          String 
-  recipes           Recipe[]
-  cookbooks         Cookbook[]
-  communities       Community[]
-  comments          Comment[]
-  mainCookbookId    Int?        // Made optional; consider adding a relation
-  role              Role        @default(USER)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  @@index([username, email])     // Removed id from the index for clarity
+  id             Int         @id @default(autoincrement())
+  name           String?
+  email          String      @unique
+  username       String      @unique
+  password       String
+  recipes        Recipe[]
+  cookbooks      Cookbook[]
+  communities    Community[]
+  comments       Comment[]
+  mainCookbookId Int
+  role           Role        @default(USER)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([username, email]) 
 }
 
 model Cookbook {
-  id                Int         @id @default(autoincrement())
-  name              String
-  description       String?
-  isPublic          Boolean     @default(false)
-  isMainCookbook    Boolean     @default(false)
-  userId            Int
-  user              User        @relation(fields: [userId], references: [id])  
-  recipes           Recipe[]
-  communities       Community[]
-  rating            Decimal?    @db.Decimal(3, 2)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  @@index([name, userId])  // Removed id from the index for clarity
+  id             Int         @id @default(autoincrement())
+  name           String
+  description    String?
+  isPublic       Boolean     @default(false)
+  isMainCookbook Boolean     @default(false)
+  userId         Int         
+  user           User        @relation(fields: [userId], references: [id])
+  recipes        Recipe[]
+  communities    Community[]
+  rating         Decimal?    @db.Decimal(3, 2)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([name, userId])
 }
 
 model Recipe {
-  id                Int         @id @default(autoincrement())
-  name              String
-  description       String?
-  directions        String?
-  ingredients       String[]
-  prepTime          Int?
-  cookTime          Int?
-  isPublic          Boolean     @default(false)
-  userId            Int
-  user              User        @relation(fields: [userId], references: [id])  // Removed username from relation
-  cookbookId        Int      
-  cookbook          Cookbook    @relation(fields: [cookbookId], references: [id])
-  communities       Community[]
-  rating            Decimal?    @db.Decimal(3, 2)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  @@index([name, userId, prepTime, cookTime]) // Removed id from the index for clarity
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  directions  String?
+  ingredients String[]
+  prepTime    Int?
+  cookTime    Int?
+  isPublic    Boolean     @default(false)
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id]) 
+  cookbook    Cookbook[]
+  communities Community[]
+  rating      Decimal?    @db.Decimal(3, 2)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([name, userId, prepTime, cookTime]) 
 }
 
 model Community {
-  id                Int         @id @default(autoincrement())
-  name              String      @unique
-  description       String?
-  userId            Int
-  user              User        @relation(fields: [userId], references: [id])  // Removed username from relation
-  recipes           Recipe[]
-  cookbooks         Cookbook[]
-  @@index([name, userId])  // Removed id from the index for clarity
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id]) 
+  recipes     Recipe[]
+  cookbooks   Cookbook[]
+
+  @@index([name, userId]) 
 }
 
 model Comment {
-  id                Int         @id @default(autoincrement())
-  description       String
-  rating            Decimal?    @db.Decimal(2, 1)
-  userId            Int
-  user              User        @relation(fields: [userId], references: [id])
-  resourceId        Int
-  resourceType      ResourceType
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  id           Int          @id @default(autoincrement())
+  description  String
+  rating       Decimal?     @db.Decimal(2, 1)
+  userId       Int
+  user         User         @relation(fields: [userId], references: [id])
+  resourceId   Int
+  resourceType ResourceType
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
   @@index([userId, resourceId, resourceType])
 }
 
 model Permission {
-  id                Int         @id @default(autoincrement())
-  permissionLevel   PermissionLevel
-  userId            Int
-  resourceId        Int
-  resourceType      ResourceType
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  id              Int             @id @default(autoincrement())
+  permissionLevel PermissionLevel
+  userId          Int
+  resourceId      Int
+  resourceType    ResourceType
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
   @@index([userId, resourceId, resourceType, permissionLevel])
 }
 

@@ -10,7 +10,6 @@ export enum RecipeScalarFieldEnum {
     cookTime = "cookTime",
     isPublic = "isPublic",
     userId = "userId",
-    cookbookId = "cookbookId",
     rating = "rating",
     createdAt = "createdAt",
     updatedAt = "updatedAt"

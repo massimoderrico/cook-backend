@@ -39,9 +39,6 @@ export class RecipeGroupBy {
     @Field(() => Int, {nullable:false})
     userId!: number;
 
-    @Field(() => Int, {nullable:false})
-    cookbookId!: number;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
 

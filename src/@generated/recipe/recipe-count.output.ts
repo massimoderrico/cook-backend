@@ -6,5 +6,8 @@ import { Int } from '@nestjs/graphql';
 export class RecipeCount {
 
     @Field(() => Int, {nullable:false})
+    cookbook?: number;
+
+    @Field(() => Int, {nullable:false})
     communities?: number;
 }
