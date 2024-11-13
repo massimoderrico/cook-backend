@@ -27,8 +27,8 @@ export class User {
     @Field(() => String, {nullable:false})
     password!: string;
 
-    @Field(() => Int, {nullable:false})
-    mainCookbookId!: number;
+    @Field(() => Int, {nullable:true})
+    mainCookbookId!: number | null;
 
     @Field(() => Role, {nullable:false,defaultValue:'USER'})
     role!: keyof typeof Role;
