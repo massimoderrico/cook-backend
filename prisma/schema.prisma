@@ -22,7 +22,7 @@ model User {
   cookbooks      Cookbook[]
   communities    Community[]
   comments       Comment[]
-  mainCookbookId Int
+  mainCookbookId Int?
   role           Role        @default(USER)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
