@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { IntFilter } from '../prisma/int-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { StringFilter } from '../prisma/string-filter.input';
+import { IntNullableFilter } from '../prisma/int-nullable-filter.input';
 import { EnumRoleFilter } from '../prisma/enum-role-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { RecipeListRelationFilter } from '../recipe/recipe-list-relation-filter.input';
@@ -38,8 +39,8 @@ export class UserWhereInput {
     @Field(() => StringFilter, {nullable:true})
     password?: StringFilter;
 
-    @Field(() => IntFilter, {nullable:true})
-    mainCookbookId?: IntFilter;
+    @Field(() => IntNullableFilter, {nullable:true})
+    mainCookbookId?: IntNullableFilter;
 
     @Field(() => EnumRoleFilter, {nullable:true})
     role?: EnumRoleFilter;

@@ -26,8 +26,8 @@ export class UserOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     password?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    mainCookbookId?: keyof typeof SortOrder;
+    @Field(() => SortOrderInput, {nullable:true})
+    mainCookbookId?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     role?: keyof typeof SortOrder;
