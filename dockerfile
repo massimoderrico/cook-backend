@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:18-alpine
+FROM node:20
 
 # Set the working directory in the container
 WORKDIR /app
@@ -11,11 +11,13 @@ COPY . .
 RUN npm install
 
 # Install Prisma globally and generate the client
+
 RUN npm install -g prisma
 RUN npx prisma generate
 
 # Expose the port the app runs on
 EXPOSE 4000
 
+
 # Start the application
-CMD [ "npm", "run", "start:dev" ]
+CMD ["npm", "run", "start:dev"]

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver} from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig} from '@nestjs/apollo';
 import { AppService } from './app.service';
 import { join } from 'path';
 import { PrismaService } from './prisma/prisma.service';
@@ -16,9 +16,12 @@ import { AppResolver } from './app.resolver';
   providers: [PrismaService, AppService, AppResolver],
   exports: [PrismaService],
   imports: [
-    GraphQLModule.forRoot({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      autoSchemaFile: true,
+      playground: true, 
+      introspection: true, 
+      path: '/graphql', 
     }),
     PermissionModule,
     CommentModule,

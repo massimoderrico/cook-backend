@@ -26,7 +26,6 @@ model User {
   role           Role        @default(USER)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
-
   @@index([username, email]) 
 }
 
@@ -43,7 +42,6 @@ model Cookbook {
   rating         Decimal?    @db.Decimal(3, 2)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
-
   @@index([name, userId])
 }
 
@@ -63,7 +61,6 @@ model Recipe {
   rating      Decimal?    @db.Decimal(3, 2)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-
   @@index([name, userId, prepTime, cookTime]) 
 }
 
@@ -75,7 +72,6 @@ model Community {
   user        User       @relation(fields: [userId], references: [id]) 
   recipes     Recipe[]
   cookbooks   Cookbook[]
-
   @@index([name, userId]) 
 }
 
@@ -89,7 +85,6 @@ model Comment {
   resourceType ResourceType
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
-
   @@index([userId, resourceId, resourceType])
 }
 
@@ -101,7 +96,6 @@ model Permission {
   resourceType    ResourceType
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
-
   @@index([userId, resourceId, resourceType, permissionLevel])
 }
 
