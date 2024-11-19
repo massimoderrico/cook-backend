@@ -2,6 +2,123 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type CommunityCount {
+  recipes: Int!
+  cookbooks: Int!
+}
+
+type Community {
+  id: ID!
+  name: String!
+  description: String
+  userId: Int!
+  user: User!
+  recipes: [Recipe!]
+  cookbooks: [Cookbook!]
+  _count: CommunityCount!
+}
+
+type CookbookCount {
+  recipes: Int!
+  communities: Int!
+}
+
+type Cookbook {
+  id: ID!
+  name: String!
+  description: String
+  isPublic: Boolean!
+  isMainCookbook: Boolean!
+  userId: Int!
+  rating: Decimal
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  recipes: [Recipe!]
+  communities: [Community!]
+  _count: CookbookCount!
+}
+
+"""An arbitrary-precision Decimal type"""
+scalar Decimal
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type RecipeCount {
+  cookbook: Int!
+  communities: Int!
+}
+
+type Recipe {
+  id: ID!
+  name: String!
+  description: String
+  directions: String
+  ingredients: [String!]
+  prepTime: Int
+  cookTime: Int
+  isPublic: Boolean!
+  userId: Int!
+  rating: Decimal
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  cookbook: [Cookbook!]
+  communities: [Community!]
+  _count: RecipeCount!
+}
+
+type Comment {
+  id: ID!
+  description: String!
+  rating: Decimal
+  userId: Int!
+  resourceId: Int!
+  resourceType: ResourceType!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+}
+
+enum ResourceType {
+  RECIPE
+  COOKBOOK
+  COMMUNITY
+}
+
+type UserCount {
+  recipes: Int!
+  cookbooks: Int!
+  communities: Int!
+  comments: Int!
+}
+
+type User {
+  id: ID!
+  name: String
+  email: String!
+  username: String!
+  password: String!
+  mainCookbookId: Int!
+  role: Role!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  recipes: [Recipe!]
+  cookbooks: [Cookbook!]
+  communities: [Community!]
+  comments: [Comment!]
+  _count: UserCount!
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
 type Query {
   hello: String!
+  users: [User!]!
 }
