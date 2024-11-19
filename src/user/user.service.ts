@@ -16,8 +16,11 @@ export class UserService {
                 password: data.password,
                 recipes: data.recipes,
                 cookbooks: data.cookbooks
-
             }
         });
+    }
+
+    async deleteUser(id: number){
+        return this.prisma.user.delete({where: {id: id}});
     }
 }
