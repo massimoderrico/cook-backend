@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { CookbookService } from './cookbook.service';
 import { Cookbook } from '../@generated/cookbook/cookbook.model';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
@@ -8,8 +8,7 @@ export class CookbookResolver {
   constructor(private readonly cookbookService: CookbookService) {}
 
   @Mutation(() => Cookbook)
-  async createCookbook(@Args('data') data: CookbookCreateInput,): 
-  Promise<Cookbook> {
+  async createCookbook(@Args('data') data: CookbookCreateInput,): Promise<Cookbook> {
     try {
       return await this.cookbookService.createCookbook(data);
     } catch (error) {
