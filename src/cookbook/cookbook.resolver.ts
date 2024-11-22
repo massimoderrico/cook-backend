@@ -1,6 +1,7 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { CookbookService } from './cookbook.service';
 import { Cookbook } from '../@generated/cookbook/cookbook.model';
+import { Recipe } from '../@generated/recipe/recipe.model'
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 
 @Resolver(() => Cookbook)
@@ -23,6 +24,14 @@ export class CookbookResolver {
     } catch (error) {
       throw new Error(`Failed to get cookbooks: ${error.message}`);
     }
-}
+  }
 
+  @Query(() => [Recipe], { nullable: true })
+  async getRecipesByCookbookId(@Args('cookbookId', { type: () => Number }) cookbookId: number): Promise<Recipe[]> {
+    try {
+      return await this.cookbookService.getRecipesByCookbookId(cookbookId);
+    } catch (error) {
+      throw new Error(`Failed to get recipes for cookbook ID ${cookbookId}: ${error.message}`);
+    }
+  }
 }
