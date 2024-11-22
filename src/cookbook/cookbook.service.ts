@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Cookbook } from '@prisma/client';
+import { Cookbook, Recipe } from '@prisma/client';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 
 @Injectable()
@@ -42,6 +42,28 @@ export class CookbookService {
                     id: { in: ids },
                 },
             });
+        } catch (error) {
+            throw error;
+        }
+    }   
+    
+    async getRecipesByCookbookId(cookbookId: number): Promise<Recipe[]> {
+        try {
+            //validate presence of a cookbook ID
+            if (!cookbookId) {
+                throw new BadRequestException('Cookbook ID is required');
+            }
+            //get the cookbook along with its recipes
+            const cookbook = await this.prisma.cookbook.findUnique({
+                where: { id: cookbookId },
+                include: { recipes: true }, //include the related recipes
+            });
+            //handle case where the cookbook does not exist
+            if (!cookbook) {
+                throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
+            }
+            //return the recipes
+            return cookbook.recipes;
         } catch (error) {
             throw error;
         }
