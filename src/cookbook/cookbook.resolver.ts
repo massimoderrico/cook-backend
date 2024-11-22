@@ -15,4 +15,14 @@ export class CookbookResolver {
       throw new Error(`Failed to create cookbook: ${error.message}`);
     }
   }
+
+  @Query(() => [Cookbook], { nullable: true })
+  async getCookbooksByIds(@Args('ids', { type: () => [Number] }) ids: number[]): Promise<Cookbook[]> {
+    try {
+      return await this.cookbookService.getCookbooksByIds(ids);
+    } catch (error) {
+      throw new Error(`Failed to get cookbooks: ${error.message}`);
+    }
+}
+
 }
