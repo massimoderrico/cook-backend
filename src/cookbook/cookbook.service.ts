@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Cookbook} from '@prisma/client';
+import { Cookbook } from '@prisma/client';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class CookbookService {
 
     async createCookbook(data: CookbookCreateInput): Promise<Cookbook> {
         try {
-            //validate presence of cookb ook name
+            //validate presence of cookbook name
             if (!data.name) {
                 throw new BadRequestException('Cookbook name is required for creation');
             }
@@ -29,4 +29,21 @@ export class CookbookService {
             throw error;
         }
     }
+
+    async getCookbooksByIds(ids: number[]): Promise<Cookbook[]> {
+        try {
+            //validate input
+            if (!ids || ids.length === 0) {
+                throw new BadRequestException('Array of cookbook IDs must not be empty');
+            }
+            //get cookbooks from the database
+            return await this.prisma.cookbook.findMany({
+                where: {
+                    id: { in: ids },
+                },
+            });
+        } catch (error) {
+            throw error;
+        }
+    }    
 }
