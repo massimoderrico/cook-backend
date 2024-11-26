@@ -25,4 +25,13 @@ export class PermissionResolver {
             throw new Error(`Failed to get permissions: ${error.message}`);
         }
     }
+
+    @Mutation(() => Permission)
+    async deletePermission(@Args('data') data: PermissionWhereInput,) {
+        try {
+            return await this.permissionService.deletePermission(data);
+        } catch (error) {
+            throw new Error(`Failed to delete permission: ${error.message}`);
+        }
+    }
 }
