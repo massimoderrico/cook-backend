@@ -10,17 +10,25 @@ export class PermissionService {
     async createPermission(data: PermissionCreateInput) {
         try {
             if (!data.userId || !data.resourceId || !data.permissionLevel || !data.resourceType) {
-                throw new BadRequestException('Resource ID, resource type, user ID and permission level are required fields for permission creation');
+                throw new BadRequestException(
+                    'Resource ID, resource type, user ID and permission level are required fields for permission creation'
+                );
             }
             //ensure user exists in database
-            await this.prisma.user.findUnique({where: {id: data.userId}});
+            // Ensure the user exists
+            const userExists = await this.prisma.user.findUnique({
+                where: { id: data.userId },
+            });
+            if (!userExists) {
+                throw new Error('User does not exist.');
+            }
             //ensure permission doesn't already exist in database
             const existingPermission = await this.prisma.permission.findFirst({
                 where: {
                     userId: data.userId,
                     resourceId: data.resourceId,
                     resourceType: data.resourceType,
-                }
+                },
             });
             if (existingPermission) {
                 throw new Error('Permission already exists. Use editPermission instead.');
