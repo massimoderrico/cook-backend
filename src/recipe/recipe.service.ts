@@ -1,7 +1,7 @@
-import { Recipe, Cookbook, User } from '@prisma/client';
+import { Recipe, User } from '@prisma/client';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 
 @Injectable()
@@ -22,7 +22,7 @@ export class RecipeService {
                         connect: { id: userId },
                     },
                     cookbook: {
-                        connect: { id: mainCookbookId },
+                        connect: [{ id: mainCookbookId }, ...data.cookbook.connect],
                     },
                 },
             });
