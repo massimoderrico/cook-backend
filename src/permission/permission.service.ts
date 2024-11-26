@@ -88,4 +88,34 @@ export class PermissionService {
             throw error;
         }
     }
+
+    async deletePermission(data: PermissionWhereInput) {
+        try {
+            //ensure user ID, resource ID and resource type are not null
+            if (!data.userId || !data.resourceId || !data.resourceType) {
+                throw new BadRequestException(
+                    'user ID, resource ID, and resource type required to delete permission'
+                );
+            }
+            //get permission to delete from database
+            const permission: Permission = await this.prisma.permission.findFirst({
+                where: {
+                  AND: [
+                    { userId: data.userId },
+                    { resourceId: data.resourceId },
+                    { resourceType: data.resourceType },
+                  ]
+                }
+            });
+            if (!permission) {
+                throw new BadRequestException('Permission not found.');
+            }
+            //delete permission from database
+            return this.prisma.permission.delete({
+                where: { id: permission.id },
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
