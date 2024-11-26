@@ -3,6 +3,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Permission, User } from '@prisma/client';
 import { PermissionCreateInput } from '../@generated/permission/permission-create.input';
 import { PermissionWhereInput } from '../@generated/permission/permission-where.input';
+import { ResourceType } from '../@generated/prisma/resource-type.enum';
+import { PermissionLevel } from '../@generated/prisma/permission-level.enum';
 
 @Injectable()
 export class PermissionService {
@@ -114,6 +116,37 @@ export class PermissionService {
             return this.prisma.permission.delete({
                 where: { id: permission.id },
             });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async editPermission(userId: number, resourceId: number, resourceType: ResourceType, permissionLevel: PermissionLevel): Promise<Permission> {
+        try {
+            //ensure user ID, resource ID, resource type, and permission level are not null
+            if (!userId || !resourceId || !resourceType || !permissionLevel) {
+                throw new BadRequestException(
+                    'user ID, resource ID, resource type, and permission level required to edit permission'
+                );
+            }
+            //get permission to edit in database
+            const permission: Permission = await this.prisma.permission.findFirst({
+                where: {
+                  AND: [
+                    { userId: userId },
+                    { resourceId: resourceId },
+                    { resourceType: resourceType },
+                  ]
+                }
+            });
+            if (!permission) {
+                throw new BadRequestException('Permission not found.');
+            }
+            //update permission level in database
+            return this.prisma.permission.update({
+                where: { id: permission.id },
+                data: { permissionLevel: permissionLevel },
+              });
         } catch (error) {
             throw error;
         }
