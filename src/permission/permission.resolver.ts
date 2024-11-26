@@ -1,8 +1,8 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { PermissionService } from './permission.service'
 import { Permission } from '../@generated/permission/permission.model';
-import { PermissionLevel, ResourceType } from '@prisma/client';
 import { PermissionCreateInput } from '../@generated/permission/permission-create.input';
+import { PermissionWhereInput } from '../@generated/permission/permission-where.input';
 
 @Resolver()
 export class PermissionResolver {
@@ -14,6 +14,15 @@ export class PermissionResolver {
             return await this.permissionService.createPermission(data);
         } catch (error) {
             throw new Error(`Failed to create permission: ${error.message}`);
+        }
+    }
+
+    @Query(() => [Permission], { nullable: true })
+    async getPermission(@Args('data') data: PermissionWhereInput,): Promise<Permission[]> {
+        try {
+            return await this.permissionService.getPermissions(data);
+        } catch (error) {
+            throw new Error(`Failed to get permissions: ${error.message}`);
         }
     }
 }
