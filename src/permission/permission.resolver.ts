@@ -1,9 +1,8 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { PermissionService } from './permission.service'
 import { Permission } from '../@generated/permission/permission.model';
 import { PermissionCreateInput } from '../@generated/permission/permission-create.input';
 import { PermissionWhereInput } from '../@generated/permission/permission-where.input';
-import { Int } from '@nestjs/graphql';
 import { ResourceType } from '../@generated/prisma/resource-type.enum';
 import { PermissionLevel } from '../@generated/prisma/permission-level.enum';
 
