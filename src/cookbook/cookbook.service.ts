@@ -68,4 +68,32 @@ export class CookbookService {
             throw error;
         }
     }    
+
+    async deleteCookbook(cookbookId: number, userId: number): Promise<boolean> {
+        try {
+            if (!cookbookId || !userId) {
+                throw new BadRequestException('Cookbook ID and User ID are required to delete a cookbook.');
+            }
+      
+            //get the cookbook and validate ownership
+            const cookbook = await this.prisma.cookbook.findUnique({
+                where: { id: cookbookId },
+                select: { userId: true },
+            });
+            if (!cookbook) {
+                throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist.`);
+            }
+            if (cookbook.userId !== userId) {
+                throw new BadRequestException('User does not have permission to delete this cookbook.');
+            }
+            //delete cookbook from database
+            await this.prisma.cookbook.delete({
+                where: { id: cookbookId },
+            });
+            //succesfully deleted
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

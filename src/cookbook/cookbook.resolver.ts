@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql';
 import { CookbookService } from './cookbook.service';
 import { Cookbook } from '../@generated/cookbook/cookbook.model';
 import { Recipe } from '../@generated/recipe/recipe.model'
@@ -32,6 +32,18 @@ export class CookbookResolver {
       return await this.cookbookService.getRecipesByCookbookId(cookbookId);
     } catch (error) {
       throw new Error(`Failed to get recipes for cookbook ID ${cookbookId}: ${error.message}`);
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async deleteCookbook(
+    @Args('cookbookId', { type: () => Int }) cookbookId: number,
+    @Args('userId', { type: () => Int }) userId: number,
+  ): Promise<boolean> {
+    try {
+      return await this.cookbookService.deleteCookbook(cookbookId, userId);
+    } catch (error) {
+      throw new Error(`Failed to delete cookbook: ${error.message}`);
     }
   }
 }
