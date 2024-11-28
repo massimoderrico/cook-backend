@@ -16,7 +16,7 @@ export class UserResolver {
       return await this.userService.createUser(user);
     }
     catch (err) {
-      throw new Error("Failed to createeeeeeee user: ${err.message}");
+      throw new Error("Failed to create user: ${err.message}");
     }
   }
 
