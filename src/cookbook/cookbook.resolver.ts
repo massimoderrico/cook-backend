@@ -1,8 +1,9 @@
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql';
 import { CookbookService } from './cookbook.service';
 import { Cookbook } from '../@generated/cookbook/cookbook.model';
-import { Recipe } from '../@generated/recipe/recipe.model'
+import { Recipe } from '../@generated/recipe/recipe.model';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
+import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
 
 @Resolver(() => Cookbook)
 export class CookbookResolver {
@@ -44,6 +45,18 @@ export class CookbookResolver {
       return await this.cookbookService.deleteCookbook(cookbookId, userId);
     } catch (error) {
       throw new Error(`Failed to delete cookbook: ${error.message}`);
+    }
+  }
+
+  @Mutation(() => Cookbook)
+  async editCookbook(
+    @Args('cookbookId', { type: () => Int }) cookbookId: number,
+    @Args('data') data: CookbookUpdateManyMutationInput,
+  ): Promise<Cookbook> {
+    try {
+      return await this.cookbookService.editCookbook(cookbookId, data);
+    } catch (error) {
+      throw new Error(`Failed to edit cookbook: ${error.message}`);
     }
   }
 }
