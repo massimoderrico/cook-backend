@@ -23,6 +23,7 @@ describe('CookbookService', () => {
               findUnique: jest.fn(),
               delete: jest.fn(),
               update: jest.fn(),
+              findMany: jest.fn(),
             },
             user: {
               create: jest.fn(), // Mock the Prisma client's user.create method
@@ -88,7 +89,7 @@ describe('CookbookService', () => {
       // Arrange
       const cookbookId = 1;
       const userId = 123;
-      const mockCookbook = {
+      const mockCookbook: Cookbook = {
         id: 1,
         name: 'Test Cookbook',
         description: null,
@@ -205,6 +206,149 @@ describe('CookbookService', () => {
       const input: CookbookUpdateManyMutationInput = { name: { "set": "Updated Cookbook Name" }, };
       jest.spyOn(prisma.cookbook, 'findUnique').mockRejectedValue(new Error('Service Error'));
       await expect(service.editCookbook(1, input)).rejects.toThrow('Service Error');
+    });
+  });
+
+  describe('getRecipesByCookbookId', () => {
+    it('should return recipes for a given cookbookId', async () => {
+      const mockCookbook: Cookbook = {
+        id: 1,
+        name: 'Test Cookbook',
+        description: null,
+        isPublic: false,
+        isMainCookbook: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        userId: 123,
+        rating: null,
+        recipes: [
+          {
+            id: 1,
+            name: 'Recipe 1',
+            description: 'Description of Recipe 1',
+            directions: 'Step-by-step directions for Recipe 1',
+            ingredients: ['ingredient1', 'ingredient2'],
+            prepTime: 30,
+            cookTime: 60,
+            isPublic: true,
+            userId: 123,
+            rating: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: { 
+              id: 123,
+              name: 'user1',
+              email: 'testUser@mail.com',
+              username: 'testUser',
+              password: 'securePassword123',
+              mainCookbookId: null, // No main cookbook assigned
+              role: Role.USER, // Default role
+              createdAt: new Date(), // Mocked creation date
+              updatedAt: new Date(), // Mocked update date 
+            },
+            cookbook: [],
+            communities: [],
+            _count: { communities: 0, cookbook: 0 },
+          },
+          {
+            id: 2,
+            name: 'Recipe 2',
+            description: 'Description of Recipe 2',
+            directions: 'Step-by-step directions for Recipe 2',
+            ingredients: ['ingredient1', 'ingredient2'],
+            prepTime: 20,
+            cookTime: 40,
+            isPublic: true,
+            userId: 123,
+            rating: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: { 
+              id: 123,
+              name: 'user1',
+              email: 'testUser@mail.com',
+              username: 'testUser',
+              password: 'securePassword123',
+              mainCookbookId: null, // No main cookbook assigned
+              role: Role.USER, // Default role
+              createdAt: new Date(), // Mocked creation date
+              updatedAt: new Date(), // Mocked update date 
+            },
+            cookbook: [],
+            communities: [],
+            _count: { communities: 0, cookbook: 0 },
+          },
+        ],
+      };
+      jest.spyOn(prisma.cookbook, 'findUnique').mockResolvedValue(mockCookbook);
+      const result = await service.getRecipesByCookbookId(1);
+      expect(prisma.cookbook.findUnique).toHaveBeenCalledWith({
+        where: { id: 1 },
+        include: { recipes: true },
+      });
+      expect(result).toEqual(mockCookbook.recipes);
+    });
+
+    it('should throw an error if cookbook ID is missing', async () => {
+      await expect(service.getRecipesByCookbookId(null)).rejects.toThrow('Cookbook ID is required');
+    });
+
+    it('should throw an error if the cookbook does not exist', async () => {
+      jest.spyOn(prisma.cookbook, 'findUnique').mockResolvedValue(null); // Mock no cookbook found
+      await expect(service.getRecipesByCookbookId(1)).rejects.toThrow(
+        'Cookbook with ID 1 does not exist'
+      );
+    });
+
+    it('should throw an error if service fails', async () => {
+      jest.spyOn(prisma.cookbook, 'findUnique').mockRejectedValue(new Error('Service Error'));
+      await expect(service.getRecipesByCookbookId(1)).rejects.toThrow('Service Error');
+    });
+  });
+
+  describe('getCookbooksByIds', () => {
+    it('should return cookbooks for a given array of ids', async () => {
+      const mockCookbooks: Cookbook[] = [
+        {
+          id: 1,
+          name: 'Cookbook 1',
+          description: 'Description for Cookbook 1',
+          isPublic: false,
+          isMainCookbook: false,
+          userId: 123,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          rating: null,
+        },
+        {
+          id: 2,
+          name: 'Cookbook 2',
+          description: 'Description for Cookbook 2',
+          isPublic: false,
+          isMainCookbook: false,
+          userId: 124,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          rating: null,
+        },
+      ];
+      jest.spyOn(prisma.cookbook, 'findMany').mockResolvedValue(mockCookbooks);
+      const result = await service.getCookbooksByIds([1, 2]);
+      expect(prisma.cookbook.findMany).toHaveBeenCalledWith({
+        where: { id: { in: [1, 2] } },
+      });
+      expect(result).toEqual(mockCookbooks);
+    });
+
+    it('should throw an error if no IDs are provided', async () => {
+      await expect(service.getCookbooksByIds([])).rejects.toThrow(
+        'Array of cookbook IDs must not be empty'
+      );
+    });
+
+    it('should throw an error if service fails', async () => {
+      jest.spyOn(prisma.cookbook, 'findMany').mockRejectedValue(new Error('Service Error'));
+      await expect(service.getCookbooksByIds([1, 2])).rejects.toThrow('Service Error');
     });
   });
 });

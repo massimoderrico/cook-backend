@@ -2,8 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CookbookResolver } from './cookbook.resolver';
 import { CookbookService } from './cookbook.service';
 import { Cookbook } from '../@generated/cookbook/cookbook.model';
+import { Recipe } from '../@generated/recipe/recipe.model';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
+import { Role } from '../@generated/prisma/role.enum';
 
 describe('CookbookResolver', () => {
   let resolver: CookbookResolver;
@@ -18,6 +20,8 @@ describe('CookbookResolver', () => {
             createCookbook: jest.fn(), // Mock the service methods
             deleteCookbook: jest.fn(),
             editCookbook: jest.fn(),
+            getRecipesByCookbookId: jest.fn(),
+            getCookbooksByIds: jest.fn(),
           },
         },
       ],
@@ -130,6 +134,130 @@ describe('CookbookResolver', () => {
       };
       jest.spyOn(service, 'editCookbook').mockRejectedValue(new Error('Cookbook with ID 1 does not exist'));
       await expect(resolver.editCookbook(1, input)).rejects.toThrow('Failed to edit cookbook: Cookbook with ID 1 does not exist');
+    });
+  });
+
+  describe('getRecipesByCookbookId', () => {
+    it('should return recipes for a given cookbookId', async () => {
+      // Arrange
+      const mockRecipes: Recipe[] = [
+        {
+          id: 1,
+          name: 'Recipe 1',
+          description: 'Description of Recipe 1',
+          directions: 'Step-by-step directions for Recipe 1',
+          ingredients: ['ingredient1', 'ingredient2'],
+          prepTime: 30,
+          cookTime: 60,
+          isPublic: true,
+          userId: 123,
+          rating: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: {  
+            id: 123,
+            name: 'user1',
+            email: 'testUser@mail.com',
+            username: 'testUser',
+            password: 'securePassword123',
+            mainCookbookId: null, // No main cookbook assigned
+            role: Role.USER, // Default role
+            createdAt: new Date(), // Mocked creation date
+            updatedAt: new Date(), // Mocked update date 
+          },
+          cookbook: [],
+          communities: [],
+          _count: { communities: 0, cookbook: 0 },
+        },
+        {
+          id: 2,
+          name: 'Recipe 2',
+          description: 'Description of Recipe 2',
+          directions: 'Step-by-step directions for Recipe 2',
+          ingredients: ['ingredient1', 'ingredient2'],
+          prepTime: 20,
+          cookTime: 40,
+          isPublic: true,
+          userId: 123,
+          rating: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: { 
+            id: 123,
+            name: 'user1',
+            email: 'testUser@mail.com',
+            username: 'testUser',
+            password: 'securePassword123',
+            mainCookbookId: null, // No main cookbook assigned
+            role: Role.USER, // Default role
+            createdAt: new Date(), // Mocked creation date
+            updatedAt: new Date(), // Mocked update date
+          },
+          cookbook: [],
+          communities: [],
+          _count: { communities: 0, cookbook: 0 },
+        },
+      ];
+      jest.spyOn(service, 'getRecipesByCookbookId').mockResolvedValue(mockRecipes);
+      // Act
+      const result = await resolver.getRecipesByCookbookId(1);
+      // Assert
+      expect(service.getRecipesByCookbookId).toHaveBeenCalledWith(1);
+      expect(result).toEqual(mockRecipes);
+    });
+
+    it('should throw an error if service fails', async () => {
+      jest.spyOn(service, 'getRecipesByCookbookId').mockRejectedValue(new Error('Service Error'));
+      await expect(resolver.getRecipesByCookbookId(1)).rejects.toThrow('Failed to get recipes for cookbook ID 1: Service Error');
+    });
+
+    it('should throw an error if cookbook does not exist', async () => {
+      jest.spyOn(service, 'getRecipesByCookbookId').mockRejectedValue(new Error('Cookbook with ID 1 does not exist'));
+      await expect(resolver.getRecipesByCookbookId(1)).rejects.toThrow('Failed to get recipes for cookbook ID 1: Cookbook with ID 1 does not exist');
+    });
+  });
+
+  describe('getCookbooksByIds', () => {
+    it('should return cookbooks for a given array of ids', async () => {
+      // Arrange: Mock data for cookbooks
+      const mockCookbooks: Cookbook[] = [
+        {
+          id: 1,
+          name: 'Cookbook1',
+          description: 'description1',
+          isPublic: true,
+          isMainCookbook: false,
+          userId: 123,
+          rating: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 2,
+          name: 'Cookbook2',
+          description: 'description2',
+          isPublic: true,
+          isMainCookbook: false,
+          userId: 123,
+          rating: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+      // Mock the service to return the mock cookbooks
+      jest.spyOn(service, 'getCookbooksByIds').mockResolvedValue(mockCookbooks);
+      // Act
+      const result = await resolver.getCookbooksByIds([1, 2]);
+      // Assert
+      expect(service.getCookbooksByIds).toHaveBeenCalledWith([1, 2]);
+      expect(result).toEqual(mockCookbooks);
+    });
+
+    it('should throw an error if service fails', async () => {
+      jest.spyOn(service, 'getCookbooksByIds').mockRejectedValue(new Error('Service Error'));
+      await expect(resolver.getCookbooksByIds([1, 2])).rejects.toThrow(
+        'Failed to get cookbooks: Service Error'
+      );
     });
   });
 });
