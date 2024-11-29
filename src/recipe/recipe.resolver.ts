@@ -15,5 +15,4 @@ export class RecipeResolver {
         throw err;
     }
     }
-  
 }
