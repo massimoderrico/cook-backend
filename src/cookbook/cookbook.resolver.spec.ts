@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CookbookResolver } from './cookbook.resolver';
 import { CookbookService } from './cookbook.service';
+import { Cookbook } from '../@generated/cookbook/cookbook.model';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
+import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
 
 describe('CookbookResolver', () => {
   let resolver: CookbookResolver;
@@ -15,6 +17,7 @@ describe('CookbookResolver', () => {
           useValue: {
             createCookbook: jest.fn(), // Mock the service methods
             deleteCookbook: jest.fn(),
+            editCookbook: jest.fn(),
           },
         },
       ],
@@ -24,14 +27,15 @@ describe('CookbookResolver', () => {
     service = module.get<CookbookService>(CookbookService);
   });
 
-  it('should be defined', () => {
+  it('resolver and service should be defined', () => {
     expect(resolver).toBeDefined();
+    expect(service).toBeDefined();
   });
 
   describe('createCookbook', () => {
     it('should create a cookbook with minimal input (name and user)', async () => {
       // Arrange
-      const mockCookbook = {
+      const mockCookbook: Cookbook = {
         id: 1,
         name: 'Test Cookbook',
         description: null,
@@ -47,10 +51,8 @@ describe('CookbookResolver', () => {
         user: { connect: { id: 1 } }, // Minimal user input
       };
       jest.spyOn(service, 'createCookbook').mockResolvedValue(mockCookbook);
-
       // Act
       const result = await resolver.createCookbook(input);
-
       // Assert
       expect(service.createCookbook).toHaveBeenCalledWith(input);
       expect(result).toEqual(mockCookbook);
@@ -59,7 +61,6 @@ describe('CookbookResolver', () => {
     it('should throw an error if service fails', async () => {
       const input = { name: 'Test Cookbook', user: {} } as any;
       jest.spyOn(service, 'createCookbook').mockRejectedValue(new Error('Service Error'));
-
       await expect(resolver.createCookbook(input)).rejects.toThrow('Failed to create cookbook: Service Error');
     });
   });
@@ -70,10 +71,8 @@ describe('CookbookResolver', () => {
       const cookbookId = 1;
       const userId = 123;
       jest.spyOn(service, 'deleteCookbook').mockResolvedValue(true); // Mock service response
-
       // Act
       const result = await resolver.deleteCookbook(cookbookId, userId);
-
       // Assert
       expect(service.deleteCookbook).toHaveBeenCalledWith(cookbookId, userId);
       expect(result).toBe(true);
@@ -84,11 +83,53 @@ describe('CookbookResolver', () => {
       const cookbookId = 1;
       const userId = 123;
       jest.spyOn(service, 'deleteCookbook').mockRejectedValue(new Error('Service Error'));
-  
       // Act & Assert
       await expect(resolver.deleteCookbook(cookbookId, userId)).rejects.toThrow(
         'Failed to delete cookbook: Service Error'
       );
+    });
+  });
+
+  describe('editCookbook', () => {
+    it('should edit a cookbook with valid input', async () => {
+      // Arrange
+      const mockCookbook: Cookbook = {
+        id: 1,
+        name: 'Updated Cookbook',
+        description: 'Updated description',
+        isPublic: true,
+        isMainCookbook: false,
+        userId: 123,
+        rating: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const input: CookbookUpdateManyMutationInput = {
+        name: { "set": "Updated Cookbook Name" },
+        description: { "set": "new description" },
+      };
+      jest.spyOn(service, 'editCookbook').mockResolvedValue(mockCookbook);
+      // Act
+      const result = await resolver.editCookbook(1, input);
+      // Assert
+      expect(service.editCookbook).toHaveBeenCalledWith(1, input);
+      expect(result).toEqual(mockCookbook);
+    });
+
+    it('should throw an error if service fails', async () => {
+      const input = { name: 'Updated Cookbook' } as any;
+      jest.spyOn(service, 'editCookbook').mockRejectedValue(new Error('Service Error'));
+
+      await expect(resolver.editCookbook(1, input)).rejects.toThrow('Failed to edit cookbook: Service Error');
+    });
+
+    it('should throw an error if cookbook does not exist', async () => {
+      const input: CookbookUpdateManyMutationInput = {
+        name: { "set": "Updated Cookbook Name" },
+        description: { "set": "new description" },
+      };
+      jest.spyOn(service, 'editCookbook').mockRejectedValue(new Error('Cookbook with ID 1 does not exist'));
+      await expect(resolver.editCookbook(1, input)).rejects.toThrow('Failed to edit cookbook: Cookbook with ID 1 does not exist');
     });
   });
 });
