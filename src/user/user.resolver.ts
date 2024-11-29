@@ -5,13 +5,14 @@ import { User } from '../@generated/user/user.model';
 import { NotFoundException } from '@nestjs/common';
 import { UserCreateInput } from 'src/@generated/user/user-create.input';
 import { UserService } from './user.service';
+import { CookbookRelationFilter } from 'src/@generated/cookbook/cookbook-relation-filter.input';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Mutation(() => User)
-  async createUser(@Args('data') user: UserCreateInput): Promise<User>{
+  async createUser(@Args('user') user: UserCreateInput): Promise<User>{
     try { 
       return await this.userService.createUser(user);
     }

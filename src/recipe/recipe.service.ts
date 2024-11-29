@@ -14,7 +14,7 @@ export class RecipeService {
             }
             let userId: number = data.user.connect.id
             let user: User = await this.prisma.user.findUnique({where: {id: userId}})
-            let mainCookbookId: number = user.mainCookbookId; 
+            let mainCookbookId: number = user.mainCookbookId;
             return this.prisma.recipe.create({
                 data: {
                     ...data,
