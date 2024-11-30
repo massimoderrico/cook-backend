@@ -21,6 +21,7 @@ describe('PermissionResolver', () => {
             createPermission: jest.fn(), // Mock the service method
             getPermissions: jest.fn(),
             deletePermission: jest.fn(),
+            editPermission: jest.fn(),
           },
         },
       ],
@@ -138,6 +139,31 @@ describe('PermissionResolver', () => {
       const result = await resolver.deletePermission(input);
       expect(service.deletePermission).toHaveBeenCalledWith(input);
       expect(result).toEqual(mockPermission);
+    });
+  });
+
+  describe('editPermission', () => {
+    it('should throw an error if the service throws an error', async () => {
+      jest.spyOn(service, 'editPermission').mockRejectedValue(new Error('Service error'));
+      await expect(
+        resolver.editPermission(123, 456, ResourceType.RECIPE, PermissionLevel.CREATOR),
+      ).rejects.toThrow('Failed to edit permission: Service error');
+    });
+  
+    it('should call the service and return the updated permission', async () => {
+      const updatedPermission = {
+        id: 1,
+        userId: 123,
+        resourceId: 456,
+        resourceType: ResourceType.RECIPE,
+        permissionLevel: PermissionLevel.VIEWER,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      jest.spyOn(service, 'editPermission').mockResolvedValue(updatedPermission);
+      const result = await resolver.editPermission(123, 456, ResourceType.RECIPE, PermissionLevel.VIEWER);
+      expect(service.editPermission).toHaveBeenCalledWith(123, 456, ResourceType.RECIPE, PermissionLevel.VIEWER);
+      expect(result).toEqual(updatedPermission);
     });
   });
 });

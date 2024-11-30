@@ -27,6 +27,7 @@ describe('PermissionService', () => {
               create: jest.fn(),
               findMany: jest.fn(),
               delete: jest.fn(),
+              update: jest.fn(),
             },
           },
         },
@@ -239,6 +240,51 @@ describe('PermissionService', () => {
       });
       expect(prisma.permission.delete).toHaveBeenCalledWith({ where: { id: mockPermission.id } });
       expect(result).toEqual(mockPermission);
+    });
+  });
+
+  describe('editPermission', () => {
+    it('should throw BadRequestException if userId, resourceId, resourceType, or permissionLevel is missing', async () => {
+      await expect(service.editPermission(null, 123, ResourceType.RECIPE, PermissionLevel.CREATOR)).rejects.toThrow(
+        'user ID, resource ID, resource type, and permission level required to edit permission',
+      );
+    });
+  
+    it('should throw BadRequestException if the permission does not exist', async () => {
+      jest.spyOn(prisma.permission, 'findFirst').mockResolvedValue(null);
+      await expect(service.editPermission(123, 456, ResourceType.RECIPE, PermissionLevel.CREATOR)).rejects.toThrow(
+        'Permission not found.',
+      );
+    });
+  
+    it('should update and return the edited permission if it exists', async () => {
+      const mockPermission = {
+        id: 1,
+        userId: 123,
+        resourceId: 456,
+        resourceType: ResourceType.RECIPE,
+        permissionLevel: PermissionLevel.CREATOR,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedPermission = { ...mockPermission, permissionLevel: PermissionLevel.VIEWER };
+      jest.spyOn(prisma.permission, 'findFirst').mockResolvedValue(mockPermission);
+      jest.spyOn(prisma.permission, 'update').mockResolvedValue(updatedPermission);
+      const result = await service.editPermission(123, 456, ResourceType.RECIPE, PermissionLevel.VIEWER);
+      expect(prisma.permission.findFirst).toHaveBeenCalledWith({
+        where: {
+          AND: [
+            { userId: 123 },
+            { resourceId: 456 },
+            { resourceType: ResourceType.RECIPE },
+          ],
+        },
+      });
+      expect(prisma.permission.update).toHaveBeenCalledWith({
+        where: { id: mockPermission.id },
+        data: { permissionLevel: PermissionLevel.VIEWER },
+      });
+      expect(result).toEqual(updatedPermission);
     });
   });
 });
