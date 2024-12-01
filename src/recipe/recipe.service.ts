@@ -1,4 +1,4 @@
-import { Recipe, User } from '@prisma/client';
+import { Cookbook, Recipe, User } from '@prisma/client';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
@@ -31,6 +31,28 @@ export class RecipeService {
             throw error;
         }
           
+    }
+
+    async addRecipeToCookbook(data: Recipe, cookbooks: Array<Cookbook>): Promise<Recipe> {
+        //TODO: Handle how we will process the update data. Will it be cookbook id, or whole cookbook object,
+        //TBD with frontend work
+        try {
+            let recipe: Recipe = await this.prisma.recipe.findUnique({where: {id: data.id}})
+            let recipeId: number = recipe.id
+            return this.prisma.recipe.update({
+                where: {
+                    id: recipeId,
+                },
+                data: {
+                    cookbook:{
+                        connect: cookbooks
+                    }
+                },
+            })
+        }
+        catch (error) {
+            throw error;
+        }
     }
 }
     
