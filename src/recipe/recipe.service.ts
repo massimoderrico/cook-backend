@@ -33,7 +33,7 @@ export class RecipeService {
           
     }
 
-    async addRecipeToCookbook(data: Recipe, cookbooks: Array<Cookbook>): Promise<Recipe> {
+    async addRecipeToCookbook(data: Recipe, cookbooks: Cookbook[]): Promise<Recipe> {
         //TODO: Handle how we will process the update data. Will it be cookbook id, or whole cookbook object,
         //TBD with frontend work
         try {
