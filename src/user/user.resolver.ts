@@ -6,6 +6,7 @@ import { NotFoundException } from '@nestjs/common';
 import { UserCreateInput } from 'src/@generated/user/user-create.input';
 import { UserService } from './user.service';
 import { CookbookRelationFilter } from 'src/@generated/cookbook/cookbook-relation-filter.input';
+import { Cookbook } from 'src/@generated/cookbook/cookbook.model';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -33,6 +34,15 @@ export class UserResolver {
       }  
       // Rethrow any unexpected errors
       throw new Error('An unexpected error occurred while deleting the user');
+    }
+  }
+
+  @Query(() => [Cookbook], { nullable: true })
+  async getUserCookbooks(@Args('userId', { type: () => Number }) userId: number): Promise<Cookbook[]> {
+    try {
+      return await this.userService.getUserCookbooks(userId);
+    } catch (error) {
+      throw new Error(`Failed to get cookbooks for user ID ${userId}: ${error.message}`);
     }
   }
 }
