@@ -22,7 +22,7 @@ export class RecipeService {
                         connect: { id: userId },
                     },
                     cookbook: {
-                        connect: [{ id: mainCookbookId }, ...data.cookbook.connect],
+                        connect: data.cookbook?.connect ? [{ id: mainCookbookId }, ...data.cookbook.connect] : [{ id: mainCookbookId }],
                     },
                 },
             });
