@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client'
+import { Prisma, User } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service';
 import { UserCreateInput } from '../@generated/user/user-create.input';
-import { User } from 'src/@generated/user/user.model';
 import { CookbookCreateInput } from 'src/@generated/cookbook/cookbook-create.input';
 import { CookbookResolver } from 'src/cookbook/cookbook.resolver';
 import { Cookbook } from 'src/@generated/cookbook/cookbook.model';
@@ -43,6 +42,17 @@ export class UserService {
             return updatedUser;
         }
         catch(error){
+            throw(error.message);
+        }
+    }
+
+    async getUserById(id: number): Promise<User> {
+        try{
+            return await this.prisma.user.findUnique({
+                where: {id: id},
+            });
+        }
+        catch(error) {
             throw(error.message);
         }
     }
