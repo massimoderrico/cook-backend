@@ -15,7 +15,13 @@ export class RecipeService {
             }
             let userId: number = data.user.connect.id
             let user: User = await this.prisma.user.findUnique({where: {id: userId}})
+            if (!user) {
+                throw new BadRequestException(`User with ID ${userId} not found`);
+            }
             let mainCookbookId: number = user.mainCookbookId;
+            if (!mainCookbookId) {
+                throw new BadRequestException(`User with ID ${userId} missing mainCookbookId`);
+            }
             return this.prisma.recipe.create({
                 data: {
                     ...data,
