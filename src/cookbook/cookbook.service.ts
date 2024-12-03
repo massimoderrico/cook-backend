@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Cookbook, Recipe } from '@prisma/client';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
+import { CookbookUpdateInput } from 'src/@generated/cookbook/cookbook-update.input';
 
 @Injectable()
 export class CookbookService {
@@ -126,5 +127,46 @@ export class CookbookService {
         } catch (error) {
             throw error;
         }
-    }      
+    }
+
+    async deleteRecipeFromCookbook(data: CookbookUpdateInput, cookbookId: number, recipeId: number): Promise<Cookbook>{
+        try {
+            //validate input
+            if (!cookbookId) {
+                throw new BadRequestException('Cookbook ID is required');
+            }
+            //get the cookbook to ensure it exists in the database
+            const existingCookbook = await this.prisma.cookbook.findUnique({
+                where: { id: cookbookId },
+            });
+            if (!existingCookbook) {
+                throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
+            }
+
+            const updatedCookbook = await this.prisma.cookbook.update({
+                where: {id: cookbookId},
+                data: {
+                    ...data,
+                    recipes: {
+                        disconnect: { id: recipeId}
+                    }
+                },
+                include: {recipes: true}
+            })
+
+            await this.prisma.recipe.update({
+                where : {id: recipeId},
+                data: {
+                    cookbook: {
+                        disconnect: {id: cookbookId}
+                    }
+                }
+            })
+
+            return updatedCookbook
+            
+        } catch (error) {
+            throw error
+        }
+    }
 }
