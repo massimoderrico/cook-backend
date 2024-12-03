@@ -54,7 +54,15 @@ export class RecipeService {
             }
             //const cookbooks: [Cookbook] = await this.resolver.getCookbooksByIds(cookbookIds)
             
-            const connectCookbooks = cookbookIds.map((id) => ({ id }))
+            const cookbooks = await this.prisma.cookbook.findMany({
+                where: {
+                    id: { in: cookbookIds },
+                },
+                
+            });
+
+            const validCookbookIds = cookbooks.map( (c) => c.id)
+            const connectCookbooks = validCookbookIds.map((id) => ({ id }))
 
             data.cookbook = {
                 connect: connectCookbooks,
@@ -72,7 +80,7 @@ export class RecipeService {
             })
 
             await Promise.all(
-                cookbookIds.map((id)=>
+                validCookbookIds.map((id)=>
                     this.prisma.cookbook.update({
                         where: { id: id },
                         data: {
