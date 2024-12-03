@@ -61,7 +61,7 @@ export class RecipeService {
                 ...(data.cookbook || {})
             }
 
-            return await this.prisma.recipe.update({ 
+            const updatedRecipe = await this.prisma.recipe.update({ 
                 where: {
                     id: recipeId,
                 },
@@ -70,6 +70,21 @@ export class RecipeService {
                     cookbook: true,
                 }
             })
+
+            await Promise.all(
+                cookbookIds.map((id)=>
+                    this.prisma.cookbook.update({
+                        where: { id: id },
+                        data: {
+                            recipes:{
+                                connect: { id: recipeId },
+                            }
+                        }
+                    })
+                )
+            )
+
+            return updatedRecipe
         }
         catch (error) {
             throw error;

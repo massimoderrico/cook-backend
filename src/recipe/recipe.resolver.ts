@@ -22,7 +22,7 @@ export class RecipeResolver {
     @Mutation(() => Recipe, {nullable: true})
     async addRecipeToCookbook(
         @Args('data') data: RecipeUpdateInput, 
-        @Args('cookbookIds' ) cookbookIds: number[],
+        @Args('cookbookIds', {type: () => [Int]} ) cookbookIds: number[],
         @Args('recipeId', {type: () => Int}) recipeId: number
     ): Promise<Recipe> { 
         try {
