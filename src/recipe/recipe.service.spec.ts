@@ -4,9 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Recipe } from '../@generated/recipe/recipe.model';
 import { User } from '../@generated/user/user.model';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
-import { connect } from 'http2';
 import { Cookbook } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
 
 describe('RecipeService', () => {
   let service: RecipeService;
@@ -22,6 +20,7 @@ describe('RecipeService', () => {
             recipe: {
               findUnique: jest.fn(),
               create: jest.fn(),
+              delete: jest.fn(),
             },
             user: {
               findUnique: jest.fn(), // Add this mock
@@ -186,6 +185,87 @@ describe('RecipeService', () => {
         },
       });
       expect(result).toEqual(mockCreatedRecipe);
+    });
+  });
+
+  describe('deleteRecipe', () => {
+    it('should delete a recipe with valid input', async () => {
+      // Arrange
+      const recipeId = 1;
+      const userId = 123;
+      const mockRecipe: Recipe = {
+        id: 1,
+        name: 'Test Recipe',
+        description: null,
+        isPublic: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        userId: userId,
+        rating: null,
+        ingredients: null,
+        directions: null,
+        prepTime: null,
+        cookTime: null,
+      };
+      jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(mockRecipe);
+      jest.spyOn(prisma.recipe, 'delete').mockResolvedValue(mockRecipe);
+      // Act
+      const result = await service.deleteRecipe(recipeId, userId);
+      // Assert
+      expect(prisma.recipe.findUnique).toHaveBeenCalledWith({
+        where: { id: recipeId },
+        select: { userId: true },
+      });
+      expect(prisma.recipe.delete).toHaveBeenCalledWith({
+        where: { id: recipeId },
+      });
+      expect(result).toBe(true);
+    });
+  
+    it('should throw an error if the recipe does not exist', async () => {
+      // Arrange
+      const recipeId = 1;
+      const userId = 123;
+      jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(null);
+      // Act & Assert
+      await expect(service.deleteRecipe(recipeId, userId)).rejects.toThrow(
+        `Recipe with ID ${recipeId} does not exist.`
+      );
+    });
+  
+    it('should throw an error if the user does not own the recipe', async () => {
+      // Arrange
+      const recipeId = 1;
+      const userId = 123;
+      const otherUserId = 456;
+      const mockRecipe: Recipe = {
+        id: 1,
+        name: 'Test Recipe',
+        description: null,
+        isPublic: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        userId: userId,
+        rating: null,
+        ingredients: null,
+        directions: null,
+        prepTime: null,
+        cookTime: null,
+      };
+      jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(mockRecipe);
+      // Act & Assert
+      await expect(service.deleteRecipe(recipeId, otherUserId)).rejects.toThrow(
+        'User does not have permission to delete this recipe.'
+      );
+    });
+  
+    it('should throw an error if recipeId or userId is missing', async () => {
+      await expect(service.deleteRecipe(null, 123)).rejects.toThrow(
+        'Recipe ID and User ID are required to delete a recipe.'
+      );
+      await expect(service.deleteRecipe(1, null)).rejects.toThrow(
+        'Recipe ID and User ID are required to delete a recipe.'
+      );
     });
   });
   
