@@ -1,7 +1,10 @@
-import { Recipe, User } from '@prisma/client';
+import { Cookbook, Recipe, User } from '@prisma/client';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { RecipeUpdateInput } from 'src/@generated/recipe/recipe-update.input';
+import { CookbookResolver } from 'src/cookbook/cookbook.resolver';
+import { connect } from 'http2';
 
 
 @Injectable()
@@ -30,7 +33,7 @@ export class RecipeService {
                     },
                     cookbook: {
                         connect: data.cookbook?.connect ? [{ id: mainCookbookId }, ...data.cookbook.connect] : [{ id: mainCookbookId }],
-                    },
+                    }, 
                 },
             });
         } 
@@ -38,6 +41,70 @@ export class RecipeService {
             throw error;
         }
     }
+
+    async addRecipeToCookbook(data: RecipeUpdateInput, cookbookIds: number[], recipeId: number): Promise<Recipe> {
+        //TODO: Handle how we will process the update data. Will it be cookbook id, or whole cookbook object,
+        // TBD with frontend work
+        // Input: recipeId, CookbookId[], recipe object
+        // Output: Adds recipe to all cookbooks in CookbookId, and add all cookbookId to recipe
+        try {
+            if (!recipeId){
+                throw new BadRequestException("Recipe Id is required")
+            }
+            let recipe = await this.prisma.recipe.findUnique({
+                where: {id: recipeId},
+            })
+
+            if (!recipe){
+                throw new BadRequestException("Recipe does not exist")
+            }
+            //const cookbooks: [Cookbook] = await this.resolver.getCookbooksByIds(cookbookIds)
+            
+            const cookbooks = await this.prisma.cookbook.findMany({
+                where: {
+                    id: { in: cookbookIds },
+                },
+                
+            });
+
+            const validCookbookIds = cookbooks.map( (c) => c.id)
+            const connectCookbooks = validCookbookIds.map((id) => ({ id }))
+
+            data.cookbook = {
+                connect: connectCookbooks,
+                ...(data.cookbook || {})
+            }
+
+            const updatedRecipe = await this.prisma.recipe.update({ 
+                where: {
+                    id: recipeId,
+                },
+                data,
+                include: {
+                    cookbook: true,
+                }
+            })
+
+            await Promise.all(
+                validCookbookIds.map((id)=>
+                    this.prisma.cookbook.update({
+                        where: { id: id },
+                        data: {
+                            recipes:{
+                                connect: { id: recipeId },
+                            }
+                        }
+                    })
+                )
+            )
+
+            return updatedRecipe
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+
 
     async duplicateRecipe(recipeId: number, newUserId: number): Promise<Recipe> {
         try {

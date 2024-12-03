@@ -4,6 +4,7 @@ import { Cookbook } from '../@generated/cookbook/cookbook.model';
 import { Recipe } from '../@generated/recipe/recipe.model';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
+import { CookbookUpdateInput } from 'src/@generated/cookbook/cookbook-update.input';
 
 @Resolver(() => Cookbook)
 export class CookbookResolver {
@@ -57,6 +58,19 @@ export class CookbookResolver {
       return await this.cookbookService.editCookbook(cookbookId, data);
     } catch (error) {
       throw new Error(`Failed to edit cookbook: ${error.message}`);
+    }
+  }
+
+  @Mutation(() => Cookbook)
+  async deleteRecipeFromCookbook(
+    @Args('data') data: CookbookUpdateInput,
+    @Args("cookbookId", { type: () => Int}) cookbookId: number,
+    @Args("recipeId", {type: () => Int}) recipeId: number
+  ): Promise<Cookbook> {
+    try {
+      return await this.cookbookService.deleteRecipeFromCookbook(data, cookbookId, recipeId);
+    } catch (error) {
+      throw new Error(`Failed to remove recipe from cookbook: ${error.message}`);
     }
   }
 }

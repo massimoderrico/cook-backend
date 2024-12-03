@@ -3,6 +3,8 @@ import { CreateOneRecipeArgs } from 'src/@generated/recipe/create-one-recipe.arg
 import { Recipe } from 'src/@generated/recipe/recipe.model';
 import { RecipeService } from './recipe.service';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
+import { Cookbook } from '@prisma/client';
+import { RecipeUpdateInput } from 'src/@generated/recipe/recipe-update.input';
 
 @Resolver(() => Recipe)
 export class RecipeResolver {
@@ -17,6 +19,19 @@ export class RecipeResolver {
         }
     }
 
+    @Mutation(() => Recipe, {nullable: true})
+    async addRecipeToCookbook(
+        @Args('data') data: RecipeUpdateInput, 
+        @Args('cookbookIds', {type: () => [Int]} ) cookbookIds: number[],
+        @Args('recipeId', {type: () => Int}) recipeId: number
+    ): Promise<Recipe> { 
+        try {
+            return this.recipeService.addRecipeToCookbook(data, cookbookIds, recipeId);
+        } catch (error) { 
+            throw error;
+        }
+    }
+    
     @Mutation(() => Recipe, { nullable: true })
     async duplicateRecipe(
         @Args('recipeId', { type: () => Int }) recipeId: number,
@@ -28,4 +43,6 @@ export class RecipeResolver {
             throw new Error(`Failed to duplicate recipe: ${error.message}`);
         }
     }
+
+
 }
