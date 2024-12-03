@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Cookbook, Recipe } from '@prisma/client';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
+import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
 
 @Injectable()
 export class CookbookService {
@@ -56,7 +57,14 @@ export class CookbookService {
             //get the cookbook along with its recipes
             const cookbook = await this.prisma.cookbook.findUnique({
                 where: { id: cookbookId },
-                include: { recipes: true }, //include the related recipes
+                include: { 
+                    recipes: {
+                        include: {
+                            cookbook: true, // Include cookbook for each recipe
+                            communities: true,
+                        },
+                    } 
+                }, //include the related recipes
             });
             //handle case where the cookbook does not exist
             if (!cookbook) {
@@ -68,4 +76,55 @@ export class CookbookService {
             throw error;
         }
     }    
+
+    async deleteCookbook(cookbookId: number, userId: number): Promise<boolean> {
+        try {
+            if (!cookbookId || !userId) {
+                throw new BadRequestException('Cookbook ID and User ID are required to delete a cookbook.');
+            }
+      
+            //get the cookbook and validate ownership
+            const cookbook = await this.prisma.cookbook.findUnique({
+                where: { id: cookbookId },
+                select: { userId: true },
+            });
+            if (!cookbook) {
+                throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist.`);
+            }
+            if (cookbook.userId !== userId) {
+                throw new BadRequestException('User does not have permission to delete this cookbook.');
+            }
+            //delete cookbook from database
+            await this.prisma.cookbook.delete({
+                where: { id: cookbookId },
+            });
+            //succesfully deleted
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async editCookbook(cookbookId: number, data: CookbookUpdateManyMutationInput,): Promise<Cookbook> {
+        try {
+            //validate input
+            if (!cookbookId) {
+                throw new BadRequestException('Cookbook ID is required');
+            }
+            //get the cookbook to ensure it exists in the database
+            const existingCookbook = await this.prisma.cookbook.findUnique({
+                where: { id: cookbookId },
+            });
+            if (!existingCookbook) {
+                throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
+            }
+            //edit the cookbook in the database
+            return await this.prisma.cookbook.update({
+                where: { id: cookbookId },
+                data,
+            });
+        } catch (error) {
+            throw error;
+        }
+    }      
 }
