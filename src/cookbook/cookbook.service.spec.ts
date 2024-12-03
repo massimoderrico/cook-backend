@@ -284,7 +284,14 @@ describe('CookbookService', () => {
       const result = await service.getRecipesByCookbookId(1);
       expect(prisma.cookbook.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
-        include: { recipes: true },
+        include: { 
+          recipes: {
+              include: {
+                  cookbook: true,
+                  communities: true,
+              },
+          } 
+      },
       });
       expect(result).toEqual(mockCookbook.recipes);
     });

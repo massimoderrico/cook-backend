@@ -57,7 +57,14 @@ export class CookbookService {
             //get the cookbook along with its recipes
             const cookbook = await this.prisma.cookbook.findUnique({
                 where: { id: cookbookId },
-                include: { recipes: true }, //include the related recipes
+                include: { 
+                    recipes: {
+                        include: {
+                            cookbook: true, // Include cookbook for each recipe
+                            communities: true,
+                        },
+                    } 
+                }, //include the related recipes
             });
             //handle case where the cookbook does not exist
             if (!cookbook) {
