@@ -23,14 +23,18 @@ describe('RecipeService', () => {
               findUnique: jest.fn(),
               create: jest.fn(),
             },
+            user: {
+              findUnique: jest.fn(), // Add this mock
+            },
           },
         },
       ],
     }).compile();
-
+  
     service = module.get<RecipeService>(RecipeService);
     prisma = module.get<PrismaService>(PrismaService);
   });
+  
 
   it('service and prisma should be defined', () => {
     expect(service).toBeDefined();
@@ -90,7 +94,7 @@ describe('RecipeService', () => {
         cookTime: 30,
         isPublic: false,
         user: { connect: { id: userId } },
-        cookbook: { connect: [{ id : mainCookbookId},...otherCookbookIds.map((id) => ({ id }))] },
+        cookbook: { connect: [...otherCookbookIds.map((id) => ({ id }))] },
       };
   
       const mockCreatedRecipe: Recipe = {
