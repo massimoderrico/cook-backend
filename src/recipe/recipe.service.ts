@@ -3,8 +3,6 @@ import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RecipeUpdateInput } from 'src/@generated/recipe/recipe-update.input';
-import { CookbookResolver } from 'src/cookbook/cookbook.resolver';
-import { connect } from 'http2';
 
 
 @Injectable()
@@ -38,6 +36,33 @@ export class RecipeService {
             });
         } 
         catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteRecipe(recipeId: number, userId: number): Promise<boolean> {
+        try {
+            if (!recipeId || !userId) {
+                throw new BadRequestException('Recipe ID and User ID are required to delete a recipe.');
+            }
+            //get the recipe and validate ownership
+            const recipe = await this.prisma.recipe.findUnique({
+                where: { id: recipeId },
+                select: { userId: true },
+            });
+            if (!recipe) {
+                throw new BadRequestException(`Recipe with ID ${recipeId} does not exist.`);
+            }
+            if (recipe.userId !== userId) {
+                throw new BadRequestException('User does not have permission to delete this recipe.');
+            }
+            //delete recipe from database
+            await this.prisma.recipe.delete({
+                where: { id: recipeId },
+            });
+            //succesfully deleted
+            return true;
+        } catch (error) {
             throw error;
         }
     }
