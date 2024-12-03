@@ -21,6 +21,16 @@ export class UserResolver {
     }
   }
 
+  @Query(() => User, { nullable: true })
+  async getUserById(@Args('id', { type: () => Number }) id: number): Promise<User> {
+    try {
+      return await this.userService.getUserById(id);
+    }
+    catch(error){
+      throw new Error("Failed to get user: ${error.message}");
+    }
+  }
+
   @Mutation(() => User, { nullable: true })
   async deleteUser(@Args('id', { type: () => Number }) id: number): Promise<User> {
     try {
