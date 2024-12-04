@@ -99,6 +99,48 @@ describe('UserService', () => {
     });
   });
 
+  describe('getUserById', () => {
+    it('should return a user if found', async () => {
+      const mockUser: User = {
+        id: 1,
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        username: 'johndoe',
+        password: 'hashed_password',
+        role: 'USER',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        mainCookbookId: 1,
+        cookbooks: [],
+        recipes: [],
+        communities: [],
+        comments: [],
+      };
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser);
+      const result = await service.getUserById(1);
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(result).toEqual(mockUser);
+    });
+
+    it('should throw a BadRequestException if the user does not exist', async () => {
+      jest.spyOn(prisma.user, 'findUnique').mockRejectedValue(
+        new BadRequestException('User with ID 1 does not exist'),
+      );
+      await expect(service.getUserById(1)).rejects.toThrow(
+        'User with ID 1 does not exist',
+      );
+    });
+
+    it('should throw an error if prisma throws an exception', async () => {
+      jest.spyOn(prisma.user, 'findUnique').mockRejectedValue(
+        new Error('Some internal error')
+      );
+      await expect(service.getUserById(1)).rejects.toThrow(
+        'Some internal error',
+      );
+    });
+  });
+
   describe('getUserCookbooks', () => {
     it('should throw BadRequestException if userId is not provided', async () => {
       await expect(service.getUserCookbooks(null)).rejects.toThrow(

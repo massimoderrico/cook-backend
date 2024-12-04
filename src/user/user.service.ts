@@ -42,18 +42,22 @@ export class UserService {
             return updatedUser;
         }
         catch(error){
-            throw(error.message);
+            throw error;
         }
     }
 
     async getUserById(id: number): Promise<User> {
-        try{
-            return await this.prisma.user.findUnique({
-                where: {id: id},
+        try {
+            const user: User = await this.prisma.user.findUnique({
+                where: { id: id },
             });
+            if (!user) {
+                throw new BadRequestException(`User with ID ${id} does not exist`);
+            }
+            return user;
         }
         catch(error) {
-            throw(error.message);
+            throw error;
         }
     }
 
@@ -62,7 +66,7 @@ export class UserService {
             return this.prisma.user.delete({where: {id: id}});
         }
         catch(error){
-            throw(error.message);
+            throw error;
         }
     }
 
