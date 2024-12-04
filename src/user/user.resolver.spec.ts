@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { UserResolver } from './user.resolver';
 import { Cookbook } from '../@generated/cookbook/cookbook.model';
 import { User } from '../@generated/user/user.model';
+import { BadRequestException } from '@nestjs/common';
 
 describe('UserResolver', () => {
   let resolver: UserResolver;
@@ -17,6 +18,7 @@ describe('UserResolver', () => {
           useValue: {
             getUserCookbooks: jest.fn(),
             createUser: jest.fn(),
+            getUserById: jest.fn(),
           },
         },
       ],
@@ -69,6 +71,39 @@ describe('UserResolver', () => {
       jest.spyOn(userService, 'createUser').mockRejectedValue(new Error('Some error'));
       await expect(resolver.createUser(input)).rejects.toThrow(
         'Failed to create user: Some error',
+      );
+    });
+  });
+
+  describe('getUserById', () => {
+    it('should return a user by ID', async () => {
+      const mockUser: User = {
+        id: 1,
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        username: 'johndoe',
+        password: 'hashed_password',
+        role: 'USER',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        mainCookbookId: 1,
+        cookbooks: [],
+        recipes: [],
+        communities: [],
+        comments: [],
+      };
+      jest.spyOn(userService, 'getUserById').mockResolvedValue(mockUser);
+      const result = await resolver.getUserById(1);
+      expect(userService.getUserById).toHaveBeenCalledWith(1);
+      expect(result).toEqual(mockUser);
+    });
+
+    it('should throw an error if the user does not exist', async () => {
+      jest.spyOn(userService, 'getUserById').mockRejectedValue(
+        new BadRequestException('User with ID 1 does not exist')
+      );
+      await expect(resolver.getUserById(1)).rejects.toThrow(
+        'Failed to get user: User with ID 1 does not exist',
       );
     });
   });

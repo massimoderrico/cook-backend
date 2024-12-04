@@ -1,6 +1,5 @@
 // Example in a User Resolver
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { PrismaService } from '../prisma/prisma.service';
 import { User } from '../@generated/user/user.model';
 import { NotFoundException } from '@nestjs/common';
 import { UserCreateInput } from 'src/@generated/user/user-create.input';
