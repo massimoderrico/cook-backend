@@ -10,9 +10,9 @@ import { Cookbook } from 'src/@generated/cookbook/cookbook.model';
 export class UserService {
     constructor(private prisma: PrismaService, private resolver: CookbookResolver){}
 
-    async createUser(data: UserCreateInput, ){
+    async createUser(data: UserCreateInput,) {
         try{
-            if(!data.name) throw new BadRequestException("Name is required to create a user");
+            if(!data.username) throw new BadRequestException("Username is required to create a user");
             
             if(!data.password) throw new BadRequestException("Password is required to create a user");
             

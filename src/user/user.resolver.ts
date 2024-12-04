@@ -5,7 +5,6 @@ import { User } from '../@generated/user/user.model';
 import { NotFoundException } from '@nestjs/common';
 import { UserCreateInput } from 'src/@generated/user/user-create.input';
 import { UserService } from './user.service';
-import { CookbookRelationFilter } from 'src/@generated/cookbook/cookbook-relation-filter.input';
 import { Cookbook } from 'src/@generated/cookbook/cookbook.model';
 
 @Resolver(() => User)
@@ -18,7 +17,7 @@ export class UserResolver {
       return await this.userService.createUser(user);
     }
     catch (err) {
-      throw new Error("Failed to create user: ${err.message}");
+      throw new Error(`Failed to create user: ${err.message}`);
     }
   }
 
@@ -28,7 +27,7 @@ export class UserResolver {
       return await this.userService.getUserById(id);
     }
     catch(error){
-      throw new Error("Failed to get user: ${error.message}");
+      throw new Error(`Failed to get user: ${error.message}`);
     }
   }
 

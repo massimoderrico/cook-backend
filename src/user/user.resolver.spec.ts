@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { UserResolver } from './user.resolver';
-import { BadRequestException } from '@nestjs/common';
 import { Cookbook } from '../@generated/cookbook/cookbook.model';
+import { User } from '../@generated/user/user.model';
 
 describe('UserResolver', () => {
   let resolver: UserResolver;
@@ -16,6 +16,7 @@ describe('UserResolver', () => {
           provide: UserService,
           useValue: {
             getUserCookbooks: jest.fn(),
+            createUser: jest.fn(),
           },
         },
       ],
@@ -28,6 +29,48 @@ describe('UserResolver', () => {
   it('should be defined', () => {
     expect(resolver).toBeDefined();
     expect(userService).toBeDefined();
+  });
+
+  describe('createUser', () => {
+    it('should create a user successfully', async () => {
+      const input = {
+        name: 'Test User',
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'securepassword',
+      };
+      const mockUser: User = {
+        id: 1,
+        name: 'Test User',
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'hashedpassword',
+        mainCookbookId: null,
+        role: 'USER',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        cookbooks: null,
+        recipes: null,
+        communities: null,
+      };
+      jest.spyOn(userService, 'createUser').mockResolvedValue(mockUser);
+      const result = await resolver.createUser(input);
+      expect(userService.createUser).toHaveBeenCalledWith(input);
+      expect(result).toEqual(mockUser);
+    });
+
+    it('should throw an error if user creation fails', async () => {
+      const input = {
+        name: 'Test User',
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'securepassword',
+      };
+      jest.spyOn(userService, 'createUser').mockRejectedValue(new Error('Some error'));
+      await expect(resolver.createUser(input)).rejects.toThrow(
+        'Failed to create user: Some error',
+      );
+    });
   });
 
   describe('getUserCookbooks', () => {
