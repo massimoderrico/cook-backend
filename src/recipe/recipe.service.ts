@@ -3,6 +3,7 @@ import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RecipeUpdateInput } from 'src/@generated/recipe/recipe-update.input';
+import { RecipeUpdateManyMutationInput } from 'src/@generated/recipe/recipe-update-many-mutation.input';
 
 
 @Injectable()
@@ -62,6 +63,28 @@ export class RecipeService {
             });
             //succesfully deleted
             return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async editRecipe (recipeId: number, data: RecipeUpdateManyMutationInput): Promise<Recipe> {
+        try {
+            if (!recipeId) {
+                throw new BadRequestException("Recipe ID is required to edit recipe");
+            }
+
+            const existingRecipe = await this.prisma.recipe.findUnique({
+                where: { id: recipeId}
+            })
+            if (!existingRecipe) {
+                throw new BadRequestException("Recipe does not exist");
+            }
+
+            return await this.prisma.recipe.update({
+                where: { id: recipeId },
+                data
+            })
         } catch (error) {
             throw error;
         }
