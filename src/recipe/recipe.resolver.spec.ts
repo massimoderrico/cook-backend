@@ -16,6 +16,7 @@ describe('RecipeResolver', () => {
           provide: RecipeService,
           useValue: {
             duplicateRecipe: jest.fn(),
+            deleteRecipe: jest.fn(),
           },
         },
       ],
@@ -65,6 +66,31 @@ describe('RecipeResolver', () => {
         'Failed to duplicate recipe',
       );
       expect(service.duplicateRecipe).toHaveBeenCalledWith(1, 2);
+    });
+  });
+
+  describe('deleteRecipe', () => {
+    it('should delete a recipe with valid input', async () => {
+      // Arrange
+      const recipeId = 1;
+      const userId = 123;
+      jest.spyOn(service, 'deleteRecipe').mockResolvedValue(true); // Mock service response
+      // Act
+      const result = await resolver.deleteRecipe(recipeId, userId);
+      // Assert
+      expect(service.deleteRecipe).toHaveBeenCalledWith(recipeId, userId);
+      expect(result).toBe(true);
+    });
+
+    it('should throw an error if the service throws an error', async () => {
+      // Arrange
+      const recipeId = 1;
+      const userId = 123;
+      jest.spyOn(service, 'deleteRecipe').mockRejectedValue(new Error('Service Error'));
+      // Act & Assert
+      await expect(resolver.deleteRecipe(recipeId, userId)).rejects.toThrow(
+        'Failed to delete recipe: Service Error'
+      );
     });
   });
 });

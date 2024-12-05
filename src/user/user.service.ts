@@ -13,7 +13,7 @@ export class UserService {
 
     async createUser(data: UserCreateInput){
         try{
-            if(!data.name) throw new BadRequestException("Name is required to create a user");
+            if(!data.username) throw new BadRequestException("Username is required to create a user");
             
             if(!data.password) throw new BadRequestException("Password is required to create a user");
             
@@ -43,18 +43,22 @@ export class UserService {
             return updatedUser;
         }
         catch(error){
-            throw(error.message);
+            throw error;
         }
     }
 
     async getUserById(id: number): Promise<User> {
-        try{
-            return await this.prisma.user.findUnique({
-                where: {id: id},
+        try {
+            const user: User = await this.prisma.user.findUnique({
+                where: { id: id },
             });
+            if (!user) {
+                throw new BadRequestException(`User with ID ${id} does not exist`);
+            }
+            return user;
         }
         catch(error) {
-            throw(error.message);
+            throw error;
         }
     }
 
@@ -81,7 +85,7 @@ export class UserService {
             return this.prisma.user.delete({where: {id: id}});
         }
         catch(error){
-            throw(error.message);
+            throw error;
         }
     }
 
