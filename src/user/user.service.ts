@@ -68,11 +68,28 @@ export class UserService {
             const existingUser = await this.prisma.user.findUnique({where: {id: userid}});
 
             if (!existingUser) {
-                throw new BadRequestException(`Cookbook with ID ${userid} does not exist`);
+                throw new BadRequestException(`User with ID ${userid} does not exist`);
             }
             return await this.prisma.user.update({
                 where: {id: userid},
                 data: {name: data}
+            });
+        }
+        catch(error){
+            throw(error.message);
+        }
+    }
+
+    async changeUserPassword(userid: number, password: string): Promise<User>{
+        try{
+            const existingUser = await this.prisma.user.findUnique({where: {id: userid}});
+
+            if(!existingUser) {
+                throw new BadRequestException(`User with ID ${userid} does not exist`);
+            }
+            return await this.prisma.user.update({
+                where: {id: userid},
+                data: {password: password}
             });
         }
         catch(error){

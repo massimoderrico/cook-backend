@@ -44,6 +44,19 @@ export class UserResolver {
     }
   }
 
+  @Mutation(() => User)
+  async changeUserPassword(@Args('id', { type: () => Number}) id: number,
+                           @Args('password', {type: () => String}) password: string
+                          ): Promise<User> {
+    try{
+      const user = await this.userService.changeUserPassword(id, password);
+      return user;
+    }
+    catch(error){
+      throw new Error("Failed to change user's password: ${error.message}");
+    }
+  }
+
   @Mutation(() => User, { nullable: true })
   async deleteUser(@Args('id', { type: () => Number }) id: number): Promise<User> {
     try {
