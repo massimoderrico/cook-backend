@@ -7,6 +7,7 @@ import { UserCreateInput } from 'src/@generated/user/user-create.input';
 import { UserService } from './user.service';
 import { CookbookRelationFilter } from 'src/@generated/cookbook/cookbook-relation-filter.input';
 import { Cookbook } from 'src/@generated/cookbook/cookbook.model';
+import { UserUpdateInput } from 'src/@generated/user/user-update.input';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -32,6 +33,19 @@ export class UserResolver {
     }
   }
 
+  @Mutation(() => User)
+  async changeNameUser(@Args('id', { type: () => Number }) id: number,
+                       @Args('data', {type: () => String}) data: string
+                      ): Promise<User> {
+    try{
+      const user = await this.userService.changeNameUser(id, data);
+      return user;
+    }
+    catch(error){
+      throw new Error("Failed to change user's name: ${error.message}");
+    }
+  }
+
   @Mutation(() => User, { nullable: true })
   async deleteUser(@Args('id', { type: () => Number }) id: number): Promise<User> {
     try {
@@ -41,7 +55,7 @@ export class UserResolver {
       // Handle the "record not found" error from Prisma
       if (error.code === 'P2025') {
         throw new NotFoundException(`User with id ${id} does not exist`);
-      }  
+      }
       // Rethrow any unexpected errors
       throw new Error('An unexpected error occurred while deleting the user');
     }
