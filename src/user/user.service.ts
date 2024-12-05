@@ -5,12 +5,13 @@ import { UserCreateInput } from '../@generated/user/user-create.input';
 import { CookbookCreateInput } from 'src/@generated/cookbook/cookbook-create.input';
 import { CookbookResolver } from 'src/cookbook/cookbook.resolver';
 import { Cookbook } from 'src/@generated/cookbook/cookbook.model';
+import { UserUpdateInput } from 'src/@generated/user/user-update.input';
 
 @Injectable()
 export class UserService {
     constructor(private prisma: PrismaService, private resolver: CookbookResolver){}
 
-    async createUser(data: UserCreateInput,) {
+    async createUser(data: UserCreateInput){
         try{
             if(!data.username) throw new BadRequestException("Username is required to create a user");
             
@@ -19,10 +20,10 @@ export class UserService {
             if(!data.email) throw new BadRequestException("Email is required to create a user");
             
             const createdUser = this.prisma.user.create({
-                    data:{
-                        ...data
-                    },
-                });
+                data:{
+                    ...data
+                },
+            });
             
             const userId = (await createdUser).id;
 
@@ -58,6 +59,24 @@ export class UserService {
         }
         catch(error) {
             throw error;
+        }
+    }
+
+    async changeNameUser(userid: number, data :string): Promise<User>{
+        try{
+
+            const existingUser = await this.prisma.user.findUnique({where: {id: userid}});
+
+            if (!existingUser) {
+                throw new BadRequestException(`Cookbook with ID ${userid} does not exist`);
+            }
+            return await this.prisma.user.update({
+                where: {id: userid},
+                data: {name: data}
+            });
+        }
+        catch(error){
+            throw(error.message);
         }
     }
 
