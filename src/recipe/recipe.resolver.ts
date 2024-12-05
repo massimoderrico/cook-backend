@@ -3,6 +3,7 @@ import { Recipe } from 'src/@generated/recipe/recipe.model';
 import { RecipeService } from './recipe.service';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
 import { RecipeUpdateInput } from 'src/@generated/recipe/recipe-update.input';
+import { RecipeUpdateManyMutationInput } from 'src/@generated/recipe/recipe-update-many-mutation.input';
 
 @Resolver(() => Recipe)
 export class RecipeResolver {
@@ -26,6 +27,18 @@ export class RecipeResolver {
             return await this.recipeService.deleteRecipe(recipeId, userId);
         } catch (error) {
             throw new Error(`Failed to delete recipe: ${error.message}`);
+        }
+    }
+
+    @Mutation(() => Recipe)
+    async editRecipe(  
+        @Args("recipeId", { type: () => Int }) recipeId: number,
+        @Args("data") data: RecipeUpdateManyMutationInput
+    ): Promise<Recipe>{
+        try {
+            return await this.recipeService.editRecipe(recipeId, data)
+        } catch (error) {
+            throw new Error(`Failed to edit recipe: ${error.message}`)
         }
     }
 
