@@ -31,7 +31,7 @@ export class RecipeResolver {
     }
 
     @Mutation(() => Recipe)
-    async editRecipe(
+    async editRecipe(  
         @Args("recipeId", { type: () => Int }) recipeId: number,
         @Args("data") data: RecipeUpdateManyMutationInput
     ): Promise<Recipe>{
