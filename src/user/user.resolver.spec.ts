@@ -19,6 +19,8 @@ describe('UserResolver', () => {
             getUserCookbooks: jest.fn(),
             createUser: jest.fn(),
             getUserById: jest.fn(),
+            changeNameUser: jest.fn(),
+            changeUserPassword: jest.fn(),
           },
         },
       ],
@@ -139,6 +141,94 @@ describe('UserResolver', () => {
         'Failed to get cookbooks for user ID 123: Some internal error',
       );
       expect(userService.getUserCookbooks).toHaveBeenCalledWith(123);
+    });
+  });
+
+  describe('changeNameUser', () => {
+    it('should change the user\'s name successfully', async () => {
+      const userId = 1;
+      const newName = 'New Name';
+      const mockUser: User = {
+        id: userId,
+        name: 'Old Name',
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'hashedpassword',
+        mainCookbookId: null,
+        role: 'USER',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedUser: User = { ...mockUser, name: newName };
+      jest.spyOn(userService, 'changeNameUser').mockResolvedValue(updatedUser);
+      const result = await resolver.changeNameUser(userId, newName);
+      expect(userService.changeNameUser).toHaveBeenCalledWith(userId, newName);
+      expect(result).toEqual(updatedUser);
+    });
+
+    it('should throw an error if the user does not exist', async () => {
+      const userId = 1;
+      const newName = 'New Name';
+      jest.spyOn(userService, 'changeNameUser').mockRejectedValue(
+        new BadRequestException(`User with ID ${userId} does not exist`),
+      );
+      await expect(resolver.changeNameUser(userId, newName)).rejects.toThrow(
+        'Failed to change user\'s name: User with ID 1 does not exist',
+      );
+    });
+
+    it('should throw an error if there is an internal error', async () => {
+      const userId = 1;
+      const newName = 'New Name';
+      jest.spyOn(userService, 'changeNameUser').mockRejectedValue(new Error('Some internal error'));
+      await expect(resolver.changeNameUser(userId, newName)).rejects.toThrow(
+        'Failed to change user\'s name: Some internal error',
+      );
+    });
+  });
+
+  describe('changeUserPassword', () => {
+    it('should change the user\'s password successfully', async () => {
+      const userId = 1;
+      const newPassword = 'NewSecurePassword123';
+      const mockUser: User = {
+        id: userId,
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        username: 'johndoe',
+        password: 'OldPassword123',
+        mainCookbookId: null,
+        role: 'USER',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedUser: User = { ...mockUser, password: newPassword };
+      jest.spyOn(userService, 'changeUserPassword').mockResolvedValue(updatedUser);
+      const result = await resolver.changeUserPassword(userId, newPassword);
+      expect(userService.changeUserPassword).toHaveBeenCalledWith(userId, newPassword);
+      expect(result).toEqual(updatedUser);
+    });
+  
+    it('should throw an error if the user does not exist', async () => {
+      const userId = 1;
+      const newPassword = 'NewSecurePassword123';
+      jest.spyOn(userService, 'changeUserPassword').mockRejectedValue(
+        new BadRequestException(`User with ID 1 does not exist`)
+      );
+      await expect(resolver.changeUserPassword(userId, newPassword)).rejects.toThrow(
+        'Failed to change user\'s password: User with ID 1 does not exist'
+      );
+    });
+  
+    it('should throw an error if the service throws an exception', async () => {
+      const userId = 1;
+      const newPassword = 'NewSecurePassword123';
+      jest.spyOn(userService, 'changeUserPassword').mockRejectedValue(
+        new Error('Some internal error')
+      );
+      await expect(resolver.changeUserPassword(userId, newPassword)).rejects.toThrow(
+        'Failed to change user\'s password: Some internal error'
+      );
     });
   });
 });

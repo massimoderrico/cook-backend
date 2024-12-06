@@ -211,4 +211,94 @@ describe('UserService', () => {
       expect(result).toEqual(mockUser.cookbooks);
     });
   });
+
+  describe('changeNameUser', () => {
+    it('should change the user\'s name successfully', async () => {
+      const userId = 1;
+      const newName = 'New Name';
+      const mockUser: User = {
+        id: userId,
+        name: 'Old Name',
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'hashedpassword',
+        mainCookbookId: null,
+        role: 'USER',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedUser: User = { ...mockUser, name: newName };
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser);
+      jest.spyOn(prisma.user, 'update').mockResolvedValue(updatedUser);
+      const result = await service.changeNameUser(userId, newName);
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prisma.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { name: newName },
+      });
+      expect(result).toEqual(updatedUser);
+    });
+
+    it('should throw BadRequestException if user does not exist', async () => {
+      const userId = 1;
+      const newName = 'New Name';
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
+      await expect(service.changeNameUser(userId, newName)).rejects.toThrow(
+        `User with ID 1 does not exist`
+      );
+    });
+
+    it('should throw an error if prisma throws an exception', async () => {
+      const userId = 1;
+      const newName = 'New Name';
+      jest.spyOn(prisma.user, 'findUnique').mockRejectedValue(new Error('Some internal error'));
+      await expect(service.changeNameUser(userId, newName)).rejects.toThrow('Some internal error');
+    });
+  });
+
+  describe('changeUserPassword', () => {
+    it('should change the user\'s password successfully', async () => {
+      const userId = 1;
+      const newPassword = 'NewSecurePassword123';
+      const mockUser: User = {
+        id: userId,
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        username: 'johndoe',
+        password: 'OldPassword123',
+        mainCookbookId: null,
+        role: 'USER',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedUser: User = { ...mockUser, password: newPassword };
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser);
+      jest.spyOn(prisma.user, 'update').mockResolvedValue(updatedUser);
+      const result = await service.changeUserPassword(userId, newPassword);
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prisma.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { password: newPassword },
+      });
+      expect(result).toEqual(updatedUser);
+    });
+  
+    it('should throw BadRequestException if user does not exist', async () => {
+      const userId = 1;
+      const newPassword = 'NewSecurePassword123';
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
+      await expect(service.changeUserPassword(userId, newPassword)).rejects.toThrow(
+        `User with ID 1 does not exist`
+      );
+    });
+  
+    it('should throw an error if prisma throws an exception', async () => {
+      const userId = 1;
+      const newPassword = 'NewSecurePassword123';
+      jest.spyOn(prisma.user, 'findUnique').mockRejectedValue(new Error('Some internal error'));
+      await expect(service.changeUserPassword(userId, newPassword)).rejects.toThrow(
+        'Some internal error'
+      );
+    });
+  });
 });
