@@ -64,9 +64,7 @@ export class UserService {
 
     async changeNameUser(userid: number, data :string): Promise<User>{
         try{
-
-            const existingUser = await this.prisma.user.findUnique({where: {id: userid}});
-
+            const existingUser: User = await this.prisma.user.findUnique({where: {id: userid}});
             if (!existingUser) {
                 throw new BadRequestException(`User with ID ${userid} does not exist`);
             }
@@ -76,14 +74,13 @@ export class UserService {
             });
         }
         catch(error){
-            throw(error.message);
+            throw error;
         }
     }
 
     async changeUserPassword(userid: number, password: string): Promise<User>{
         try{
             const existingUser = await this.prisma.user.findUnique({where: {id: userid}});
-
             if(!existingUser) {
                 throw new BadRequestException(`User with ID ${userid} does not exist`);
             }
@@ -93,7 +90,7 @@ export class UserService {
             });
         }
         catch(error){
-            throw(error.message);
+            throw error;
         }
     }
 

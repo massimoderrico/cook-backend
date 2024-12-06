@@ -32,28 +32,28 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async changeNameUser(@Args('id', { type: () => Number }) id: number,
-                       @Args('data', {type: () => String}) data: string
-                      ): Promise<User> {
+  async changeNameUser(
+    @Args('id', { type: () => Number }) id: number,
+    @Args('data', {type: () => String}) data: string
+  ): Promise<User> {
     try{
-      const user = await this.userService.changeNameUser(id, data);
-      return user;
+      return await this.userService.changeNameUser(id, data);
     }
     catch(error){
-      throw new Error("Failed to change user's name: ${error.message}");
+      throw new Error(`Failed to change user's name: ${error.message}`);
     }
   }
 
   @Mutation(() => User)
-  async changeUserPassword(@Args('id', { type: () => Number}) id: number,
-                           @Args('password', {type: () => String}) password: string
-                          ): Promise<User> {
+  async changeUserPassword(
+    @Args('id', { type: () => Number}) id: number,     
+    @Args('password', {type: () => String}) password: string
+  ): Promise<User> {
     try{
-      const user = await this.userService.changeUserPassword(id, password);
-      return user;
+      return await this.userService.changeUserPassword(id, password);
     }
     catch(error){
-      throw new Error("Failed to change user's password: ${error.message}");
+      throw new Error(`Failed to change user's password: ${error.message}`);
     }
   }
 
