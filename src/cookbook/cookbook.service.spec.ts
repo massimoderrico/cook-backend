@@ -29,6 +29,9 @@ describe('CookbookService', () => {
               create: jest.fn(), // Mock the Prisma client's user.create method
               findUnique: jest.fn(),
             },
+            recipe: {
+              update: jest.fn(),
+            },
           },
         },
       ],
@@ -356,6 +359,126 @@ describe('CookbookService', () => {
     it('should throw an error if service fails', async () => {
       jest.spyOn(prisma.cookbook, 'findMany').mockRejectedValue(new Error('Service Error'));
       await expect(service.getCookbooksByIds([1, 2])).rejects.toThrow('Service Error');
+    });
+  });
+
+  describe('deleteRecipeFromCookbook', () => {
+    it('should remove a recipe from the cookbook with valid input', async () => {
+      const mockCookbook: Cookbook = {
+        id: 1,
+        name: 'Cookbook 1',
+        description: 'A test cookbook',
+        isPublic: true,
+        isMainCookbook: false,
+        userId: 123,
+        rating: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        recipes: [
+          {
+            id: 1,
+            name: 'Mock Recipe',
+            description: 'A mock recipe description',
+            directions: 'Mock directions',
+            ingredients: ['Ingredient1', 'Ingredient2'],
+            prepTime: 10,
+            cookTime: 20,
+            isPublic: false,
+            userId: 2,
+            rating: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: null,
+            cookbook: null,
+            communities: null,
+            _count: null,
+          }, 
+          {
+            id: 2,
+            name: 'Mock Recipe2',
+            description: 'A mock recipe description',
+            directions: 'Mock directions',
+            ingredients: ['Ingredient1', 'Ingredient2'],
+            prepTime: 10,
+            cookTime: 20,
+            isPublic: false,
+            userId: 2,
+            rating: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: null,
+            cookbook: null,
+            communities: null,
+            _count: null,
+          }
+        ]
+      };
+      const mockUpdatedCookbook: Cookbook = {
+        ...mockCookbook,
+        recipes: [
+          {
+            id: 2,
+            name: 'Mock Recipe2',
+            description: 'A mock recipe description',
+            directions: 'Mock directions',
+            ingredients: ['Ingredient1', 'Ingredient2'],
+            prepTime: 10,
+            cookTime: 20,
+            isPublic: false,
+            userId: 2,
+            rating: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: null,
+            cookbook: null,
+            communities: null,
+            _count: null,
+          }
+        ] // Recipe 1 removed
+      };
+      const cookbookId = 1;
+      const recipeId = 2;
+      jest.spyOn(prisma.cookbook, 'findUnique').mockResolvedValue(mockCookbook); // Mock finding the cookbook
+      jest.spyOn(prisma.cookbook, 'update').mockResolvedValue(mockUpdatedCookbook); // Mock updating the cookbook
+      jest.spyOn(prisma.recipe, 'update').mockResolvedValue(mockCookbook.recipes[1]); // Mock updating the recipe
+      const result = await service.deleteRecipeFromCookbook(cookbookId, recipeId);
+      expect(prisma.cookbook.findUnique).toHaveBeenCalledWith({
+        where: { id: cookbookId },
+      });
+      expect(prisma.cookbook.update).toHaveBeenCalledWith({
+        where: { id: cookbookId },
+        data: {
+          recipes: { disconnect: { id: recipeId } }
+        },
+        include: { recipes: true },
+      });
+      expect(prisma.recipe.update).toHaveBeenCalledWith({
+        where: { id: recipeId },
+        data: {
+          cookbook: { disconnect: { id: cookbookId } }
+        },
+      });
+      expect(result).toEqual(mockUpdatedCookbook);
+    });
+  
+    it('should throw an error if cookbook ID is missing', async () => {
+      const cookbookId = null;
+      const recipeId = 2;
+      await expect(service.deleteRecipeFromCookbook(cookbookId, recipeId)).rejects.toThrow('Cookbook ID is required');
+    });
+  
+    it('should throw an error if cookbook does not exist', async () => {
+      const cookbookId = 1;
+      const recipeId = 2;
+      jest.spyOn(prisma.cookbook, 'findUnique').mockResolvedValue(null); // Mock no cookbook found 
+      await expect(service.deleteRecipeFromCookbook(cookbookId, recipeId)).rejects.toThrow('Cookbook with ID 1 does not exist');
+    });
+  
+    it('should throw an error if service fails', async () => {
+      const cookbookId = 1;
+      const recipeId = 2;
+      jest.spyOn(prisma.cookbook, 'findUnique').mockRejectedValue(new Error('Service Error'));
+      await expect(service.deleteRecipeFromCookbook(cookbookId, recipeId)).rejects.toThrow('Service Error');
     });
   });
 });

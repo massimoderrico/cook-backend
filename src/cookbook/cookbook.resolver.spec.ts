@@ -22,6 +22,7 @@ describe('CookbookResolver', () => {
             editCookbook: jest.fn(),
             getRecipesByCookbookId: jest.fn(),
             getCookbooksByIds: jest.fn(),
+            deleteRecipeFromCookbook: jest.fn(),
           },
         },
       ],
@@ -258,6 +259,104 @@ describe('CookbookResolver', () => {
       await expect(resolver.getCookbooksByIds([1, 2])).rejects.toThrow(
         'Failed to get cookbooks: Service Error'
       );
+    });
+  });
+
+  describe('deleteRecipeFromCookbook', () => {
+    it('should remove a recipe from the cookbook with valid input', async () => {
+      // Arrange
+      const mockCookbook: Cookbook = {
+        id: 1,
+        name: 'Cookbook 1',
+        description: 'A test cookbook',
+        isPublic: true,
+        isMainCookbook: false,
+        userId: 123,
+        rating: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        recipes: [
+          {
+            id: 1,
+            name: 'Mock Recipe',
+            description: 'A mock recipe description',
+            directions: 'Mock directions',
+            ingredients: ['Ingredient1', 'Ingredient2'],
+            prepTime: 10,
+            cookTime: 20,
+            isPublic: false,
+            userId: 2,
+            rating: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: null,
+            cookbook: null,
+            communities: null,
+            _count: null,
+          }, 
+          {
+            id: 2,
+            name: 'Mock Recipe2',
+            description: 'A mock recipe description',
+            directions: 'Mock directions',
+            ingredients: ['Ingredient1', 'Ingredient2'],
+            prepTime: 10,
+            cookTime: 20,
+            isPublic: false,
+            userId: 2,
+            rating: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: null,
+            cookbook: null,
+            communities: null,
+            _count: null,
+          }
+        ]
+      };
+      const mockUpdatedCookbook: Cookbook = {
+        ...mockCookbook,
+        recipes: [{
+          id: 2,
+          name: 'Mock Recipe2',
+          description: 'A mock recipe description',
+          directions: 'Mock directions',
+          ingredients: ['Ingredient1', 'Ingredient2'],
+          prepTime: 10,
+          cookTime: 20,
+          isPublic: false,
+          userId: 2,
+          rating: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: null,
+          cookbook: null,
+          communities: null,
+          _count: null,
+        }] // Recipe 1 removed
+      };
+      const cookbookId = 1;
+      const recipeId = 2;
+      jest.spyOn(service, 'deleteRecipeFromCookbook').mockResolvedValue(mockUpdatedCookbook);
+      // Act
+      const result = await resolver.deleteRecipeFromCookbook(cookbookId, recipeId);
+      // Assert
+      expect(service.deleteRecipeFromCookbook).toHaveBeenCalledWith(cookbookId, recipeId);
+      expect(result).toEqual(mockUpdatedCookbook);
+    });
+  
+    it('should throw an error if service fails', async () => {
+      const cookbookId = 1;
+      const recipeId = 2;
+      jest.spyOn(service, 'deleteRecipeFromCookbook').mockRejectedValue(new Error('Service Error'));
+      await expect(resolver.deleteRecipeFromCookbook(cookbookId, recipeId)).rejects.toThrow('Failed to remove recipe from cookbook: Service Error');
+    });
+  
+    it('should throw an error if cookbook does not exist', async () => {
+      const cookbookId = 1;
+      const recipeId = 2;
+      jest.spyOn(service, 'deleteRecipeFromCookbook').mockRejectedValue(new Error('Cookbook with ID 1 does not exist'));
+      await expect(resolver.deleteRecipeFromCookbook(cookbookId, recipeId)).rejects.toThrow('Failed to remove recipe from cookbook: Cookbook with ID 1 does not exist');
     });
   });
 });

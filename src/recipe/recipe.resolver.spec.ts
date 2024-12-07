@@ -3,6 +3,7 @@ import { RecipeResolver } from './recipe.resolver';
 import { RecipeService } from './recipe.service';
 import { Recipe } from '../@generated/recipe/recipe.model';
 import { BadRequestException } from '@nestjs/common';
+import { RecipeUpdateManyMutationInput } from 'src/@generated/recipe/recipe-update-many-mutation.input';
 
 describe('RecipeResolver', () => {
   let resolver: RecipeResolver;
@@ -18,6 +19,7 @@ describe('RecipeResolver', () => {
             duplicateRecipe: jest.fn(),
             deleteRecipe: jest.fn(),
             addRecipeToCookbook: jest.fn(),
+            editRecipe: jest.fn(),
           },
         },
       ],
@@ -131,6 +133,55 @@ describe('RecipeResolver', () => {
       await expect(resolver.addRecipeToCookbook(cookbookIds, recipeId)).rejects.toThrow(
         'Error occurred'
       );
+    });
+  });
+
+  describe('editRecipe', () => {
+    it('should edit a recipe with valid input', async () => {
+      // Arrange
+      const mockRecipe: Recipe = {
+        id: 1,
+        name: 'Mock Recipe',
+        description: 'A mock recipe description',
+        directions: 'Mock directions',
+        ingredients: ['Ingredient1', 'Ingredient2'],
+        prepTime: 10,
+        cookTime: 20,
+        isPublic: false,
+        userId: 2,
+        rating: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        user: null,
+        cookbook: null,
+        communities: null,
+        _count: null,
+      };
+      const input: RecipeUpdateManyMutationInput = {
+        name: { set: "Updated Recipe Name" },
+        ingredients: { set: ['Updated ingredients list'] },
+      };
+      jest.spyOn(service, 'editRecipe').mockResolvedValue(mockRecipe);
+      // Act
+      const result = await resolver.editRecipe(1, input);
+      // Assert
+      expect(service.editRecipe).toHaveBeenCalledWith(1, input);
+      expect(result).toEqual(mockRecipe);
+    });
+  
+    it('should throw an error if service fails', async () => {
+      const input = { name: 'Updated Recipe' } as any;
+      jest.spyOn(service, 'editRecipe').mockRejectedValue(new Error('Service Error'));
+      await expect(resolver.editRecipe(1, input)).rejects.toThrow('Failed to edit recipe: Service Error');
+    });
+  
+    it('should throw an error if recipe does not exist', async () => {
+      const input: RecipeUpdateManyMutationInput = {
+        name: { set: "Updated Recipe Name" },
+        ingredients: { set: ['Updated ingredients list'] },
+      };
+      jest.spyOn(service, 'editRecipe').mockRejectedValue(new Error('Recipe with ID 1 does not exist'));
+      await expect(resolver.editRecipe(1, input)).rejects.toThrow('Failed to edit recipe: Recipe with ID 1 does not exist');
     });
   });
 });

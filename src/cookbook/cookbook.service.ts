@@ -129,7 +129,7 @@ export class CookbookService {
         }
     }
 
-    async deleteRecipeFromCookbook(data: CookbookUpdateInput, cookbookId: number, recipeId: number): Promise<Cookbook>{
+    async deleteRecipeFromCookbook(cookbookId: number, recipeId: number): Promise<Cookbook>{
         try {
             //validate input
             if (!cookbookId) {
@@ -142,18 +142,15 @@ export class CookbookService {
             if (!existingCookbook) {
                 throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
             }
-
             const updatedCookbook = await this.prisma.cookbook.update({
                 where: {id: cookbookId},
                 data: {
-                    ...data,
                     recipes: {
                         disconnect: { id: recipeId}
                     }
                 },
                 include: {recipes: true}
             })
-
             await this.prisma.recipe.update({
                 where : {id: recipeId},
                 data: {
@@ -162,9 +159,7 @@ export class CookbookService {
                     }
                 }
             })
-
             return updatedCookbook
-            
         } catch (error) {
             throw error
         }
