@@ -5,6 +5,7 @@ import { Recipe } from '../@generated/recipe/recipe.model';
 import { User } from '../@generated/user/user.model';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
 import { Cookbook } from '@prisma/client';
+import { RecipeUpdateManyMutationInput } from 'src/@generated/recipe/recipe-update-many-mutation.input';
 
 describe('RecipeService', () => {
   let service: RecipeService;
@@ -436,6 +437,61 @@ describe('RecipeService', () => {
       });
       expect(prisma.cookbook.update).toHaveBeenCalledTimes(cookbookIds.length);
       expect(result).toEqual(updatedRecipe);
+    });
+  });
+
+  describe('editRecipe', () => {
+    it('should edit a recipe with valid input', async () => {
+      const mockRecipe: Recipe = {
+        id: 1,
+        name: 'Mock Recipe',
+        description: 'A mock recipe description',
+        directions: 'Mock directions',
+        ingredients: ['Ingredient1', 'Ingredient2'],
+        prepTime: 10,
+        cookTime: 20,
+        isPublic: false,
+        userId: 2,
+        rating: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        user: null,
+        cookbook: null,
+        communities: null,
+        _count: null,
+      };
+      const input: RecipeUpdateManyMutationInput = {
+        name: { set: "Updated Recipe Name" },
+        ingredients: { set: ['Updated ingredients list'] },
+      };
+      jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(mockRecipe); // Mock finding the recipe
+      jest.spyOn(prisma.recipe, 'update').mockResolvedValue(mockRecipe); // Mock updating the recipe
+      const result = await service.editRecipe(1, input);
+      expect(prisma.recipe.findUnique).toHaveBeenCalledWith({
+        where: { id: 1 },
+      });
+      expect(prisma.recipe.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: input,
+      });
+      expect(result).toEqual(mockRecipe);
+    });
+  
+    it('should throw an error if recipe ID is missing', async () => {
+      const input: RecipeUpdateManyMutationInput = { name: { set: "Updated Recipe Name" } } as any;
+      await expect(service.editRecipe(null, input)).rejects.toThrow('Recipe ID is required to edit recipe');
+    });
+  
+    it('should throw an error if the recipe does not exist', async () => {
+      const input: RecipeUpdateManyMutationInput = { name: { set: "Updated Recipe Name" } };
+      jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(null); // Mock no recipe found
+      await expect(service.editRecipe(1, input)).rejects.toThrow('Recipe does not exist');
+    });
+  
+    it('should throw an error if service fails', async () => {
+      const input: RecipeUpdateManyMutationInput = { name: { set: "Updated Recipe Name" } };
+      jest.spyOn(prisma.recipe, 'findUnique').mockRejectedValue(new Error('Service Error'));
+      await expect(service.editRecipe(1, input)).rejects.toThrow('Service Error');
     });
   });
 });

@@ -63,12 +63,11 @@ export class CookbookResolver {
 
   @Mutation(() => Cookbook)
   async deleteRecipeFromCookbook(
-    @Args('data') data: CookbookUpdateInput,
     @Args("cookbookId", { type: () => Int}) cookbookId: number,
     @Args("recipeId", {type: () => Int}) recipeId: number
   ): Promise<Cookbook> {
     try {
-      return await this.cookbookService.deleteRecipeFromCookbook(data, cookbookId, recipeId);
+      return await this.cookbookService.deleteRecipeFromCookbook(cookbookId, recipeId);
     } catch (error) {
       throw new Error(`Failed to remove recipe from cookbook: ${error.message}`);
     }
