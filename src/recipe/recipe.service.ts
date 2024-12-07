@@ -90,7 +90,7 @@ export class RecipeService {
         }
     }
 
-    async addRecipeToCookbook(data: RecipeUpdateInput, cookbookIds: number[], recipeId: number): Promise<Recipe> {
+    async addRecipeToCookbook(cookbookIds: number[], recipeId: number): Promise<Recipe> {
         //TODO: Handle how we will process the update data. Will it be cookbook id, or whole cookbook object,
         // TBD with frontend work
         // Input: recipeId, CookbookId[], recipe object
@@ -101,28 +101,23 @@ export class RecipeService {
             }
             let recipe = await this.prisma.recipe.findUnique({
                 where: {id: recipeId},
+                include: { cookbook: true, }
             })
-
             if (!recipe){
                 throw new BadRequestException("Recipe does not exist")
-            }
-            //const cookbooks: [Cookbook] = await this.resolver.getCookbooksByIds(cookbookIds)
-            
+            }            
             const cookbooks = await this.prisma.cookbook.findMany({
                 where: {
                     id: { in: cookbookIds },
                 },
-                
             });
-
             const validCookbookIds = cookbooks.map( (c) => c.id)
             const connectCookbooks = validCookbookIds.map((id) => ({ id }))
-
-            data.cookbook = {
-                connect: connectCookbooks,
-                ...(data.cookbook || {})
+            const data: RecipeUpdateInput = {
+                cookbook : {
+                    connect: connectCookbooks,
+                }
             }
-
             const updatedRecipe = await this.prisma.recipe.update({ 
                 where: {
                     id: recipeId,
@@ -132,7 +127,6 @@ export class RecipeService {
                     cookbook: true,
                 }
             })
-
             await Promise.all(
                 validCookbookIds.map((id)=>
                     this.prisma.cookbook.update({
@@ -145,7 +139,6 @@ export class RecipeService {
                     })
                 )
             )
-
             return updatedRecipe
         }
         catch (error) {

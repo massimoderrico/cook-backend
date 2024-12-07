@@ -44,12 +44,11 @@ export class RecipeResolver {
 
     @Mutation(() => Recipe, {nullable: true})
     async addRecipeToCookbook(
-        @Args('data') data: RecipeUpdateInput, 
         @Args('cookbookIds', {type: () => [Int]} ) cookbookIds: number[],
         @Args('recipeId', {type: () => Int}) recipeId: number
     ): Promise<Recipe> { 
         try {
-            return this.recipeService.addRecipeToCookbook(data, cookbookIds, recipeId);
+            return this.recipeService.addRecipeToCookbook(cookbookIds, recipeId);
         } catch (error) { 
             throw error;
         }
