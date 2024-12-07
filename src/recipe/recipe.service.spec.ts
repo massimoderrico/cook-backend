@@ -21,9 +21,14 @@ describe('RecipeService', () => {
               findUnique: jest.fn(),
               create: jest.fn(),
               delete: jest.fn(),
+              update: jest.fn(),
             },
             user: {
               findUnique: jest.fn(), // Add this mock
+            },
+            cookbook: {
+              findMany: jest.fn(),
+              update: jest.fn(),
             },
           },
         },
@@ -342,6 +347,95 @@ describe('RecipeService', () => {
         user: { connect: { id: 456 } },
       });
       expect(result).toEqual(mockNewRecipe);
+    });
+  });
+
+  describe('addRecipeToCookbook', () => {
+    it('should throw BadRequestException if recipeId is not provided', async () => {
+      const cookbookIds = [1, 2];
+      await expect(service.addRecipeToCookbook(cookbookIds, null)).rejects.toThrow(
+        'Recipe Id is required'
+      );
+    });
+
+    it('should throw BadRequestException if recipe does not exist', async () => {
+      const recipeId = 1;
+      const cookbookIds = [1, 2];
+      jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(null);
+      await expect(service.addRecipeToCookbook(cookbookIds, recipeId)).rejects.toThrow(
+        'Recipe does not exist'
+      );
+    });
+
+    it('should successfully add recipe to cookbooks', async () => {
+      const recipeId = 1;
+      const cookbookIds = [1, 2];
+      const mockRecipe: Recipe = {
+        id: 1,
+        name: 'Mock Recipe',
+        description: 'A mock recipe description',
+        directions: 'Mock directions',
+        ingredients: ['Ingredient1', 'Ingredient2'],
+        prepTime: 10,
+        cookTime: 20,
+        isPublic: false,
+        userId: 2,
+        rating: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        user: null,
+        cookbook: null,
+        communities: null,
+        _count: null,
+      };
+      const mockCookbooks: Cookbook[] = [
+        {
+          id: 1,
+          name: 'Test Cookbook',
+          description: null,
+          isPublic: false,
+          isMainCookbook: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          userId: 2,
+          rating: null,
+        },
+        {
+          id: 2,
+          name: 'Test Cookbook2',
+          description: null,
+          isPublic: false,
+          isMainCookbook: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          userId: 2,
+          rating: null,
+        }
+      ];
+      const updatedRecipe = { ...mockRecipe, cookbook: mockCookbooks };
+      jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(mockRecipe);
+      jest.spyOn(prisma.cookbook, 'findMany').mockResolvedValue(mockCookbooks);
+      jest.spyOn(prisma.recipe, 'update').mockResolvedValue(updatedRecipe);
+      jest.spyOn(prisma.cookbook, 'update').mockResolvedValue(mockCookbooks[0]);
+      const result = await service.addRecipeToCookbook(cookbookIds, recipeId);
+      expect(prisma.recipe.findUnique).toHaveBeenCalledWith({
+        where: { id: recipeId },
+        include: { cookbook: true },
+      });
+      expect(prisma.cookbook.findMany).toHaveBeenCalledWith({
+        where: { id: { in: cookbookIds } },
+      });
+      expect(prisma.recipe.update).toHaveBeenCalledWith({
+        where: { id: recipeId },
+        data: {
+          cookbook: {
+            connect: mockCookbooks.map((c) => ({ id: c.id })),
+          },
+        },
+        include: { cookbook: true },
+      });
+      expect(prisma.cookbook.update).toHaveBeenCalledTimes(cookbookIds.length);
+      expect(result).toEqual(updatedRecipe);
     });
   });
 });

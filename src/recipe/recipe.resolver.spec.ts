@@ -17,6 +17,7 @@ describe('RecipeResolver', () => {
           useValue: {
             duplicateRecipe: jest.fn(),
             deleteRecipe: jest.fn(),
+            addRecipeToCookbook: jest.fn(),
           },
         },
       ],
@@ -90,6 +91,45 @@ describe('RecipeResolver', () => {
       // Act & Assert
       await expect(resolver.deleteRecipe(recipeId, userId)).rejects.toThrow(
         'Failed to delete recipe: Service Error'
+      );
+    });
+  });
+
+  describe('addRecipeToCookbook', () => {
+    const mockRecipe: Recipe = {
+      id: 1,
+      name: 'Mock Recipe',
+      description: 'A mock recipe description',
+      directions: 'Mock directions',
+      ingredients: ['Ingredient1', 'Ingredient2'],
+      prepTime: 10,
+      cookTime: 20,
+      isPublic: false,
+      userId: 2,
+      rating: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      user: null,
+      cookbook: null,
+      communities: null,
+      _count: null,
+    };
+
+    it('should add recipe to the cookbooks successfully', async () => {
+      const cookbookIds = [1, 2];
+      const recipeId = 1;
+      jest.spyOn(service, 'addRecipeToCookbook').mockResolvedValue(mockRecipe);
+      const result = await resolver.addRecipeToCookbook(cookbookIds, recipeId);
+      expect(service.addRecipeToCookbook).toHaveBeenCalledWith(cookbookIds, recipeId);
+      expect(result).toEqual(mockRecipe);
+    });
+
+    it('should throw an error if the service throws an exception', async () => {
+      const cookbookIds = [1, 2];
+      const recipeId = 1;
+      jest.spyOn(service, 'addRecipeToCookbook').mockRejectedValue(new BadRequestException('Error occurred'));
+      await expect(resolver.addRecipeToCookbook(cookbookIds, recipeId)).rejects.toThrow(
+        'Error occurred'
       );
     });
   });
