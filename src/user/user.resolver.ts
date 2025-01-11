@@ -80,4 +80,13 @@ export class UserResolver {
       throw new Error(`Failed to get cookbooks for user ID ${userId}: ${error.message}`);
     }
   }
+
+  @Query(() => [User], { nullable: true })
+  async searchUser(@Args('query', { type: () => String }) query: string): Promise<User[]> {
+    try {
+      return await this.userService.searchUser(query);
+    } catch (error) {
+      throw new Error(`Failed to find any users matching ${query}: ${error.message}`);
+    }
+  }
 }

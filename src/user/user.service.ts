@@ -131,4 +131,26 @@ export class UserService {
             throw error;
         }
     }   
+
+    async searchUser(query: string): Promise<User[]> {
+        try {
+            //validate presence of a query
+            if (!query) {
+                throw new BadRequestException('Query is required');
+            }
+            //return users that match query
+            return this.prisma.user.findMany({
+                where: {
+                  OR: [
+                    //search by name
+                    { name: { contains: query, mode: 'insensitive' } }, 
+                    //search by username
+                    { username: { contains: query, mode: 'insensitive' } },
+                  ],
+                },
+            }); 
+        } catch (error) {
+            throw error;
+        }
+    }
 }
