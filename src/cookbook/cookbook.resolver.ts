@@ -72,4 +72,13 @@ export class CookbookResolver {
       throw new Error(`Failed to remove recipe from cookbook: ${error.message}`);
     }
   }
+
+  @Query(() => [Cookbook], { nullable: true })
+  async searchCookbook(@Args('query', { type: () => String }) query: string): Promise<Cookbook[]> {
+    try {
+      return await this.cookbookService.searchCookbook(query);
+    } catch (error) {
+      throw new Error(`Failed to find any cookbooks matching ${query}: ${error.message}`);
+    }
+  }
 }
