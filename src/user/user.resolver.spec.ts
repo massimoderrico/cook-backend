@@ -21,6 +21,7 @@ describe('UserResolver', () => {
             getUserById: jest.fn(),
             changeNameUser: jest.fn(),
             changeUserPassword: jest.fn(),
+            searchUser: jest.fn(),
           },
         },
       ],
@@ -229,6 +230,36 @@ describe('UserResolver', () => {
       await expect(resolver.changeUserPassword(userId, newPassword)).rejects.toThrow(
         'Failed to change user\'s password: Some internal error'
       );
+    });
+  });
+
+  describe('searchUser', () => {
+    it('should return users that match the query', async () => {
+      const mockUsers: User[] = [
+        {
+          id: 1,
+          name: 'John Doe',
+          username: 'johndoe',
+          email: 'john@example.com',
+          password: 'abc123',
+          mainCookbookId: 1,
+          role: 'USER',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+      jest.spyOn(userService, 'searchUser').mockResolvedValue(mockUsers);
+      const result = await resolver.searchUser('john');
+      expect(userService.searchUser).toHaveBeenCalledWith('john');
+      expect(result).toEqual(mockUsers);
+    });
+  
+    it('should throw an error when the service throws an exception', async () => {
+      jest.spyOn(userService, 'searchUser').mockRejectedValue(new Error('Some internal error'));
+      await expect(resolver.searchUser('test')).rejects.toThrow(
+        'Failed to find any users matching test: Some internal error',
+      );
+      expect(userService.searchUser).toHaveBeenCalledWith('test');
     });
   });
 });

@@ -21,6 +21,7 @@ describe('UserService', () => {
               findUnique: jest.fn(),
               create: jest.fn(),
               update: jest.fn(),
+              findMany: jest.fn(),
             },
           },
         },
@@ -299,6 +300,52 @@ describe('UserService', () => {
       await expect(service.changeUserPassword(userId, newPassword)).rejects.toThrow(
         'Some internal error'
       );
+    });
+  });
+
+  describe('searchUser', () => {
+    it('should return users that match the query', async () => {
+      const mockUsers: User[] = [
+        {
+          id: 1,
+          name: 'John Doe',
+          username: 'johndoe',
+          email: 'john@example.com',
+          password: 'abc123',
+          mainCookbookId: 1,
+          role: 'USER',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+      jest.spyOn(prisma.user, 'findMany').mockResolvedValue(mockUsers);
+      const result = await service.searchUser('john');
+      expect(prisma.user.findMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { name: { contains: 'john', mode: 'insensitive' } },
+            { username: { contains: 'john', mode: 'insensitive' } },
+          ],
+        },
+      });
+      expect(result).toEqual(mockUsers);
+    });
+  
+    it('should throw a BadRequestException if query is empty', async () => {
+      await expect(service.searchUser('')).rejects.toThrow(BadRequestException);
+    });
+  
+    it('should throw an error if Prisma throws an exception', async () => {
+      jest.spyOn(prisma.user, 'findMany').mockRejectedValue(new Error('Database error'));
+      await expect(service.searchUser('john')).rejects.toThrow('Database error');
+      expect(prisma.user.findMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { name: { contains: 'john', mode: 'insensitive' } },
+            { username: { contains: 'john', mode: 'insensitive' } },
+          ],
+        },
+      });
     });
   });
 });
