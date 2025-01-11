@@ -164,4 +164,26 @@ export class CookbookService {
             throw error
         }
     }
+
+    async searchCookbook(query: string): Promise<Cookbook[]> {
+        try {
+            //validate presence of a query
+            if (!query) {
+                throw new BadRequestException('Query is required');
+            }
+            //return cookbooks that match query
+            return this.prisma.cookbook.findMany({
+                where: {
+                    OR: [
+                        //search by name
+                        { name: { contains: query, mode: 'insensitive' } }, 
+                        //search in description
+                        { description: { contains: query, mode: 'insensitive' } },
+                    ],
+                },
+            }); 
+        } catch (error) {
+            throw error;
+        }
+    }
 }

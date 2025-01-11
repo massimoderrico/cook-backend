@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CookbookService } from './cookbook.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { Cookbook } from '../@generated/cookbook/cookbook.model';
+import { BadRequestException } from '@nestjs/common';
 import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { Role } from '../@generated/prisma/role.enum';
@@ -481,4 +482,50 @@ describe('CookbookService', () => {
       await expect(service.deleteRecipeFromCookbook(cookbookId, recipeId)).rejects.toThrow('Service Error');
     });
   });
+
+  describe('searchUser', () => {
+      it('should return cookbooks that match the query', async () => {
+        const mockCookbook: Cookbook[] = [
+          {
+            id: 1,
+            name: 'Cookbook1',
+            description: 'description1',
+            isPublic: true,
+            isMainCookbook: false,
+            userId: 123,
+            rating: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ];
+        jest.spyOn(prisma.cookbook, 'findMany').mockResolvedValue(mockCookbook);
+        const result = await service.searchCookbook('description');
+        expect(prisma.cookbook.findMany).toHaveBeenCalledWith({
+          where: {
+            OR: [
+              { name: { contains: 'description', mode: 'insensitive' } },
+              { description: { contains: 'description', mode: 'insensitive' } },
+            ],
+          },
+        });
+        expect(result).toEqual(mockCookbook);
+      });
+    
+      it('should throw a BadRequestException if query is empty', async () => {
+        await expect(service.searchCookbook('')).rejects.toThrow(BadRequestException);
+      });
+    
+      it('should throw an error if Prisma throws an exception', async () => {
+        jest.spyOn(prisma.cookbook, 'findMany').mockRejectedValue(new Error('Database error'));
+        await expect(service.searchCookbook('description')).rejects.toThrow('Database error');
+        expect(prisma.cookbook.findMany).toHaveBeenCalledWith({
+          where: {
+            OR: [
+              { name: { contains: 'description', mode: 'insensitive' } },
+              { description: { contains: 'description', mode: 'insensitive' } },
+            ],
+          },
+        });
+      });
+    });
 });
