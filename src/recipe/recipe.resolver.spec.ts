@@ -20,6 +20,7 @@ describe('RecipeResolver', () => {
             deleteRecipe: jest.fn(),
             addRecipeToCookbook: jest.fn(),
             editRecipe: jest.fn(),
+            searchRecipes: jest.fn(),
           },
         },
       ],
@@ -182,6 +183,43 @@ describe('RecipeResolver', () => {
       };
       jest.spyOn(service, 'editRecipe').mockRejectedValue(new Error('Recipe with ID 1 does not exist'));
       await expect(resolver.editRecipe(1, input)).rejects.toThrow('Failed to edit recipe: Recipe with ID 1 does not exist');
+    });
+  });
+
+  describe('searchRecipes', () => {
+    it('should return recipes that match the query', async () => {
+      const mockRecipe: Recipe[] = [
+        {
+          id: 1,
+          name: 'Mock Recipe',
+          description: 'A mock recipe description',
+          directions: 'Mock directions',
+          ingredients: ['Ingredient1', 'Ingredient2'],
+          prepTime: 10,
+          cookTime: 20,
+          isPublic: false,
+          userId: 2,
+          rating: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: null,
+          cookbook: null,
+          communities: null,
+          _count: null,
+        },
+      ];
+      jest.spyOn(service, 'searchRecipes').mockResolvedValue(mockRecipe);
+      const result = await resolver.searchRecipes('Mock Recipe');
+      expect(service.searchRecipes).toHaveBeenCalledWith('Mock Recipe');
+      expect(result).toEqual(mockRecipe);
+    });
+      
+    it('should throw an error when the service throws an exception', async () => {
+      jest.spyOn(service, 'searchRecipes').mockRejectedValue(new Error('Some internal error'));
+      await expect(resolver.searchRecipes('test')).rejects.toThrow(
+        'Failed to find any recipes matching test: Some internal error',
+      );
+      expect(service.searchRecipes).toHaveBeenCalledWith('test');
     });
   });
 });

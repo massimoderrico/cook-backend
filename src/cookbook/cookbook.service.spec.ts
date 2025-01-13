@@ -483,49 +483,49 @@ describe('CookbookService', () => {
     });
   });
 
-  describe('searchUser', () => {
-      it('should return cookbooks that match the query', async () => {
-        const mockCookbook: Cookbook[] = [
-          {
-            id: 1,
-            name: 'Cookbook1',
-            description: 'description1',
-            isPublic: true,
-            isMainCookbook: false,
-            userId: 123,
-            rating: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        ];
-        jest.spyOn(prisma.cookbook, 'findMany').mockResolvedValue(mockCookbook);
-        const result = await service.searchCookbook('description');
-        expect(prisma.cookbook.findMany).toHaveBeenCalledWith({
-          where: {
-            OR: [
-              { name: { contains: 'description', mode: 'insensitive' } },
-              { description: { contains: 'description', mode: 'insensitive' } },
-            ],
-          },
-        });
-        expect(result).toEqual(mockCookbook);
+  describe('searchCookbooks', () => {
+    it('should return cookbooks that match the query', async () => {
+      const mockCookbook: Cookbook[] = [
+        {
+          id: 1,
+          name: 'Cookbook1',
+          description: 'description1',
+          isPublic: true,
+          isMainCookbook: false,
+          userId: 123,
+          rating: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+      jest.spyOn(prisma.cookbook, 'findMany').mockResolvedValue(mockCookbook);
+      const result = await service.searchCookbook('description');
+      expect(prisma.cookbook.findMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { name: { contains: 'description', mode: 'insensitive' } },
+            { description: { contains: 'description', mode: 'insensitive' } },
+          ],
+        },
       });
+      expect(result).toEqual(mockCookbook);
+    });
     
-      it('should throw a BadRequestException if query is empty', async () => {
-        await expect(service.searchCookbook('')).rejects.toThrow(BadRequestException);
-      });
+    it('should throw a BadRequestException if query is empty', async () => {
+      await expect(service.searchCookbook('')).rejects.toThrow(BadRequestException);
+    });
     
-      it('should throw an error if Prisma throws an exception', async () => {
-        jest.spyOn(prisma.cookbook, 'findMany').mockRejectedValue(new Error('Database error'));
-        await expect(service.searchCookbook('description')).rejects.toThrow('Database error');
-        expect(prisma.cookbook.findMany).toHaveBeenCalledWith({
-          where: {
-            OR: [
-              { name: { contains: 'description', mode: 'insensitive' } },
-              { description: { contains: 'description', mode: 'insensitive' } },
-            ],
-          },
-        });
+    it('should throw an error if Prisma throws an exception', async () => {
+      jest.spyOn(prisma.cookbook, 'findMany').mockRejectedValue(new Error('Database error'));
+      await expect(service.searchCookbook('description')).rejects.toThrow('Database error');
+      expect(prisma.cookbook.findMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { name: { contains: 'description', mode: 'insensitive' } },
+            { description: { contains: 'description', mode: 'insensitive' } },
+          ],
+        },
       });
     });
+  });
 });
