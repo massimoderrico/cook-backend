@@ -182,6 +182,30 @@ export class RecipeService {
             throw error;
         }
     } 
+
+    async searchRecipes(query: string): Promise<Recipe[]> {
+        try {
+            // Validate the presence of a query
+            if (!query) {
+                throw new BadRequestException('Query is required');
+            }
+            // Return recipes that match the query
+            return this.prisma.recipe.findMany({
+                where: {
+                    OR: [
+                        // Search by name
+                        { name: { contains: query, mode: 'insensitive' } },
+                        // Search in description
+                        { description: { contains: query, mode: 'insensitive' } },
+                        // Search in ingredients
+                        { ingredients: { hasSome: query.split(',').map(ingredient => ingredient.trim()) } },
+                    ],
+                },
+            });
+        } catch (error) {
+          throw error;
+        }
+    }      
 }
     
 

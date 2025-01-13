@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver, Int } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver, Int } from '@nestjs/graphql';
 import { Recipe } from 'src/@generated/recipe/recipe.model';
 import { RecipeService } from './recipe.service';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
@@ -66,5 +66,12 @@ export class RecipeResolver {
         }
     }
 
-
+    @Query(() => [Recipe], { nullable: true })
+    async searchRecipes(@Args('query', { type: () => String }) query: string): Promise<Recipe[]> {
+        try {
+            return await this.recipeService.searchRecipes(query);
+        } catch (error) {
+            throw new Error(`Failed to find any recipes matching ${query}: ${error.message}`);
+        }
+    }
 }

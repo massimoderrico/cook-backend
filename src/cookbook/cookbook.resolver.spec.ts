@@ -361,33 +361,33 @@ describe('CookbookResolver', () => {
     });
   });
 
-  describe('searchUser', () => {
-      it('should return cookbooks that match the query', async () => {
-        const mockCookbook: Cookbook[] = [
-          {
-            id: 1,
-            name: 'Cookbook1',
-            description: 'description1',
-            isPublic: true,
-            isMainCookbook: false,
-            userId: 123,
-            rating: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        ];
-        jest.spyOn(service, 'searchCookbook').mockResolvedValue(mockCookbook);
-        const result = await resolver.searchCookbook('cookbook');
-        expect(service.searchCookbook).toHaveBeenCalledWith('cookbook');
-        expect(result).toEqual(mockCookbook);
-      });
-    
-      it('should throw an error when the service throws an exception', async () => {
-        jest.spyOn(service, 'searchCookbook').mockRejectedValue(new Error('Some internal error'));
-        await expect(resolver.searchCookbook('test')).rejects.toThrow(
-          'Failed to find any cookbooks matching test: Some internal error',
-        );
-        expect(service.searchCookbook).toHaveBeenCalledWith('test');
-      });
+  describe('searchCookbooks', () => {
+    it('should return cookbooks that match the query', async () => {
+      const mockCookbook: Cookbook[] = [
+        {
+          id: 1,
+          name: 'Cookbook1',
+          description: 'description1',
+          isPublic: true,
+          isMainCookbook: false,
+          userId: 123,
+          rating: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+      jest.spyOn(service, 'searchCookbook').mockResolvedValue(mockCookbook);
+      const result = await resolver.searchCookbook('cookbook');
+      expect(service.searchCookbook).toHaveBeenCalledWith('cookbook');
+      expect(result).toEqual(mockCookbook);
     });
+    
+    it('should throw an error when the service throws an exception', async () => {
+      jest.spyOn(service, 'searchCookbook').mockRejectedValue(new Error('Some internal error'));
+      await expect(resolver.searchCookbook('test')).rejects.toThrow(
+        'Failed to find any cookbooks matching test: Some internal error',
+      );
+      expect(service.searchCookbook).toHaveBeenCalledWith('test');
+    });
+  });
 });

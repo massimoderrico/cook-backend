@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RecipeService } from './recipe.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { Recipe } from '../@generated/recipe/recipe.model';
+import { BadRequestException } from '@nestjs/common';
 import { User } from '../@generated/user/user.model';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
 import { Cookbook } from '@prisma/client';
@@ -23,6 +24,7 @@ describe('RecipeService', () => {
               create: jest.fn(),
               delete: jest.fn(),
               update: jest.fn(),
+              findMany: jest.fn(),
             },
             user: {
               findUnique: jest.fn(), // Add this mock
@@ -492,6 +494,61 @@ describe('RecipeService', () => {
       const input: RecipeUpdateManyMutationInput = { name: { set: "Updated Recipe Name" } };
       jest.spyOn(prisma.recipe, 'findUnique').mockRejectedValue(new Error('Service Error'));
       await expect(service.editRecipe(1, input)).rejects.toThrow('Service Error');
+    });
+  });
+
+  describe('searchRecipes', () => {
+    it('should return recipes that match the query', async () => {
+      const mockRecipe: Recipe[] = [
+        {
+          id: 1,
+          name: 'Mock Recipe',
+          description: 'A mock recipe description',
+          directions: 'Mock directions',
+          ingredients: ['Ingredient1', 'Ingredient2'],
+          prepTime: 10,
+          cookTime: 20,
+          isPublic: false,
+          userId: 2,
+          rating: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: null,
+          cookbook: null,
+          communities: null,
+          _count: null,
+        },
+      ];
+      jest.spyOn(prisma.recipe, 'findMany').mockResolvedValue(mockRecipe);
+      const result = await service.searchRecipes('Ingredient1');
+      expect(prisma.recipe.findMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { name: { contains: 'Ingredient1', mode: 'insensitive' } },
+            { description: { contains: 'Ingredient1', mode: 'insensitive' } },
+            { ingredients: { hasSome: ['Ingredient1'] } },
+          ],
+        },
+      });
+      expect(result).toEqual(mockRecipe);
+    });
+      
+    it('should throw a BadRequestException if query is empty', async () => {
+      await expect(service.searchRecipes('')).rejects.toThrow(BadRequestException);
+    });
+      
+    it('should throw an error if Prisma throws an exception', async () => {
+      jest.spyOn(prisma.recipe, 'findMany').mockRejectedValue(new Error('Database error'));
+      await expect(service.searchRecipes('description')).rejects.toThrow('Database error');
+      expect(prisma.recipe.findMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { name: { contains: 'description', mode: 'insensitive' } },
+            { description: { contains: 'description', mode: 'insensitive' } },
+            { ingredients: { hasSome: ['description'] } },
+          ],
+        },
+      });
     });
   });
 });
