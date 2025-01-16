@@ -206,6 +206,36 @@ export class RecipeService {
           throw error;
         }
     }      
+
+    async hpGetTopRecipes(skip: number, first: number): Promise<Recipe[]> {
+        try {
+            // Return top rated recipes
+            return this.prisma.recipe.findMany({
+                orderBy: {
+                  rating: 'desc', // Sort recipes by rating in descending order
+                },
+                skip, // Number of items to skip
+                take: first, // Number of items to fetch
+            });
+        } catch (error) {
+            throw error;
+        }
+    }  
+    
+    async hpGetRecentRecipes(skip: number, first: number): Promise<Recipe[]> {
+        try {
+            // Return top rated recipes
+            return this.prisma.recipe.findMany({
+                orderBy: {
+                  createdAt: 'desc', // Sort recipes by creation in descending order
+                },
+                skip, // Number of items to skip
+                take: first, // Number of items to fetch
+            });
+        } catch (error) {
+            throw error;
+        }
+    }    
 }
     
 
