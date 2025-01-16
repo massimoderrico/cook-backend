@@ -7,6 +7,7 @@ import { User } from '../@generated/user/user.model';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
 import { Cookbook } from '@prisma/client';
 import { RecipeUpdateManyMutationInput } from 'src/@generated/recipe/recipe-update-many-mutation.input';
+import { Decimal } from '@prisma/client/runtime/library';
 
 describe('RecipeService', () => {
   let service: RecipeService;
@@ -549,6 +550,82 @@ describe('RecipeService', () => {
           ],
         },
       });
+    });
+  });
+
+  describe('hpGetTopRecipes', () => {
+    it('should return top recipes successfully', async () => {
+      const mockRecipes: Recipe[] = [
+        {
+          id: 1,
+          name: 'Mock Recipe',
+          description: 'A mock recipe description',
+          directions: 'Mock directions',
+          ingredients: ['Ingredient1', 'Ingredient2'],
+          prepTime: 10,
+          cookTime: 20,
+          isPublic: true,
+          userId: 2,
+          rating: new Decimal(4.5),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: null,
+          cookbook: null,
+          communities: null,
+          _count: null,
+        },
+      ];
+      jest.spyOn(prisma.recipe, 'findMany').mockResolvedValue(mockRecipes);
+      const result = await service.hpGetTopRecipes(0, 10);
+      expect(prisma.recipe.findMany).toHaveBeenCalledWith({
+        orderBy: { rating: 'desc' },
+        skip: 0,
+        take: 10,
+      });
+      expect(result).toEqual(mockRecipes);
+    });
+
+    it('should throw error if service fails', async () => {
+      jest.spyOn(prisma.recipe, 'findMany').mockRejectedValue(new Error('Database error'));
+      await expect(service.hpGetTopRecipes(0, 10)).rejects.toThrow('Database error');
+    });
+  });
+
+  describe('hpGetRecentRecipes', () => {
+    it('should return recent recipes successfully', async () => {
+      const mockRecipes: Recipe[] = [
+        {
+          id: 1,
+          name: 'Mock Recipe',
+          description: 'A mock recipe description',
+          directions: 'Mock directions',
+          ingredients: ['Ingredient1', 'Ingredient2'],
+          prepTime: 10,
+          cookTime: 20,
+          isPublic: true,
+          userId: 2,
+          rating: new Decimal(4.5),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: null,
+          cookbook: null,
+          communities: null,
+          _count: null,
+        },
+      ];
+      jest.spyOn(prisma.recipe, 'findMany').mockResolvedValue(mockRecipes);
+      const result = await service.hpGetRecentRecipes(0, 10);
+      expect(prisma.recipe.findMany).toHaveBeenCalledWith({
+        orderBy: { createdAt: 'desc' },
+        skip: 0,
+        take: 10,
+      });
+      expect(result).toEqual(mockRecipes);
+    });
+
+    it('should throw error if service fails', async () => {
+      jest.spyOn(prisma.recipe, 'findMany').mockRejectedValue(new Error('Database error'));
+      await expect(service.hpGetRecentRecipes(0, 10)).rejects.toThrow('Database error');
     });
   });
 });
