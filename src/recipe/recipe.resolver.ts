@@ -74,4 +74,28 @@ export class RecipeResolver {
             throw new Error(`Failed to find any recipes matching ${query}: ${error.message}`);
         }
     }
+
+    @Query(() => [Recipe], { nullable: true })
+    async hpGetTopRecipes(
+        @Args('skip', { type: () => Int, defaultValue: 0 }) skip: number,
+        @Args('first', { type: () => Int, defaultValue: 10 }) first: number,
+    ): Promise<Recipe[]> {
+        try {
+            return await this.recipeService.hpGetTopRecipes(skip, first);
+        } catch (error) {
+            throw new Error(`Failed to find any recipes: ${error.message}`);
+        }
+    }
+
+    @Query(() => [Recipe], { nullable: true })
+    async hpGetRecentRecipes(
+        @Args('skip', { type: () => Int, defaultValue: 0 }) skip: number,
+        @Args('first', { type: () => Int, defaultValue: 10 }) first: number,
+    ): Promise<Recipe[]> {
+        try {
+            return await this.recipeService.hpGetRecentRecipes(skip, first);
+        } catch (error) {
+            throw new Error(`Failed to find any recipes: ${error.message}`);
+        }
+    }
 }
