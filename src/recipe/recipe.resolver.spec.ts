@@ -4,6 +4,7 @@ import { RecipeService } from './recipe.service';
 import { Recipe } from '../@generated/recipe/recipe.model';
 import { BadRequestException } from '@nestjs/common';
 import { RecipeUpdateManyMutationInput } from 'src/@generated/recipe/recipe-update-many-mutation.input';
+import { Decimal } from '@prisma/client/runtime/library';
 
 describe('RecipeResolver', () => {
   let resolver: RecipeResolver;
@@ -21,6 +22,8 @@ describe('RecipeResolver', () => {
             addRecipeToCookbook: jest.fn(),
             editRecipe: jest.fn(),
             searchRecipes: jest.fn(),
+            hpGetTopRecipes: jest.fn(),
+            hpGetRecentRecipes: jest.fn(),
           },
         },
       ],
@@ -220,6 +223,74 @@ describe('RecipeResolver', () => {
         'Failed to find any recipes matching test: Some internal error',
       );
       expect(service.searchRecipes).toHaveBeenCalledWith('test');
+    });
+  });
+
+  describe('hpGetTopRecipes', () => {
+    it('should return top recipes successfully', async () => {
+      const mockRecipes: Recipe[] = [
+        {
+          id: 1,
+          name: 'Mock Recipe',
+          description: 'A mock recipe description',
+          directions: 'Mock directions',
+          ingredients: ['Ingredient1', 'Ingredient2'],
+          prepTime: 10,
+          cookTime: 20,
+          isPublic: true,
+          userId: 2,
+          rating: new Decimal(4.5), 
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: null,
+          cookbook: null,
+          communities: null,
+          _count: null,
+        },
+      ];
+      jest.spyOn(service, 'hpGetTopRecipes').mockResolvedValue(mockRecipes);
+      const result = await resolver.hpGetTopRecipes(0, 10);
+      expect(service.hpGetTopRecipes).toHaveBeenCalledWith(0, 10);
+      expect(result).toEqual(mockRecipes);
+    });
+
+    it('should throw an error when the service fails', async () => {
+      jest.spyOn(service, 'hpGetTopRecipes').mockRejectedValue(new Error('Failed to fetch top recipes'));
+      await expect(resolver.hpGetTopRecipes(0, 10)).rejects.toThrow('Failed to find any recipes: Failed to fetch top recipes');
+    });
+  });
+
+  describe('hpGetRecentRecipes', () => {
+    it('should return recent recipes successfully', async () => {
+      const mockRecipes: Recipe[] = [
+        {
+          id: 1,
+          name: 'Mock Recipe',
+          description: 'A mock recipe description',
+          directions: 'Mock directions',
+          ingredients: ['Ingredient1', 'Ingredient2'],
+          prepTime: 10,
+          cookTime: 20,
+          isPublic: true,
+          userId: 2,
+          rating: new Decimal(4.5), 
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: null,
+          cookbook: null,
+          communities: null,
+          _count: null,
+        },
+      ];
+      jest.spyOn(service, 'hpGetRecentRecipes').mockResolvedValue(mockRecipes);
+      const result = await resolver.hpGetRecentRecipes(0, 10);
+      expect(service.hpGetRecentRecipes).toHaveBeenCalledWith(0, 10);
+      expect(result).toEqual(mockRecipes);
+    });
+
+    it('should throw an error when the service fails', async () => {
+      jest.spyOn(service, 'hpGetRecentRecipes').mockRejectedValue(new Error('Failed to fetch top recipes'));
+      await expect(resolver.hpGetRecentRecipes(0, 10)).rejects.toThrowError('Failed to find any recipes: Failed to fetch top recipes');
     });
   });
 });
