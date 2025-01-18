@@ -5,6 +5,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDecimalFieldUpdateOperationsInput } from '../prisma/nullable-decimal-field-update-operations.input';
 import { Type } from 'class-transformer';
+import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { UserUpdateOneRequiredWithoutCookbooksNestedInput } from '../user/user-update-one-required-without-cookbooks-nested.input';
 import { RecipeUpdateManyWithoutCookbookNestedInput } from '../recipe/recipe-update-many-without-cookbook-nested.input';
@@ -27,6 +28,9 @@ export class CookbookUpdateWithoutCommunitiesInput {
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)
     rating?: NullableDecimalFieldUpdateOperationsInput;
+
+    @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
+    ratingsCount?: IntFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     createdAt?: DateTimeFieldUpdateOperationsInput;

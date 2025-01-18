@@ -33,6 +33,9 @@ export class Cookbook {
     @Field(() => GraphQLDecimal, {nullable:true})
     rating!: Decimal | null;
 
+    @Field(() => Int, {nullable:false,defaultValue:0})
+    ratingsCount!: number;
+
     @Field(() => Date, {nullable:false})
     createdAt!: Date;
 

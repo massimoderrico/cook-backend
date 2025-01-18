@@ -49,7 +49,7 @@ describe('CookbookService', () => {
 
   describe('createCookbook', () => {
     it('should create a cookbook with valid input', async () => {
-      const mockCookbook = {
+      const mockCookbook: Cookbook = {
         id: 1,
         name: 'Test Cookbook',
         description: null,
@@ -59,6 +59,7 @@ describe('CookbookService', () => {
         updatedAt: new Date(),
         userId: 123,
         rating: null,
+        ratingsCount: 0,
       };
       const mockUser = {
         id: 123,
@@ -103,6 +104,7 @@ describe('CookbookService', () => {
         updatedAt: new Date(),
         userId: 123,
         rating: null,
+        ratingsCount: 0,
       };
       jest.spyOn(prisma.cookbook, 'findUnique').mockResolvedValue(mockCookbook);
       jest.spyOn(prisma.cookbook, 'delete').mockResolvedValue(mockCookbook);
@@ -135,7 +137,7 @@ describe('CookbookService', () => {
       const cookbookId = 1;
       const userId = 123;
       const otherUserId = 456;
-      const mockCookbook = {
+      const mockCookbook: Cookbook = {
         id: 1,
         name: 'Test Cookbook',
         description: null,
@@ -145,6 +147,7 @@ describe('CookbookService', () => {
         updatedAt: new Date(),
         userId: 123,
         rating: null,
+        ratingsCount: 0,
       };
       jest.spyOn(prisma.cookbook, 'findUnique').mockResolvedValue(mockCookbook);
       // Act & Assert
@@ -173,6 +176,7 @@ describe('CookbookService', () => {
         isMainCookbook: false,
         userId: 123,
         rating: null,
+        ratingsCount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -225,6 +229,7 @@ describe('CookbookService', () => {
         updatedAt: new Date(),
         userId: 123,
         rating: null,
+        ratingsCount: 0,
         recipes: [
           {
             id: 1,
@@ -237,6 +242,7 @@ describe('CookbookService', () => {
             isPublic: true,
             userId: 123,
             rating: null,
+            ratingsCount: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
             user: { 
@@ -265,6 +271,7 @@ describe('CookbookService', () => {
             isPublic: true,
             userId: 123,
             rating: null,
+            ratingsCount: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
             user: { 
@@ -330,6 +337,7 @@ describe('CookbookService', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
           rating: null,
+          ratingsCount: 0,
         },
         {
           id: 2,
@@ -341,6 +349,7 @@ describe('CookbookService', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
           rating: null,
+          ratingsCount: 0,
         },
       ];
       jest.spyOn(prisma.cookbook, 'findMany').mockResolvedValue(mockCookbooks);
@@ -373,6 +382,7 @@ describe('CookbookService', () => {
         isMainCookbook: false,
         userId: 123,
         rating: null,
+        ratingsCount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
         recipes: [
@@ -387,6 +397,7 @@ describe('CookbookService', () => {
             isPublic: false,
             userId: 2,
             rating: null,
+            ratingsCount: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
             user: null,
@@ -405,6 +416,7 @@ describe('CookbookService', () => {
             isPublic: false,
             userId: 2,
             rating: null,
+            ratingsCount: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
             user: null,
@@ -428,6 +440,7 @@ describe('CookbookService', () => {
             isPublic: false,
             userId: 2,
             rating: null,
+            ratingsCount: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
             user: null,
@@ -494,6 +507,7 @@ describe('CookbookService', () => {
           isMainCookbook: false,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
         },

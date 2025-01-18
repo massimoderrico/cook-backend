@@ -15,4 +15,7 @@ export class CookbookAvgAggregate {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
+
+    @Field(() => Float, {nullable:true})
+    ratingsCount?: number;
 }

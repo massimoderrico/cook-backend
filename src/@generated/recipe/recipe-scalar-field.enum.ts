@@ -11,6 +11,7 @@ export enum RecipeScalarFieldEnum {
     isPublic = "isPublic",
     userId = "userId",
     rating = "rating",
+    ratingsCount = "ratingsCount",
     createdAt = "createdAt",
     updatedAt = "updatedAt"
 }

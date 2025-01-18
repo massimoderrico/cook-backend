@@ -115,9 +115,10 @@ describe('RecipeService', () => {
         cookTime: 30,
         isPublic: false,
         user: {   ...mockUser  },
-        cookbook: [{ id: mainCookbookId } as Cookbook, { id: otherCookbookIds[0] } as Cookbook],
+        cookbook: [{ id: mainCookbookId, ratingsCount: 0, } as Cookbook, { id: otherCookbookIds[0], ratingsCount: 0, } as Cookbook],
         userId: userId,
         rating: null,
+        ratingsCount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -167,6 +168,7 @@ describe('RecipeService', () => {
         name: 'Test Recipe',
         userId: userId,
         rating: null,
+        ratingsCount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
         ingredients: null,
@@ -176,7 +178,7 @@ describe('RecipeService', () => {
         isPublic: false,
         description: null,
         user: {   ...mockUser  },
-        cookbook: [{ id: mainCookbookId } as Cookbook],
+        cookbook: [{ id: mainCookbookId, } as Cookbook],
       };
 
       jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser);
@@ -211,6 +213,7 @@ describe('RecipeService', () => {
         updatedAt: new Date(),
         userId: userId,
         rating: null,
+        ratingsCount: 0,
         ingredients: null,
         directions: null,
         prepTime: null,
@@ -256,6 +259,7 @@ describe('RecipeService', () => {
         updatedAt: new Date(),
         userId: userId,
         rating: null,
+        ratingsCount: 0,
         ingredients: null,
         directions: null,
         prepTime: null,
@@ -298,6 +302,7 @@ describe('RecipeService', () => {
         isPublic: false,
         userId: 123,
         rating: null,
+        ratingsCount: 0, 
         createdAt: new Date("2024-01-01T00:00:00Z"),
         updatedAt: new Date("2024-01-02T00:00:00Z"),
         user: {
@@ -318,6 +323,7 @@ describe('RecipeService', () => {
         isPublic: false,
         userId: 456,
         rating: null,
+        ratingsCount: 0,
         createdAt: new Date("2024-01-01T00:00:00Z"),
         updatedAt: new Date("2024-01-02T00:00:00Z"),
         user: {
@@ -385,6 +391,7 @@ describe('RecipeService', () => {
         isPublic: false,
         userId: 2,
         rating: null,
+        ratingsCount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
         user: null,
@@ -403,6 +410,7 @@ describe('RecipeService', () => {
           updatedAt: new Date(),
           userId: 2,
           rating: null,
+          ratingsCount: 0,
         },
         {
           id: 2,
@@ -414,6 +422,7 @@ describe('RecipeService', () => {
           updatedAt: new Date(),
           userId: 2,
           rating: null,
+          ratingsCount: 0,
         }
       ];
       const updatedRecipe = { ...mockRecipe, cookbook: mockCookbooks };
@@ -456,6 +465,7 @@ describe('RecipeService', () => {
         isPublic: false,
         userId: 2,
         rating: null,
+        ratingsCount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
         user: null,
@@ -512,6 +522,7 @@ describe('RecipeService', () => {
           isPublic: false,
           userId: 2,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
           user: null,
@@ -567,6 +578,7 @@ describe('RecipeService', () => {
           isPublic: true,
           userId: 2,
           rating: new Decimal(4.5),
+          ratingsCount: 1,
           createdAt: new Date(),
           updatedAt: new Date(),
           user: null,
@@ -605,6 +617,7 @@ describe('RecipeService', () => {
           isPublic: true,
           userId: 2,
           rating: new Decimal(4.5),
+          ratingsCount: 1,
           createdAt: new Date(),
           updatedAt: new Date(),
           user: null,

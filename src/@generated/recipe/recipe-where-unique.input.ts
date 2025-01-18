@@ -61,6 +61,9 @@ export class RecipeWhereUniqueInput {
     @Type(() => DecimalNullableFilter)
     rating?: DecimalNullableFilter;
 
+    @Field(() => IntFilter, {nullable:true})
+    ratingsCount?: IntFilter;
+
     @Field(() => DateTimeFilter, {nullable:true})
     createdAt?: DateTimeFilter;
 
