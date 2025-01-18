@@ -122,6 +122,7 @@ describe('UserResolver', () => {
           isMainCookbook: false,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
           recipes: null,

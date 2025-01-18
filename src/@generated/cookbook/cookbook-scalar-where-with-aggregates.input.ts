@@ -45,6 +45,9 @@ export class CookbookScalarWhereWithAggregatesInput {
     @Type(() => DecimalNullableWithAggregatesFilter)
     rating?: DecimalNullableWithAggregatesFilter;
 
+    @Field(() => IntWithAggregatesFilter, {nullable:true})
+    ratingsCount?: IntWithAggregatesFilter;
+
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     createdAt?: DateTimeWithAggregatesFilter;
 

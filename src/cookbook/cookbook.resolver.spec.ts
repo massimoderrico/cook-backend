@@ -51,6 +51,7 @@ describe('CookbookResolver', () => {
         updatedAt: new Date(),
         userId: 123,
         rating: null,
+        ratingsCount: 0,
       };
       const input: CookbookCreateInput = {
         name: 'Test Cookbook',
@@ -107,6 +108,7 @@ describe('CookbookResolver', () => {
         isMainCookbook: false,
         userId: 123,
         rating: null,
+        ratingsCount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -154,6 +156,7 @@ describe('CookbookResolver', () => {
           isPublic: true,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
           user: {  
@@ -182,6 +185,7 @@ describe('CookbookResolver', () => {
           isPublic: true,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
           user: { 
@@ -231,6 +235,7 @@ describe('CookbookResolver', () => {
           isMainCookbook: false,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -242,6 +247,7 @@ describe('CookbookResolver', () => {
           isMainCookbook: false,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -274,6 +280,7 @@ describe('CookbookResolver', () => {
         isMainCookbook: false,
         userId: 123,
         rating: null,
+        ratingsCount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
         recipes: [
@@ -288,6 +295,7 @@ describe('CookbookResolver', () => {
             isPublic: false,
             userId: 2,
             rating: null,
+            ratingsCount: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
             user: null,
@@ -306,6 +314,7 @@ describe('CookbookResolver', () => {
             isPublic: false,
             userId: 2,
             rating: null,
+            ratingsCount: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
             user: null,
@@ -328,6 +337,7 @@ describe('CookbookResolver', () => {
           isPublic: false,
           userId: 2,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
           user: null,
@@ -372,6 +382,7 @@ describe('CookbookResolver', () => {
           isMainCookbook: false,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
         },

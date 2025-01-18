@@ -42,6 +42,9 @@ export class RecipeGroupBy {
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
 
+    @Field(() => Int, {nullable:false})
+    ratingsCount!: number;
+
     @Field(() => Date, {nullable:false})
     createdAt!: Date | string;
 

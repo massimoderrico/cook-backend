@@ -27,6 +27,9 @@ export class CookbookCountAggregate {
     rating!: number;
 
     @Field(() => Int, {nullable:false})
+    ratingsCount!: number;
+
+    @Field(() => Int, {nullable:false})
     createdAt!: number;
 
     @Field(() => Int, {nullable:false})

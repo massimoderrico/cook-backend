@@ -40,6 +40,9 @@ export class RecipeCreateWithoutCookbookInput {
     @Transform(transformToDecimal)
     rating?: Decimal;
 
+    @Field(() => Int, {nullable:true})
+    ratingsCount?: number;
+
     @Field(() => Date, {nullable:true})
     createdAt?: Date | string;
 
