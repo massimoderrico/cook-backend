@@ -4,6 +4,7 @@ import { Cookbook, Recipe } from '@prisma/client';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
 import { CookbookUpdateInput } from 'src/@generated/cookbook/cookbook-update.input';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class CookbookService {
@@ -182,6 +183,39 @@ export class CookbookService {
                     ],
                 },
             }); 
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateCookbookRating (cookbookId: number, rating: number): Promise<Cookbook> {
+        try {
+            if (!cookbookId) {
+                throw new BadRequestException("Cookbook ID is required to update cookbook rating");
+            }
+            if (rating < 0 || rating > 5) {
+               throw new BadRequestException("Rating must be between 0 and 5");
+            }
+            const existingCookbook = await this.prisma.cookbook.findUnique({
+                where: { id: cookbookId},
+                select: { rating: true, ratingsCount: true },
+            })
+            if (!existingCookbook) {
+                throw new BadRequestException("Cookbook does not exist");
+            }
+            const currentRating = existingCookbook.rating ? existingCookbook.rating : new Decimal(0);
+            const updatedRatingsCount = existingCookbook.ratingsCount + 1;
+            const newRating= new Decimal(
+                (currentRating.toNumber() * existingCookbook.ratingsCount + rating) / updatedRatingsCount
+            );
+            return await this.prisma.cookbook.update({
+                where: { id: cookbookId },
+                data: {
+                    rating: newRating,
+                    ratingsCount: updatedRatingsCount,
+                    updatedAt: new Date(),
+                },
+            })
         } catch (error) {
             throw error;
         }

@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RecipeUpdateInput } from 'src/@generated/recipe/recipe-update.input';
 import { RecipeUpdateManyMutationInput } from 'src/@generated/recipe/recipe-update-many-mutation.input';
+import { Decimal } from '@prisma/client/runtime/library';
 
 
 @Injectable()
@@ -236,6 +237,39 @@ export class RecipeService {
             throw error;
         }
     }    
+
+    async updateRecipeRating (recipeId: number, rating: number): Promise<Recipe> {
+        try {
+            if (!recipeId) {
+                throw new BadRequestException("Recipe ID is required to update recipe rating");
+            }
+            if (rating < 0 || rating > 5) {
+                throw new BadRequestException("Rating must be between 0 and 5");
+            }
+            const existingRecipe = await this.prisma.recipe.findUnique({
+                where: { id: recipeId},
+                select: { rating: true, ratingsCount: true },
+            })
+            if (!existingRecipe) {
+                throw new BadRequestException("Recipe does not exist");
+            }
+            const currentRating = existingRecipe.rating ? existingRecipe.rating : new Decimal(0);
+            const updatedRatingsCount = existingRecipe.ratingsCount + 1;
+            const newRating= new Decimal(
+                (currentRating.toNumber() * existingRecipe.ratingsCount + rating) / updatedRatingsCount
+            );
+            return await this.prisma.recipe.update({
+                where: { id: recipeId },
+                data: {
+                    rating: newRating,
+                    ratingsCount: updatedRatingsCount,
+                    updatedAt: new Date(),
+                },
+            })
+        } catch (error) {
+            throw error;
+        }
+    }
 }
     
 

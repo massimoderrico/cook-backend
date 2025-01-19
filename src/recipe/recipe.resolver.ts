@@ -1,8 +1,7 @@
-import { Args, Mutation, Query, Resolver, Int } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver, Int, Float } from '@nestjs/graphql';
 import { Recipe } from 'src/@generated/recipe/recipe.model';
 import { RecipeService } from './recipe.service';
 import { RecipeCreateInput } from 'src/@generated/recipe/recipe-create.input';
-import { RecipeUpdateInput } from 'src/@generated/recipe/recipe-update.input';
 import { RecipeUpdateManyMutationInput } from 'src/@generated/recipe/recipe-update-many-mutation.input';
 
 @Resolver(() => Recipe)
@@ -96,6 +95,18 @@ export class RecipeResolver {
             return await this.recipeService.hpGetRecentRecipes(skip, first);
         } catch (error) {
             throw new Error(`Failed to find any recipes: ${error.message}`);
+        }
+    }
+
+    @Mutation(() => Recipe)
+    async updateRecipeRating(  
+        @Args("recipeId", { type: () => Int }) recipeId: number,
+        @Args("rating", { type: () => Float }) rating: number,
+    ): Promise<Recipe>{
+        try {
+            return await this.recipeService.updateRecipeRating(recipeId, rating)
+        } catch (error) {
+            throw new Error(`Failed to update recipe rating: ${error.message}`)
         }
     }
 }
