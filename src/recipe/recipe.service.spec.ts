@@ -641,4 +641,96 @@ describe('RecipeService', () => {
       await expect(service.hpGetRecentRecipes(0, 10)).rejects.toThrow('Database error');
     });
   });
+
+  describe('updateRecipeRating', () => {
+    it('should throw BadRequestException if recipeId is not provided', async () => {
+      await expect(service.updateRecipeRating(null, 3)).rejects.toThrow(
+        'Recipe ID is required to update recipe rating',
+      );
+    });
+  
+    it('should throw BadRequestException if rating is out of range', async () => {
+      await expect(service.updateRecipeRating(1, -1)).rejects.toThrow(
+        'Rating must be between 0 and 5',
+      );
+      await expect(service.updateRecipeRating(1, 6)).rejects.toThrow(
+        'Rating must be between 0 and 5',
+      );
+    });
+  
+    it('should throw BadRequestException if the recipe does not exist', async () => {
+      const recipeId = 1;
+      const rating = 4;
+      jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(null);
+      await expect(service.updateRecipeRating(recipeId, rating)).rejects.toThrow(
+        'Recipe does not exist',
+      );
+    });
+  
+    it('should update the recipe rating successfully when valid data is provided', async () => {
+      const recipeId = 1;
+      const rating = 4;
+      const mockExistingRecipe: Recipe = {
+        id: 1,
+        name: 'Mock Recipe',
+        description: 'A mock recipe description',
+        directions: 'Mock directions',
+        ingredients: ['Ingredient1', 'Ingredient2'],
+        prepTime: 10,
+        cookTime: 20,
+        isPublic: false,
+        userId: 2,
+        rating: new Decimal(3),
+        ratingsCount: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        user: null,
+        cookbook: null,
+        communities: null,
+        _count: null,
+      };
+      const updatedRecipe: Recipe = {
+        id: 1,
+        name: 'Mock Recipe',
+        description: 'A mock recipe description',
+        directions: 'Mock directions',
+        ingredients: ['Ingredient1', 'Ingredient2'],
+        prepTime: 10,
+        cookTime: 20,
+        isPublic: false,
+        userId: 2,
+        rating: new Decimal(3.5),
+        ratingsCount: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        user: null,
+        cookbook: null,
+        communities: null,
+        _count: null,
+      };
+      jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(mockExistingRecipe);
+      jest.spyOn(prisma.recipe, 'update').mockResolvedValue(updatedRecipe);
+      const result = await service.updateRecipeRating(recipeId, rating);
+      expect(prisma.recipe.findUnique).toHaveBeenCalledWith({
+        where: { id: recipeId },
+        select: { rating: true, ratingsCount: true },
+      });
+      expect(prisma.recipe.update).toHaveBeenCalledWith({
+        where: { id: recipeId },
+        data: {
+          rating: new Decimal(3.5),
+          ratingsCount: 2,
+          updatedAt: expect.any(Date),
+        },
+      });
+      expect(result).toEqual(updatedRecipe);
+    });
+  
+    it('should handle errors thrown during the process', async () => {
+      const recipeId = 1;
+      const rating = 4;
+      jest.spyOn(prisma.recipe, 'findUnique').mockRejectedValue(new Error('Database Error'));
+      await expect(service.updateRecipeRating(recipeId, rating)).rejects.toThrow('Database Error');
+    });
+  });
 });

@@ -24,6 +24,7 @@ describe('RecipeResolver', () => {
             searchRecipes: jest.fn(),
             hpGetTopRecipes: jest.fn(),
             hpGetRecentRecipes: jest.fn(),
+            updateRecipeRating: jest.fn(),
           },
         },
       ],
@@ -296,7 +297,62 @@ describe('RecipeResolver', () => {
 
     it('should throw an error when the service fails', async () => {
       jest.spyOn(service, 'hpGetRecentRecipes').mockRejectedValue(new Error('Failed to fetch top recipes'));
-      await expect(resolver.hpGetRecentRecipes(0, 10)).rejects.toThrowError('Failed to find any recipes: Failed to fetch top recipes');
+      await expect(resolver.hpGetRecentRecipes(0, 10)).rejects.toThrow('Failed to find any recipes: Failed to fetch top recipes');
+    });
+  });
+
+  describe('updateRecipeRating', () => {
+    const mockRecipe: Recipe = {
+      id: 1,
+      name: 'Mock Recipe',
+      description: 'A mock recipe description',
+      directions: 'Mock directions',
+      ingredients: ['Ingredient1', 'Ingredient2'],
+      prepTime: 10,
+      cookTime: 20,
+      isPublic: false,
+      userId: 2,
+      rating: new Decimal(4.5),
+      ratingsCount: 10,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      user: null,
+      cookbook: null,
+      communities: null,
+      _count: null,
+    };
+
+    it('should update the recipe rating successfully', async () => {
+      const recipeId = 1;
+      const rating = 4.8;
+      jest.spyOn(service, 'updateRecipeRating').mockResolvedValue(mockRecipe);
+      const result = await resolver.updateRecipeRating(recipeId, rating);
+      expect(service.updateRecipeRating).toHaveBeenCalledWith(recipeId, rating);
+      expect(result).toEqual(mockRecipe);
+    });
+
+    it('should throw an error if the recipe does not exist', async () => {
+      const recipeId = 999;
+      const rating = 4.5;
+      jest
+        .spyOn(service, 'updateRecipeRating')
+        .mockRejectedValue(new BadRequestException('Recipe does not exist'));
+      await expect(resolver.updateRecipeRating(recipeId, rating)).rejects.toThrow(
+        'Failed to update recipe rating: Recipe does not exist',
+      );
+      expect(service.updateRecipeRating).toHaveBeenCalledWith(recipeId, rating);
+    });
+
+    it('should handle unexpected service errors', async () => {
+      const recipeId = 1;
+      const rating = 4.5;
+      jest
+        .spyOn(service, 'updateRecipeRating')
+        .mockRejectedValue(new Error('Unexpected error'));
+      await expect(resolver.updateRecipeRating(recipeId, rating)).rejects.toThrow(
+        'Failed to update recipe rating: Unexpected error',
+      );
+      expect(service.updateRecipeRating).toHaveBeenCalledWith(recipeId, rating);
     });
   });
 });

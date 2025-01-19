@@ -6,6 +6,7 @@ import { BadRequestException } from '@nestjs/common';
 import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { Role } from '../@generated/prisma/role.enum';
+import { Decimal } from '@prisma/client/runtime/library';
 
 
 describe('CookbookService', () => {
@@ -540,6 +541,84 @@ describe('CookbookService', () => {
           ],
         },
       });
+    });
+  });
+
+  describe('updateCookbookRating', () => {
+    it('should throw BadRequestException if cookbookId is not provided', async () => {
+      await expect(service.updateCookbookRating(null, 3)).rejects.toThrow(
+        'Cookbook ID is required to update cookbook rating',
+      );
+    });
+    
+    it('should throw BadRequestException if rating is out of range', async () => {
+      await expect(service.updateCookbookRating(1, -1)).rejects.toThrow(
+        'Rating must be between 0 and 5',
+      );
+      await expect(service.updateCookbookRating(1, 6)).rejects.toThrow(
+        'Rating must be between 0 and 5',
+      );
+    });
+    
+    it('should throw BadRequestException if the cookbook does not exist', async () => {
+      const cookbookId = 1;
+      const rating = 4;
+      jest.spyOn(prisma.cookbook, 'findUnique').mockResolvedValue(null);
+      await expect(service.updateCookbookRating(cookbookId, rating)).rejects.toThrow(
+        'Cookbook does not exist',
+      );
+    });
+    
+    it('should update the cookbook rating successfully when valid data is provided', async () => {
+      const cookbookId = 1;
+      const rating = 4;
+      const mockExistingCookbook: Cookbook = {
+        id: 1,
+        name: 'Cookbook1',
+        description: 'description1',
+        isPublic: true,
+        isMainCookbook: false,
+        userId: 123,
+        rating: new Decimal(3),
+        ratingsCount: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedCookbook: Cookbook = {
+        id: 1,
+        name: 'Cookbook1',
+        description: 'description1',
+        isPublic: true,
+        isMainCookbook: false,
+        userId: 123,
+        rating: new Decimal(3.5),
+        ratingsCount: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      jest.spyOn(prisma.cookbook, 'findUnique').mockResolvedValue(mockExistingCookbook);
+      jest.spyOn(prisma.cookbook, 'update').mockResolvedValue(updatedCookbook);
+      const result = await service.updateCookbookRating(cookbookId, rating);
+      expect(prisma.cookbook.findUnique).toHaveBeenCalledWith({
+        where: { id: cookbookId },
+        select: { rating: true, ratingsCount: true },
+      });
+      expect(prisma.cookbook.update).toHaveBeenCalledWith({
+        where: { id: cookbookId },
+        data: {
+          rating: new Decimal(3.5),
+          ratingsCount: 2,
+          updatedAt: expect.any(Date),
+        },
+      });
+      expect(result).toEqual(updatedCookbook);
+    });
+    
+    it('should handle errors thrown during the process', async () => {
+      const cookbookId = 1;
+      const rating = 4;
+      jest.spyOn(prisma.cookbook, 'findUnique').mockRejectedValue(new Error('Database Error'));
+      await expect(service.updateCookbookRating(cookbookId, rating)).rejects.toThrow('Database Error');
     });
   });
 });

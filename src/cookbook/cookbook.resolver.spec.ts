@@ -6,6 +6,8 @@ import { Recipe } from '../@generated/recipe/recipe.model';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
 import { Role } from '../@generated/prisma/role.enum';
+import { Decimal } from '@prisma/client/runtime/library';
+import { BadRequestException } from '@nestjs/common';
 
 describe('CookbookResolver', () => {
   let resolver: CookbookResolver;
@@ -24,6 +26,7 @@ describe('CookbookResolver', () => {
             getCookbooksByIds: jest.fn(),
             deleteRecipeFromCookbook: jest.fn(),
             searchCookbook: jest.fn(),
+            updateCookbookRating: jest.fn(),
           },
         },
       ],
@@ -401,4 +404,52 @@ describe('CookbookResolver', () => {
       expect(service.searchCookbook).toHaveBeenCalledWith('test');
     });
   });
+
+  describe('updateCookbookRating', () => {
+      const mockCookbook: Cookbook = {
+        id: 1,
+        name: 'Cookbook1',
+        description: 'description1',
+        isPublic: true,
+        isMainCookbook: false,
+        userId: 123,
+        rating: new Decimal(4),
+        ratingsCount: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),       
+      };
+  
+      it('should update the cookbook rating successfully', async () => {
+        const cookbookId = 1;
+        const rating = 5;
+        jest.spyOn(service, 'updateCookbookRating').mockResolvedValue(mockCookbook);
+        const result = await resolver.updateCookbookRating(cookbookId, rating);
+        expect(service.updateCookbookRating).toHaveBeenCalledWith(cookbookId, rating);
+        expect(result).toEqual(mockCookbook);
+      });
+  
+      it('should throw an error if the cookbook does not exist', async () => {
+        const cookbookId = 999;
+        const rating = 4.5;
+        jest
+          .spyOn(service, 'updateCookbookRating')
+          .mockRejectedValue(new BadRequestException('Cookbook does not exist'));
+        await expect(resolver.updateCookbookRating(cookbookId, rating)).rejects.toThrow(
+          'Failed to update cookbook rating: Cookbook does not exist',
+        );
+        expect(service.updateCookbookRating).toHaveBeenCalledWith(cookbookId, rating);
+      });
+  
+      it('should handle unexpected service errors', async () => {
+        const cookbookId = 1;
+        const rating = 4.5;
+        jest
+          .spyOn(service, 'updateCookbookRating')
+          .mockRejectedValue(new Error('Unexpected error'));
+        await expect(resolver.updateCookbookRating(cookbookId, rating)).rejects.toThrow(
+          'Failed to update cookbook rating: Unexpected error',
+        );
+        expect(service.updateCookbookRating).toHaveBeenCalledWith(cookbookId, rating);
+      });
+    });
 });
