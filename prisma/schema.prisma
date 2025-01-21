@@ -23,6 +23,7 @@ model User {
   communities    Community[]
   comments       Comment[]
   mainCookbookId Int?
+  image          String?
   role           Role        @default(USER)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
@@ -61,6 +62,7 @@ model Recipe {
   communities Community[]
   rating      Decimal?    @db.Decimal(3, 2)
   ratingsCount   Int         @default(0)
+  image       String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   @@index([name, userId, prepTime, cookTime]) 

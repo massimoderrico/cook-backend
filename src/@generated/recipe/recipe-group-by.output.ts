@@ -45,6 +45,9 @@ export class RecipeGroupBy {
     @Field(() => Int, {nullable:false})
     ratingsCount!: number;
 
+    @Field(() => String, {nullable:true})
+    image?: string;
+
     @Field(() => Date, {nullable:false})
     createdAt!: Date | string;
 

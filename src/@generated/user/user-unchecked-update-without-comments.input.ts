@@ -32,6 +32,9 @@ export class UserUncheckedUpdateWithoutCommentsInput {
     @Field(() => NullableIntFieldUpdateOperationsInput, {nullable:true})
     mainCookbookId?: NullableIntFieldUpdateOperationsInput;
 
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    image?: NullableStringFieldUpdateOperationsInput;
+
     @Field(() => EnumRoleFieldUpdateOperationsInput, {nullable:true})
     role?: EnumRoleFieldUpdateOperationsInput;
 

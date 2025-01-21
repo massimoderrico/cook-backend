@@ -91,6 +91,7 @@ describe('RecipeService', () => {
         role: 'USER',
         createdAt: undefined,
         updatedAt: undefined,
+        image: null,
       };
   
       const createdRecipeInput: RecipeCreateInput = {
@@ -121,6 +122,7 @@ describe('RecipeService', () => {
         ratingsCount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
+        image: null,
       };
   
       jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser);
@@ -161,6 +163,7 @@ describe('RecipeService', () => {
         role: 'USER',
         createdAt: undefined,
         updatedAt: undefined,
+        image: null,
       };
 
       const mockCreatedRecipe: Recipe = {
@@ -179,6 +182,7 @@ describe('RecipeService', () => {
         description: null,
         user: {   ...mockUser  },
         cookbook: [{ id: mainCookbookId, } as Cookbook],
+        image: null,
       };
 
       jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser);
@@ -218,6 +222,7 @@ describe('RecipeService', () => {
         directions: null,
         prepTime: null,
         cookTime: null,
+        image: null,
       };
       jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(mockRecipe);
       jest.spyOn(prisma.recipe, 'delete').mockResolvedValue(mockRecipe);
@@ -264,6 +269,7 @@ describe('RecipeService', () => {
         directions: null,
         prepTime: null,
         cookTime: null,
+        image: null,
       };
       jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(mockRecipe);
       // Act & Assert
@@ -305,6 +311,7 @@ describe('RecipeService', () => {
         ratingsCount: 0, 
         createdAt: new Date("2024-01-01T00:00:00Z"),
         updatedAt: new Date("2024-01-02T00:00:00Z"),
+        image: "image",
         user: {
           id: 123,
           name: "John Doe",
@@ -326,6 +333,7 @@ describe('RecipeService', () => {
         ratingsCount: 0,
         createdAt: new Date("2024-01-01T00:00:00Z"),
         updatedAt: new Date("2024-01-02T00:00:00Z"),
+        image: "image",
         user: {
           id: 456,
           name: "John Doe2",
@@ -345,6 +353,7 @@ describe('RecipeService', () => {
           ingredients: true,
           prepTime: true,
           cookTime: true,
+          image: true,
         },
       });
       expect(service.createRecipe).toHaveBeenCalledWith({
@@ -354,6 +363,7 @@ describe('RecipeService', () => {
         ingredients: { set: originalRecipe.ingredients },
         prepTime: originalRecipe.prepTime,
         cookTime: originalRecipe.cookTime,
+        image: originalRecipe.image,
         user: { connect: { id: 456 } },
       });
       expect(result).toEqual(mockNewRecipe);
@@ -398,6 +408,7 @@ describe('RecipeService', () => {
         cookbook: null,
         communities: null,
         _count: null,
+        image: null,
       };
       const mockCookbooks: Cookbook[] = [
         {
@@ -472,6 +483,7 @@ describe('RecipeService', () => {
         cookbook: null,
         communities: null,
         _count: null,
+        image: null,
       };
       const input: RecipeUpdateManyMutationInput = {
         name: { set: "Updated Recipe Name" },
@@ -529,6 +541,7 @@ describe('RecipeService', () => {
           cookbook: null,
           communities: null,
           _count: null,
+          image: null,
         },
       ];
       jest.spyOn(prisma.recipe, 'findMany').mockResolvedValue(mockRecipe);
@@ -585,6 +598,7 @@ describe('RecipeService', () => {
           cookbook: null,
           communities: null,
           _count: null,
+          image: null,
         },
       ];
       jest.spyOn(prisma.recipe, 'findMany').mockResolvedValue(mockRecipes);
@@ -624,6 +638,7 @@ describe('RecipeService', () => {
           cookbook: null,
           communities: null,
           _count: null,
+          image: null,
         },
       ];
       jest.spyOn(prisma.recipe, 'findMany').mockResolvedValue(mockRecipes);
@@ -688,6 +703,7 @@ describe('RecipeService', () => {
         cookbook: null,
         communities: null,
         _count: null,
+        image: null,
       };
       const updatedRecipe: Recipe = {
         id: 1,
@@ -707,6 +723,7 @@ describe('RecipeService', () => {
         cookbook: null,
         communities: null,
         _count: null,
+        image: null,
       };
       jest.spyOn(prisma.recipe, 'findUnique').mockResolvedValue(mockExistingRecipe);
       jest.spyOn(prisma.recipe, 'update').mockResolvedValue(updatedRecipe);

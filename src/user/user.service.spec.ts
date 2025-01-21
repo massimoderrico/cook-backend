@@ -64,6 +64,7 @@ describe('UserService', () => {
         cookbooks: null,
         recipes: null,
         communities: null,
+        image: null,
       };
       const mockCookbook: Cookbook = { 
         id: 1,
@@ -117,6 +118,7 @@ describe('UserService', () => {
         recipes: [],
         communities: [],
         comments: [],
+        image: null,
       };
       jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser);
       const result = await service.getUserById(1);
@@ -197,6 +199,7 @@ describe('UserService', () => {
         ],
         recipes: null,
         communities: null,
+        image: null,
       };
       jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser);
       const result = await service.getUserCookbooks(123);
@@ -229,6 +232,7 @@ describe('UserService', () => {
         role: 'USER',
         createdAt: new Date(),
         updatedAt: new Date(),
+        image: null,
       };
       const updatedUser: User = { ...mockUser, name: newName };
       jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser);
@@ -273,6 +277,7 @@ describe('UserService', () => {
         role: 'USER',
         createdAt: new Date(),
         updatedAt: new Date(),
+        image: null,
       };
       const updatedUser: User = { ...mockUser, password: newPassword };
       jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser);
@@ -318,6 +323,7 @@ describe('UserService', () => {
           role: 'USER',
           createdAt: new Date(),
           updatedAt: new Date(),
+          image: null,
         },
       ];
       jest.spyOn(prisma.user, 'findMany').mockResolvedValue(mockUsers);

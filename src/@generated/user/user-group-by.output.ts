@@ -29,6 +29,9 @@ export class UserGroupBy {
     @Field(() => Int, {nullable:true})
     mainCookbookId?: number;
 
+    @Field(() => String, {nullable:true})
+    image?: string;
+
     @Field(() => Role, {nullable:false})
     role!: keyof typeof Role;
 

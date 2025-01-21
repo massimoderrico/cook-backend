@@ -38,6 +38,9 @@ export class RecipeCountAggregateInput {
     ratingsCount?: true;
 
     @Field(() => Boolean, {nullable:true})
+    image?: true;
+
+    @Field(() => Boolean, {nullable:true})
     createdAt?: true;
 
     @Field(() => Boolean, {nullable:true})

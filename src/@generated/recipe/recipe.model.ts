@@ -45,6 +45,9 @@ export class Recipe {
     @Field(() => Int, {nullable:false,defaultValue:0})
     ratingsCount!: number;
 
+    @Field(() => String, {nullable:true})
+    image!: string | null;
+
     @Field(() => Date, {nullable:false})
     createdAt!: Date;
 

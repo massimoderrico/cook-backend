@@ -42,6 +42,9 @@ export class UserWhereInput {
     @Field(() => IntNullableFilter, {nullable:true})
     mainCookbookId?: IntNullableFilter;
 
+    @Field(() => StringNullableFilter, {nullable:true})
+    image?: StringNullableFilter;
+
     @Field(() => EnumRoleFilter, {nullable:true})
     role?: EnumRoleFilter;
 

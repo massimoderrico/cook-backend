@@ -23,6 +23,9 @@ export class UserCountAggregateInput {
     mainCookbookId?: true;
 
     @Field(() => Boolean, {nullable:true})
+    image?: true;
+
+    @Field(() => Boolean, {nullable:true})
     role?: true;
 
     @Field(() => Boolean, {nullable:true})

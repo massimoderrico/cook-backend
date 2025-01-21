@@ -39,6 +39,9 @@ export class RecipeCountAggregate {
     ratingsCount!: number;
 
     @Field(() => Int, {nullable:false})
+    image!: number;
+
+    @Field(() => Int, {nullable:false})
     createdAt!: number;
 
     @Field(() => Int, {nullable:false})

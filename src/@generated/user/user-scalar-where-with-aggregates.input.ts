@@ -37,6 +37,9 @@ export class UserScalarWhereWithAggregatesInput {
     @Field(() => IntNullableWithAggregatesFilter, {nullable:true})
     mainCookbookId?: IntNullableWithAggregatesFilter;
 
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    image?: StringNullableWithAggregatesFilter;
+
     @Field(() => EnumRoleWithAggregatesFilter, {nullable:true})
     role?: EnumRoleWithAggregatesFilter;
 
