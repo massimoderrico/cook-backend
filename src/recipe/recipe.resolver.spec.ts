@@ -58,6 +58,7 @@ describe('RecipeResolver', () => {
       cookbook: null,
       communities: null,
       _count: null,
+      image: null,
     };
 
     it('should duplicate the recipe successfully', async () => {
@@ -122,6 +123,7 @@ describe('RecipeResolver', () => {
       cookbook: null,
       communities: null,
       _count: null,
+      image: null,
     };
 
     it('should add recipe to the cookbooks successfully', async () => {
@@ -164,6 +166,7 @@ describe('RecipeResolver', () => {
         cookbook: null,
         communities: null,
         _count: null,
+        image: null,
       };
       const input: RecipeUpdateManyMutationInput = {
         name: { set: "Updated Recipe Name" },
@@ -214,6 +217,7 @@ describe('RecipeResolver', () => {
           cookbook: null,
           communities: null,
           _count: null,
+          image: null,
         },
       ];
       jest.spyOn(service, 'searchRecipes').mockResolvedValue(mockRecipe);
@@ -252,6 +256,7 @@ describe('RecipeResolver', () => {
           cookbook: null,
           communities: null,
           _count: null,
+          image: null,
         },
       ];
       jest.spyOn(service, 'hpGetTopRecipes').mockResolvedValue(mockRecipes);
@@ -287,6 +292,7 @@ describe('RecipeResolver', () => {
           cookbook: null,
           communities: null,
           _count: null,
+          image: null,
         },
       ];
       jest.spyOn(service, 'hpGetRecentRecipes').mockResolvedValue(mockRecipes);
@@ -320,6 +326,7 @@ describe('RecipeResolver', () => {
       cookbook: null,
       communities: null,
       _count: null,
+      image: null,
     };
 
     it('should update the recipe rating successfully', async () => {

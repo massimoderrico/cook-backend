@@ -48,6 +48,9 @@ export class RecipeUncheckedUpdateManyWithoutCookbookInput {
     @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
     ratingsCount?: IntFieldUpdateOperationsInput;
 
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    image?: NullableStringFieldUpdateOperationsInput;
+
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     createdAt?: DateTimeFieldUpdateOperationsInput;
 

@@ -64,6 +64,9 @@ export class RecipeWhereUniqueInput {
     @Field(() => IntFilter, {nullable:true})
     ratingsCount?: IntFilter;
 
+    @Field(() => StringNullableFilter, {nullable:true})
+    image?: StringNullableFilter;
+
     @Field(() => DateTimeFilter, {nullable:true})
     createdAt?: DateTimeFilter;
 

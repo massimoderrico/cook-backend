@@ -44,6 +44,9 @@ export class RecipeOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     ratingsCount?: keyof typeof SortOrder;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    image?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;
 

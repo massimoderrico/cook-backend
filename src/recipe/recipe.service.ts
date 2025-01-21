@@ -160,6 +160,7 @@ export class RecipeService {
                     ingredients: true,
                     prepTime: true,
                     cookTime: true,
+                    image: true,
                 },
             });
             if (!originalRecipe) {
@@ -173,6 +174,7 @@ export class RecipeService {
                 ingredients: { set: originalRecipe.ingredients },
                 prepTime: originalRecipe.prepTime,
                 cookTime: originalRecipe.cookTime,
+                image: originalRecipe.image,
                 user: {
                     connect: { id: newUserId },
                 },

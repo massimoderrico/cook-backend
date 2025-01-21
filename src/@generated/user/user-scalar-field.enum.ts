@@ -7,6 +7,7 @@ export enum UserScalarFieldEnum {
     username = "username",
     password = "password",
     mainCookbookId = "mainCookbookId",
+    image = "image",
     role = "role",
     createdAt = "createdAt",
     updatedAt = "updatedAt"

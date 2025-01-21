@@ -57,6 +57,7 @@ describe('UserResolver', () => {
         cookbooks: null,
         recipes: null,
         communities: null,
+        image: null,
       };
       jest.spyOn(userService, 'createUser').mockResolvedValue(mockUser);
       const result = await resolver.createUser(input);
@@ -94,6 +95,7 @@ describe('UserResolver', () => {
         recipes: [],
         communities: [],
         comments: [],
+        image: null,
       };
       jest.spyOn(userService, 'getUserById').mockResolvedValue(mockUser);
       const result = await resolver.getUserById(1);
@@ -160,6 +162,7 @@ describe('UserResolver', () => {
         role: 'USER',
         createdAt: new Date(),
         updatedAt: new Date(),
+        image: null,
       };
       const updatedUser: User = { ...mockUser, name: newName };
       jest.spyOn(userService, 'changeNameUser').mockResolvedValue(updatedUser);
@@ -203,6 +206,7 @@ describe('UserResolver', () => {
         role: 'USER',
         createdAt: new Date(),
         updatedAt: new Date(),
+        image: null,
       };
       const updatedUser: User = { ...mockUser, password: newPassword };
       jest.spyOn(userService, 'changeUserPassword').mockResolvedValue(updatedUser);
@@ -247,6 +251,7 @@ describe('UserResolver', () => {
           role: 'USER',
           createdAt: new Date(),
           updatedAt: new Date(),
+          image: null,
         },
       ];
       jest.spyOn(userService, 'searchUser').mockResolvedValue(mockUsers);

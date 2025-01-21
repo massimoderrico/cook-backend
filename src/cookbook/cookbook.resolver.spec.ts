@@ -162,6 +162,7 @@ describe('CookbookResolver', () => {
           ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
+          image: null,
           user: {  
             id: 123,
             name: 'user1',
@@ -172,6 +173,7 @@ describe('CookbookResolver', () => {
             role: Role.USER, // Default role
             createdAt: new Date(), // Mocked creation date
             updatedAt: new Date(), // Mocked update date 
+            image: null,
           },
           cookbook: [],
           communities: [],
@@ -191,6 +193,7 @@ describe('CookbookResolver', () => {
           ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
+          image: null,
           user: { 
             id: 123,
             name: 'user1',
@@ -201,6 +204,7 @@ describe('CookbookResolver', () => {
             role: Role.USER, // Default role
             createdAt: new Date(), // Mocked creation date
             updatedAt: new Date(), // Mocked update date
+            image: null,
           },
           cookbook: [],
           communities: [],
@@ -305,6 +309,7 @@ describe('CookbookResolver', () => {
             cookbook: null,
             communities: null,
             _count: null,
+            image: null,
           }, 
           {
             id: 2,
@@ -324,6 +329,7 @@ describe('CookbookResolver', () => {
             cookbook: null,
             communities: null,
             _count: null,
+            image: null,
           }
         ]
       };
@@ -347,6 +353,7 @@ describe('CookbookResolver', () => {
           cookbook: null,
           communities: null,
           _count: null,
+          image: null,
         }] // Recipe 1 removed
       };
       const cookbookId = 1;

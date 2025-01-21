@@ -72,6 +72,7 @@ describe('CookbookService', () => {
         role: Role.USER, // Default role
         createdAt: new Date(), // Mocked creation date
         updatedAt: new Date(), // Mocked update date
+        image: null,
       };
       jest.spyOn(prisma.user, 'create').mockResolvedValue(mockUser);
       jest.spyOn(prisma.cookbook, 'create').mockResolvedValue(mockCookbook);
@@ -246,6 +247,7 @@ describe('CookbookService', () => {
             ratingsCount: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
+            image: null,
             user: { 
               id: 123,
               name: 'user1',
@@ -256,6 +258,7 @@ describe('CookbookService', () => {
               role: Role.USER, // Default role
               createdAt: new Date(), // Mocked creation date
               updatedAt: new Date(), // Mocked update date 
+              image: null,
             },
             cookbook: [],
             communities: [],
@@ -275,6 +278,7 @@ describe('CookbookService', () => {
             ratingsCount: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
+            image: null,
             user: { 
               id: 123,
               name: 'user1',
@@ -285,6 +289,7 @@ describe('CookbookService', () => {
               role: Role.USER, // Default role
               createdAt: new Date(), // Mocked creation date
               updatedAt: new Date(), // Mocked update date 
+              image: null,
             },
             cookbook: [],
             communities: [],
@@ -405,6 +410,7 @@ describe('CookbookService', () => {
             cookbook: null,
             communities: null,
             _count: null,
+            image: null,
           }, 
           {
             id: 2,
@@ -424,6 +430,7 @@ describe('CookbookService', () => {
             cookbook: null,
             communities: null,
             _count: null,
+            image: null,
           }
         ]
       };
@@ -448,6 +455,7 @@ describe('CookbookService', () => {
             cookbook: null,
             communities: null,
             _count: null,
+            image: null,
           }
         ] // Recipe 1 removed
       };

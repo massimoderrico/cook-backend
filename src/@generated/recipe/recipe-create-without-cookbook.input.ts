@@ -43,6 +43,9 @@ export class RecipeCreateWithoutCookbookInput {
     @Field(() => Int, {nullable:true})
     ratingsCount?: number;
 
+    @Field(() => String, {nullable:true})
+    image?: string;
+
     @Field(() => Date, {nullable:true})
     createdAt?: Date | string;
 
