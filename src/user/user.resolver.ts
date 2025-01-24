@@ -89,4 +89,17 @@ export class UserResolver {
       throw new Error(`Failed to find any users matching ${query}: ${error.message}`);
     }
   }
+
+  @Mutation(() => User)
+  async changePictureUser(
+    @Args('id', { type: () => Number }) id: number,
+    @Args('image', {type: () => String}) image: string
+  ): Promise<User> {
+    try{
+      return await this.userService.changePictureUser(id, image);
+    }
+    catch(error){
+      throw new Error(`Failed to change user's picture: ${error.message}`);
+    }
+  }
 }

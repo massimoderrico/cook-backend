@@ -153,4 +153,20 @@ export class UserService {
             throw error;
         }
     }
+
+    async changePictureUser(userId: number, image :string): Promise<User>{
+        try{
+            const existingUser: User = await this.prisma.user.findUnique({where: {id: userId}});
+            if (!existingUser) {
+                throw new BadRequestException(`User with ID ${userId} does not exist`);
+            }
+            return await this.prisma.user.update({
+                where: {id: userId},
+                data: {image: image}
+            });
+        }
+        catch(error){
+            throw error;
+        }
+    }
 }

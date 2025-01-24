@@ -22,6 +22,7 @@ describe('UserResolver', () => {
             changeNameUser: jest.fn(),
             changeUserPassword: jest.fn(),
             searchUser: jest.fn(),
+            changePictureUser: jest.fn(),
           },
         },
       ],
@@ -266,6 +267,50 @@ describe('UserResolver', () => {
         'Failed to find any users matching test: Some internal error',
       );
       expect(userService.searchUser).toHaveBeenCalledWith('test');
+    });
+  });
+
+  describe('changePictureUser', () => {
+    it('should change the user\'s picture successfully', async () => {
+      const userId = 1;
+      const newImage = "not null";
+      const mockUser: User = {
+        id: userId,
+        name: 'Old Name',
+        email: 'test@example.com',
+        username: 'testuser',
+        password: 'hashedpassword',
+        mainCookbookId: null,
+        role: 'USER',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        image: "null",
+      };
+      const updatedUser: User = { ...mockUser, image: newImage };
+      jest.spyOn(userService, 'changePictureUser').mockResolvedValue(updatedUser);
+      const result = await resolver.changePictureUser(userId, newImage);
+      expect(userService.changePictureUser).toHaveBeenCalledWith(userId, newImage);
+      expect(result).toEqual(updatedUser);
+    });
+
+    it('should throw an error if the user does not exist', async () => {
+      const userId = 1;
+      const newImage = 'mock';
+      jest.spyOn(userService, 'changePictureUser').mockRejectedValue(
+        new BadRequestException(`User with ID ${userId} does not exist`),
+      );
+      await expect(resolver.changePictureUser(userId, newImage)).rejects.toThrow(
+        'Failed to change user\'s picture: User with ID 1 does not exist',
+      );
+    });
+
+    it('should throw an error if there is an internal error', async () => {
+      const userId = 1;
+      const newImage = 'mock';
+      jest.spyOn(userService, 'changePictureUser').mockRejectedValue(new Error('Some internal error'));
+      await expect(resolver.changePictureUser(userId, newImage)).rejects.toThrow(
+        'Failed to change user\'s picture: Some internal error',
+      );
     });
   });
 });
