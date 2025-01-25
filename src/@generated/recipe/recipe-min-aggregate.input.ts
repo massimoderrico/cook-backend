@@ -14,9 +14,6 @@ export class RecipeMinAggregateInput {
     description?: true;
 
     @Field(() => Boolean, {nullable:true})
-    directions?: true;
-
-    @Field(() => Boolean, {nullable:true})
     prepTime?: true;
 
     @Field(() => Boolean, {nullable:true})

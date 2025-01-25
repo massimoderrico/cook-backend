@@ -170,7 +170,7 @@ export class RecipeService {
             const recipeData: RecipeCreateInput = {
                 name: `${originalRecipe.name}-duplicate`,
                 description: originalRecipe.description,
-                directions: originalRecipe.directions,
+                directions: { set: originalRecipe.directions },
                 ingredients: { set: originalRecipe.ingredients },
                 prepTime: originalRecipe.prepTime,
                 cookTime: originalRecipe.cookTime,

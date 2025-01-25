@@ -21,8 +21,8 @@ export class RecipeGroupBy {
     @Field(() => String, {nullable:true})
     description?: string;
 
-    @Field(() => String, {nullable:true})
-    directions?: string;
+    @Field(() => [String], {nullable:true})
+    directions?: Array<string>;
 
     @Field(() => [String], {nullable:true})
     ingredients?: Array<string>;

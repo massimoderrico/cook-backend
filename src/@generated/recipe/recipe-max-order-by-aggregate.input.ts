@@ -15,9 +15,6 @@ export class RecipeMaxOrderByAggregateInput {
     description?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    directions?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     prepTime?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})

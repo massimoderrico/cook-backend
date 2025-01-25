@@ -21,8 +21,8 @@ export class Recipe {
     @Field(() => String, {nullable:true})
     description!: string | null;
 
-    @Field(() => String, {nullable:true})
-    directions!: string | null;
+    @Field(() => [String], {nullable:true})
+    directions!: Array<string>;
 
     @Field(() => [String], {nullable:true})
     ingredients!: Array<string>;

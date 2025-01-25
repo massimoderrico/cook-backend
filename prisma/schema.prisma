@@ -51,7 +51,7 @@ model Recipe {
   id          Int         @id @default(autoincrement())
   name        String
   description String?
-  directions  String?
+  directions  String[]
   ingredients String[]
   prepTime    Int?
   cookTime    Int?

@@ -16,9 +16,6 @@ export class RecipeMaxAggregate {
     @Field(() => String, {nullable:true})
     description?: string;
 
-    @Field(() => String, {nullable:true})
-    directions?: string;
-
     @Field(() => Int, {nullable:true})
     prepTime?: number;
 

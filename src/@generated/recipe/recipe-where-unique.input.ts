@@ -39,8 +39,8 @@ export class RecipeWhereUniqueInput {
     @Field(() => StringNullableFilter, {nullable:true})
     description?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    directions?: StringNullableFilter;
+    @Field(() => StringNullableListFilter, {nullable:true})
+    directions?: StringNullableListFilter;
 
     @Field(() => StringNullableListFilter, {nullable:true})
     ingredients?: StringNullableListFilter;
