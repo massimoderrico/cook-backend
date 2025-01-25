@@ -34,8 +34,8 @@ export class RecipeScalarWhereWithAggregatesInput {
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     description?: StringNullableWithAggregatesFilter;
 
-    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
-    directions?: StringNullableWithAggregatesFilter;
+    @Field(() => StringNullableListFilter, {nullable:true})
+    directions?: StringNullableListFilter;
 
     @Field(() => StringNullableListFilter, {nullable:true})
     ingredients?: StringNullableListFilter;
