@@ -220,4 +220,56 @@ export class CookbookService {
             throw error;
         }
     }
+
+    async addCookbookToCommunity(communityIds: number[], cookBookId: number): Promise<Cookbook> {
+        try {
+            if (!cookBookId){
+                throw new BadRequestException("Cookbook Id is required")
+            }
+            let cookbook = await this.prisma.cookbook.findUnique({
+                where: {id: cookBookId},
+                include: { communities: true, }
+            })
+            if (!cookbook){
+                throw new BadRequestException("Cookbook does not exist")
+            }            
+            const communities = await this.prisma.community.findMany({
+                where: {
+                    id: { in: communityIds },
+                },
+            });
+            const validCommunityIds = communities.map( (c) => c.id)
+            const connectCommunities = validCommunityIds.map((id) => ({ id }))
+            const data: CookbookUpdateInput = {
+                communities : {
+                    connect: connectCommunities,
+                }
+            }
+            const updatedCookbook = await this.prisma.cookbook.update({ 
+                where: {
+                    id: cookBookId,
+                },
+                data,
+                include: {
+                    communities: true,
+                }
+            })
+            await Promise.all(
+                validCommunityIds.map((id)=>
+                    this.prisma.community.update({
+                        where: { id: id },
+                        data: {
+                            recipes:{
+                                connect: { id: cookBookId },
+                            }
+                        }
+                    })
+                )
+            )
+            return updatedCookbook
+        }
+        catch (error) {
+            throw error;
+        }
+    }
 }

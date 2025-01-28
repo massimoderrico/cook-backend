@@ -93,4 +93,16 @@ export class CookbookResolver {
       throw new Error(`Failed to update cookbook rating: ${error.message}`)
     }
   }
+
+  @Mutation(() => Cookbook, {nullable: true})
+  async addCookbookToCommunity(
+    @Args('communityIds', {type: () => [Int]} ) communityIds: number[],
+    @Args('cookbookId', {type: () => Int}) cookbookId: number
+  ): Promise<Cookbook> { 
+    try {
+      return this.cookbookService.addCookbookToCommunity(communityIds, cookbookId);
+    } catch (error) { 
+      throw error;
+    }
+  }
 }
