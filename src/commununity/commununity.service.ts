@@ -1,7 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Community, Recipe, User } from '@prisma/client';
+import { Community, Cookbook, User } from '@prisma/client';
+import { error } from 'console';
 import { CommunityCreateInput } from 'src/@generated/community/community-create.input';
-import { CommunityUpdateInput } from 'src/@generated/community/community-update.input';
+import { RecipeUpdateInput } from 'src/@generated/recipe/recipe-update.input';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -63,7 +64,50 @@ export class CommununityService {
         }
     }
 
-    async addRecipeToCommunity(communityId: number, recipeId: number){
+    async getCommunityByName(name: string): Promise<Community> {
+        try {
+            const community: Community = await this.prisma.community.findUnique({
+                where: {name: name},
+            });
+            if(!community){
+                throw new BadRequestException (`Community with name ${name} does not exist`);
+            }
+            return community;
+        }
+        catch(error){
+            throw error;
+        }
+    }
+
+    async getCommunityCookbooks(name: string): Promise<Cookbook[]>{
+        try{
+            if(!name){
+                throw new BadRequestException(`Community name is required`);
+            }
+
+            const community = await this.prisma.community.findUnique({
+                where: {name: name},
+                include:{
+                    cookbooks:{
+                        include: {
+                            communities: true
+                        }
+                    }
+                }
+            });
+            if(!community){
+                throw new BadRequestException (`Community with name ${name} does not exist`);
+            }
+            return community.cookbooks;
+        }
+        catch(error){
+            throw error;
+        }
+    }
+/*
+VERY UNCLEAR HOW THE THINGS WORK FROM HERE ON OUT... THERES NO LIST OF USERS IN A COMMUNITY? THERES A LIST OF RECIPES? WASNT SURE WHAT/HOW TO WRITE THE FUNCTIONS
+*/
+    async addRecipeToCommunity(data: RecipeUpdateInput, communityId: number, recipeId: number){
         try{
             const recipe = await this.prisma.recipe.findUnique({
                 where: {id: recipeId},
@@ -81,18 +125,13 @@ export class CommununityService {
                 throw new BadRequestException("Community not found");
             }
             
-            await this.prisma.recipe.update({
+            await this.prisma.community.update({
                 where: {id: recipeId},
-                data: {
-                    community: {
-                        connect: {id: communityId},
-                    }
-                }
+                data,
             });
-
         }
         catch(error){
             throw error;
         }
-    } 
+    }
 }
