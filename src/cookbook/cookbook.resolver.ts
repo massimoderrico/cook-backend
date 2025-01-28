@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Query, Int, Float } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql';
 import { CookbookService } from './cookbook.service';
 import { Cookbook } from '../@generated/cookbook/cookbook.model';
 import { Recipe } from '../@generated/recipe/recipe.model';
@@ -63,34 +63,26 @@ export class CookbookResolver {
 
   @Mutation(() => Cookbook)
   async deleteRecipeFromCookbook(
+    @Args('data') data: CookbookUpdateInput,
     @Args("cookbookId", { type: () => Int}) cookbookId: number,
     @Args("recipeId", {type: () => Int}) recipeId: number
   ): Promise<Cookbook> {
     try {
-      return await this.cookbookService.deleteRecipeFromCookbook(cookbookId, recipeId);
+      return await this.cookbookService.deleteRecipeFromCookbook(data, cookbookId, recipeId);
     } catch (error) {
       throw new Error(`Failed to remove recipe from cookbook: ${error.message}`);
     }
   }
 
-  @Query(() => [Cookbook], { nullable: true })
-  async searchCookbook(@Args('query', { type: () => String }) query: string): Promise<Cookbook[]> {
-    try {
-      return await this.cookbookService.searchCookbook(query);
-    } catch (error) {
-      throw new Error(`Failed to find any cookbooks matching ${query}: ${error.message}`);
+  @Mutation(() => Recipe, {nullable: true})
+    async addRecipeToCommunity(
+        @Args('communityIds', {type: () => [Int]} ) communityIds: number[],
+        @Args('cookbookId', {type: () => Int}) cookbookId: number
+    ): Promise<Recipe> { 
+        try {
+            return this.cookbookService.addCookbookToCommunity(communityIds, cookbookId);
+        } catch (error) { 
+            throw error;
+        }
     }
-  }
-
-  @Mutation(() => Cookbook)
-  async updateCookbookRating(  
-    @Args("cookbookId", { type: () => Int }) cookbookId: number,
-    @Args("rating", { type: () => Float }) rating: number,
-  ): Promise<Cookbook>{
-    try {
-      return await this.cookbookService.updateCookbookRating(cookbookId, rating)
-    } catch (error) {
-      throw new Error(`Failed to update cookbook rating: ${error.message}`)
-    }
-  }
 }

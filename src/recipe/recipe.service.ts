@@ -147,6 +147,62 @@ export class RecipeService {
         }
     }
 
+    async addRecipeToCommunity(communityIds: number[], recipeId: number): Promise<Recipe> {
+        //TODO: Handle how we will process the update data. Will it be cookbook id, or whole cookbook object,
+        // TBD with frontend work
+        // Input: recipeId, CookbookId[], recipe object
+        // Output: Adds recipe to all cookbooks in CookbookId, and add all cookbookId to recipe
+        try {
+            if (!recipeId){
+                throw new BadRequestException("Recipe Id is required")
+            }
+            let recipe = await this.prisma.recipe.findUnique({
+                where: {id: recipeId},
+                include: { cookbook: true, }
+            })
+            if (!recipe){
+                throw new BadRequestException("Recipe does not exist")
+            }            
+            const communities = await this.prisma.community.findMany({
+                where: {
+                    id: { in: communityIds },
+                },
+            });
+            const validCommunityIds = communities.map( (c) => c.id)
+            const connectCommunities = validCommunityIds.map((id) => ({ id }))
+            const data: RecipeUpdateInput = {
+                communities : {
+                    connect: connectCommunities,
+                }
+            }
+            const updatedRecipe = await this.prisma.recipe.update({ 
+                where: {
+                    id: recipeId,
+                },
+                data,
+                include: {
+                    communities: true,
+                }
+            })
+            await Promise.all(
+                validCommunityIds.map((id)=>
+                    this.prisma.community.update({
+                        where: { id: id },
+                        data: {
+                            recipes:{
+                                connect: { id: recipeId },
+                            }
+                        }
+                    })
+                )
+            )
+            return updatedRecipe
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+
 
     async duplicateRecipe(recipeId: number, newUserId: number): Promise<Recipe> {
         try {

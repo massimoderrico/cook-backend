@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Community, Cookbook, User } from '@prisma/client';
 import { error } from 'console';
 import { CommunityCreateInput } from 'src/@generated/community/community-create.input';
+import { CommunityUpdateInput } from 'src/@generated/community/community-update.input';
 import { RecipeUpdateInput } from 'src/@generated/recipe/recipe-update.input';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -79,14 +80,14 @@ export class CommununityService {
         }
     }
 
-    async getCommunityCookbooks(name: string): Promise<Cookbook[]>{
+    async getCommunityCookbooks(id: number): Promise<Cookbook[]>{
         try{
-            if(!name){
+            if(!id){
                 throw new BadRequestException(`Community name is required`);
             }
 
             const community = await this.prisma.community.findUnique({
-                where: {name: name},
+                where: {id: id},
                 include:{
                     cookbooks:{
                         include: {
@@ -96,7 +97,7 @@ export class CommununityService {
                 }
             });
             if(!community){
-                throw new BadRequestException (`Community with name ${name} does not exist`);
+                throw new BadRequestException (`Community with id ${id} does not exist`);
             }
             return community.cookbooks;
         }
@@ -107,31 +108,65 @@ export class CommununityService {
 /*
 VERY UNCLEAR HOW THE THINGS WORK FROM HERE ON OUT... THERES NO LIST OF USERS IN A COMMUNITY? THERES A LIST OF RECIPES? WASNT SURE WHAT/HOW TO WRITE THE FUNCTIONS
 */
-    async addRecipeToCommunity(data: RecipeUpdateInput, communityId: number, recipeId: number){
-        try{
-            const recipe = await this.prisma.recipe.findUnique({
-                where: {id: recipeId},
-            });
 
-            if (!recipe) {
-                throw new BadRequestException("Recipe not found");
-            }
+// I put this method in recipe.service
 
-            const community = await this.prisma.community.findUnique({
-                where: {id: communityId},
-            });
+    // async addRecipeToCommunity(data: CommunityUpdateInput, communityId: number, recipeId: number): Promise<Community>{
+    //     try{
+    //         const recipe = await this.prisma.recipe.findUnique({
+    //             where: {id: recipeId},
+    //         });
 
-            if (!community) {
-                throw new BadRequestException("Community not found");
-            }
+    //         if (!recipe) {
+    //             throw new BadRequestException("Recipe not found");
+    //         }
+
+    //         const community = await this.prisma.community.findUnique({
+    //             where: {id: communityId},
+    //         });
+
+    //         if (!community) {
+    //             throw new BadRequestException("Community not found");
+    //         }
             
-            await this.prisma.community.update({
-                where: {id: recipeId},
-                data,
-            });
-        }
-        catch(error){
-            throw error;
-        }
-    }
+    //         return await this.prisma.community.update({
+    //             where: {id: communityId},
+    //             data,
+    //         });
+    //     }
+    //     catch(error){
+    //         throw error;
+    //     }
+    // }
+
+
+    //This function is in cookbook.service 
+
+    // async addCookbookToCommunity(data: CommunityUpdateInput, communityId: number, cookBookId: number): Promise<Community>{
+    //     try{
+    //         const recipe = await this.prisma.recipe.findUnique({
+    //             where: {id: cookBookId},
+    //         });
+
+    //         if (!recipe) {
+    //             throw new BadRequestException("Recipe not found");
+    //         }
+
+    //         const community = await this.prisma.community.findUnique({
+    //             where: {id: communityId},
+    //         });
+
+    //         if (!community) {
+    //             throw new BadRequestException("Community not found");
+    //         }
+            
+    //         return await this.prisma.community.update({
+    //             where: {id: communityId},
+    //             data,
+    //         });
+    //     }
+    //     catch(error){
+    //         throw error;
+    //     }
+    // }
 }

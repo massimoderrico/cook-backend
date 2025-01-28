@@ -3,6 +3,7 @@ import { CreateOneCommunityArgs } from 'src/@generated/community/create-one-comm
 import { CommununityService } from './commununity.service';
 import { Community } from 'src/@generated/community/community.model';
 import { CommunityCreateInput } from 'src/@generated/community/community-create.input';
+import { CommunityUpdateInput } from 'src/@generated/community/community-update.input';
 
 @Resolver()
 export class CommununityResolver {
@@ -49,8 +50,6 @@ export class CommununityResolver {
             throw new Error(`Failed to get cookbooks for community ID ${communityId}: ${error.message}.`);
         }
     }
-    
-    addrecipetocommnity
 
 }
 

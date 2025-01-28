@@ -52,6 +52,18 @@ export class RecipeResolver {
             throw error;
         }
     }
+
+    @Mutation(() => Recipe, {nullable: true})
+    async addRecipeToCommunity(
+        @Args('communityIds', {type: () => [Int]} ) communityIds: number[],
+        @Args('recipeId', {type: () => Int}) recipeId: number
+    ): Promise<Recipe> { 
+        try {
+            return this.recipeService.addRecipeToCommunity(communityIds, recipeId);
+        } catch (error) { 
+            throw error;
+        }
+    }
     
     @Mutation(() => Recipe, { nullable: true })
     async duplicateRecipe(
