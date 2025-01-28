@@ -39,8 +39,8 @@ export class RecipeWhereUniqueInput {
     @Field(() => StringNullableFilter, {nullable:true})
     description?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    directions?: StringNullableFilter;
+    @Field(() => StringNullableListFilter, {nullable:true})
+    directions?: StringNullableListFilter;
 
     @Field(() => StringNullableListFilter, {nullable:true})
     ingredients?: StringNullableListFilter;
@@ -60,6 +60,12 @@ export class RecipeWhereUniqueInput {
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)
     rating?: DecimalNullableFilter;
+
+    @Field(() => IntFilter, {nullable:true})
+    ratingsCount?: IntFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    image?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     createdAt?: DateTimeFilter;

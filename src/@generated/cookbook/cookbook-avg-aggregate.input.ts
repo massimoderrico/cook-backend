@@ -12,4 +12,7 @@ export class CookbookAvgAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     rating?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    ratingsCount?: true;
 }

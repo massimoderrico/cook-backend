@@ -30,6 +30,9 @@ export class User {
     @Field(() => Int, {nullable:true})
     mainCookbookId!: number | null;
 
+    @Field(() => String, {nullable:true})
+    image!: string | null;
+
     @Field(() => Role, {nullable:false,defaultValue:'USER'})
     role!: keyof typeof Role;
 

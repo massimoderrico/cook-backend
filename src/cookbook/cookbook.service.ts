@@ -4,6 +4,7 @@ import { Cookbook, Recipe } from '@prisma/client';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
 import { CookbookUpdateInput } from 'src/@generated/cookbook/cookbook-update.input';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class CookbookService {
@@ -129,7 +130,7 @@ export class CookbookService {
         }
     }
 
-    async deleteRecipeFromCookbook(data: CookbookUpdateInput, cookbookId: number, recipeId: number): Promise<Cookbook>{
+    async deleteRecipeFromCookbook(cookbookId: number, recipeId: number): Promise<Cookbook>{
         try {
             //validate input
             if (!cookbookId) {
@@ -142,18 +143,15 @@ export class CookbookService {
             if (!existingCookbook) {
                 throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
             }
-
             const updatedCookbook = await this.prisma.cookbook.update({
                 where: {id: cookbookId},
                 data: {
-                    ...data,
                     recipes: {
                         disconnect: { id: recipeId}
                     }
                 },
                 include: {recipes: true}
             })
-
             await this.prisma.recipe.update({
                 where : {id: recipeId},
                 data: {
@@ -162,11 +160,64 @@ export class CookbookService {
                     }
                 }
             })
-
             return updatedCookbook
-            
         } catch (error) {
             throw error
+        }
+    }
+
+    async searchCookbook(query: string): Promise<Cookbook[]> {
+        try {
+            //validate presence of a query
+            if (!query) {
+                throw new BadRequestException('Query is required');
+            }
+            //return cookbooks that match query
+            return this.prisma.cookbook.findMany({
+                where: {
+                    OR: [
+                        //search by name
+                        { name: { contains: query, mode: 'insensitive' } }, 
+                        //search in description
+                        { description: { contains: query, mode: 'insensitive' } },
+                    ],
+                },
+            }); 
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateCookbookRating (cookbookId: number, rating: number): Promise<Cookbook> {
+        try {
+            if (!cookbookId) {
+                throw new BadRequestException("Cookbook ID is required to update cookbook rating");
+            }
+            if (rating < 0 || rating > 5) {
+               throw new BadRequestException("Rating must be between 0 and 5");
+            }
+            const existingCookbook = await this.prisma.cookbook.findUnique({
+                where: { id: cookbookId},
+                select: { rating: true, ratingsCount: true },
+            })
+            if (!existingCookbook) {
+                throw new BadRequestException("Cookbook does not exist");
+            }
+            const currentRating = existingCookbook.rating ? existingCookbook.rating : new Decimal(0);
+            const updatedRatingsCount = existingCookbook.ratingsCount + 1;
+            const newRating= new Decimal(
+                (currentRating.toNumber() * existingCookbook.ratingsCount + rating) / updatedRatingsCount
+            );
+            return await this.prisma.cookbook.update({
+                where: { id: cookbookId },
+                data: {
+                    rating: newRating,
+                    ratingsCount: updatedRatingsCount,
+                    updatedAt: new Date(),
+                },
+            })
+        } catch (error) {
+            throw error;
         }
     }
 }

@@ -15,9 +15,6 @@ export class RecipeMaxOrderByAggregateInput {
     description?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    directions?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     prepTime?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
@@ -31,6 +28,12 @@ export class RecipeMaxOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     rating?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    ratingsCount?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    image?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;

@@ -14,9 +14,6 @@ export class RecipeMaxAggregateInput {
     description?: true;
 
     @Field(() => Boolean, {nullable:true})
-    directions?: true;
-
-    @Field(() => Boolean, {nullable:true})
     prepTime?: true;
 
     @Field(() => Boolean, {nullable:true})
@@ -30,6 +27,12 @@ export class RecipeMaxAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     rating?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    ratingsCount?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    image?: true;
 
     @Field(() => Boolean, {nullable:true})
     createdAt?: true;

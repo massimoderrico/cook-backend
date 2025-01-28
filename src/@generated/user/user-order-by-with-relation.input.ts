@@ -29,6 +29,9 @@ export class UserOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     mainCookbookId?: SortOrderInput;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    image?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     role?: keyof typeof SortOrder;
 

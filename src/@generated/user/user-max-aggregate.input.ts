@@ -23,6 +23,9 @@ export class UserMaxAggregateInput {
     mainCookbookId?: true;
 
     @Field(() => Boolean, {nullable:true})
+    image?: true;
+
+    @Field(() => Boolean, {nullable:true})
     role?: true;
 
     @Field(() => Boolean, {nullable:true})

@@ -32,28 +32,28 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async changeNameUser(@Args('id', { type: () => Number }) id: number,
-                       @Args('data', {type: () => String}) data: string
-                      ): Promise<User> {
+  async changeNameUser(
+    @Args('id', { type: () => Number }) id: number,
+    @Args('data', {type: () => String}) data: string
+  ): Promise<User> {
     try{
-      const user = await this.userService.changeNameUser(id, data);
-      return user;
+      return await this.userService.changeNameUser(id, data);
     }
     catch(error){
-      throw new Error("Failed to change user's name: ${error.message}");
+      throw new Error(`Failed to change user's name: ${error.message}`);
     }
   }
 
   @Mutation(() => User)
-  async changeUserPassword(@Args('id', { type: () => Number}) id: number,
-                           @Args('password', {type: () => String}) password: string
-                          ): Promise<User> {
+  async changeUserPassword(
+    @Args('id', { type: () => Number}) id: number,     
+    @Args('password', {type: () => String}) password: string
+  ): Promise<User> {
     try{
-      const user = await this.userService.changeUserPassword(id, password);
-      return user;
+      return await this.userService.changeUserPassword(id, password);
     }
     catch(error){
-      throw new Error("Failed to change user's password: ${error.message}");
+      throw new Error(`Failed to change user's password: ${error.message}`);
     }
   }
 
@@ -78,6 +78,28 @@ export class UserResolver {
       return await this.userService.getUserCookbooks(userId);
     } catch (error) {
       throw new Error(`Failed to get cookbooks for user ID ${userId}: ${error.message}`);
+    }
+  }
+
+  @Query(() => [User], { nullable: true })
+  async searchUser(@Args('query', { type: () => String }) query: string): Promise<User[]> {
+    try {
+      return await this.userService.searchUser(query);
+    } catch (error) {
+      throw new Error(`Failed to find any users matching ${query}: ${error.message}`);
+    }
+  }
+
+  @Mutation(() => User)
+  async changePictureUser(
+    @Args('id', { type: () => Number }) id: number,
+    @Args('image', {type: () => String}) image: string
+  ): Promise<User> {
+    try{
+      return await this.userService.changePictureUser(id, image);
+    }
+    catch(error){
+      throw new Error(`Failed to change user's picture: ${error.message}`);
     }
   }
 }

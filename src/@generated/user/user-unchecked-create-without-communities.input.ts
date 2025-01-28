@@ -28,6 +28,9 @@ export class UserUncheckedCreateWithoutCommunitiesInput {
     @Field(() => Int, {nullable:true})
     mainCookbookId?: number;
 
+    @Field(() => String, {nullable:true})
+    image?: string;
+
     @Field(() => Role, {nullable:true})
     role?: keyof typeof Role;
 

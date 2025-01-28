@@ -16,9 +16,6 @@ export class RecipeMaxAggregate {
     @Field(() => String, {nullable:true})
     description?: string;
 
-    @Field(() => String, {nullable:true})
-    directions?: string;
-
     @Field(() => Int, {nullable:true})
     prepTime?: number;
 
@@ -33,6 +30,12 @@ export class RecipeMaxAggregate {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
+
+    @Field(() => Int, {nullable:true})
+    ratingsCount?: number;
+
+    @Field(() => String, {nullable:true})
+    image?: string;
 
     @Field(() => Date, {nullable:true})
     createdAt?: Date | string;

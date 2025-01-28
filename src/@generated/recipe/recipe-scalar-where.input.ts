@@ -34,8 +34,8 @@ export class RecipeScalarWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     description?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    directions?: StringNullableFilter;
+    @Field(() => StringNullableListFilter, {nullable:true})
+    directions?: StringNullableListFilter;
 
     @Field(() => StringNullableListFilter, {nullable:true})
     ingredients?: StringNullableListFilter;
@@ -55,6 +55,12 @@ export class RecipeScalarWhereInput {
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)
     rating?: DecimalNullableFilter;
+
+    @Field(() => IntFilter, {nullable:true})
+    ratingsCount?: IntFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    image?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     createdAt?: DateTimeFilter;

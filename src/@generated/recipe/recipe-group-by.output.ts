@@ -21,8 +21,8 @@ export class RecipeGroupBy {
     @Field(() => String, {nullable:true})
     description?: string;
 
-    @Field(() => String, {nullable:true})
-    directions?: string;
+    @Field(() => [String], {nullable:true})
+    directions?: Array<string>;
 
     @Field(() => [String], {nullable:true})
     ingredients?: Array<string>;
@@ -41,6 +41,12 @@ export class RecipeGroupBy {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
+
+    @Field(() => Int, {nullable:false})
+    ratingsCount!: number;
+
+    @Field(() => String, {nullable:true})
+    image?: string;
 
     @Field(() => Date, {nullable:false})
     createdAt!: Date | string;

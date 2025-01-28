@@ -34,8 +34,8 @@ export class RecipeScalarWhereWithAggregatesInput {
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     description?: StringNullableWithAggregatesFilter;
 
-    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
-    directions?: StringNullableWithAggregatesFilter;
+    @Field(() => StringNullableListFilter, {nullable:true})
+    directions?: StringNullableListFilter;
 
     @Field(() => StringNullableListFilter, {nullable:true})
     ingredients?: StringNullableListFilter;
@@ -55,6 +55,12 @@ export class RecipeScalarWhereWithAggregatesInput {
     @Field(() => DecimalNullableWithAggregatesFilter, {nullable:true})
     @Type(() => DecimalNullableWithAggregatesFilter)
     rating?: DecimalNullableWithAggregatesFilter;
+
+    @Field(() => IntWithAggregatesFilter, {nullable:true})
+    ratingsCount?: IntWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    image?: StringNullableWithAggregatesFilter;
 
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     createdAt?: DateTimeWithAggregatesFilter;

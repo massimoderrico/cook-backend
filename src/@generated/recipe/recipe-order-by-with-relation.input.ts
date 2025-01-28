@@ -19,8 +19,8 @@ export class RecipeOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     description?: SortOrderInput;
 
-    @Field(() => SortOrderInput, {nullable:true})
-    directions?: SortOrderInput;
+    @Field(() => SortOrder, {nullable:true})
+    directions?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     ingredients?: keyof typeof SortOrder;
@@ -40,6 +40,12 @@ export class RecipeOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     @Type(() => SortOrderInput)
     rating?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    ratingsCount?: keyof typeof SortOrder;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    image?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;

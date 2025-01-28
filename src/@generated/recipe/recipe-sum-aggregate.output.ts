@@ -21,4 +21,7 @@ export class RecipeSumAggregate {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
+
+    @Field(() => Int, {nullable:true})
+    ratingsCount?: number;
 }

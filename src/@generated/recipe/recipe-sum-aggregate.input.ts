@@ -18,4 +18,7 @@ export class RecipeSumAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     rating?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    ratingsCount?: true;
 }

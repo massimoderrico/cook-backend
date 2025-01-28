@@ -5,6 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
+import { Int } from '@nestjs/graphql';
 import { RecipeCreateNestedManyWithoutCookbookInput } from '../recipe/recipe-create-nested-many-without-cookbook.input';
 import { CommunityCreateNestedManyWithoutCookbooksInput } from '../community/community-create-nested-many-without-cookbooks.input';
 
@@ -27,6 +28,9 @@ export class CookbookCreateWithoutUserInput {
     @Type(() => Object)
     @Transform(transformToDecimal)
     rating?: Decimal;
+
+    @Field(() => Int, {nullable:true})
+    ratingsCount?: number;
 
     @Field(() => Date, {nullable:true})
     createdAt?: Date | string;

@@ -6,6 +6,8 @@ import { Recipe } from '../@generated/recipe/recipe.model';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
 import { Role } from '../@generated/prisma/role.enum';
+import { Decimal } from '@prisma/client/runtime/library';
+import { BadRequestException } from '@nestjs/common';
 
 describe('CookbookResolver', () => {
   let resolver: CookbookResolver;
@@ -22,6 +24,9 @@ describe('CookbookResolver', () => {
             editCookbook: jest.fn(),
             getRecipesByCookbookId: jest.fn(),
             getCookbooksByIds: jest.fn(),
+            deleteRecipeFromCookbook: jest.fn(),
+            searchCookbook: jest.fn(),
+            updateCookbookRating: jest.fn(),
           },
         },
       ],
@@ -49,6 +54,7 @@ describe('CookbookResolver', () => {
         updatedAt: new Date(),
         userId: 123,
         rating: null,
+        ratingsCount: 0,
       };
       const input: CookbookCreateInput = {
         name: 'Test Cookbook',
@@ -105,6 +111,7 @@ describe('CookbookResolver', () => {
         isMainCookbook: false,
         userId: 123,
         rating: null,
+        ratingsCount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -145,15 +152,17 @@ describe('CookbookResolver', () => {
           id: 1,
           name: 'Recipe 1',
           description: 'Description of Recipe 1',
-          directions: 'Step-by-step directions for Recipe 1',
+          directions: ['Step-by-step directions for Recipe 1'],
           ingredients: ['ingredient1', 'ingredient2'],
           prepTime: 30,
           cookTime: 60,
           isPublic: true,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
+          image: null,
           user: {  
             id: 123,
             name: 'user1',
@@ -164,6 +173,7 @@ describe('CookbookResolver', () => {
             role: Role.USER, // Default role
             createdAt: new Date(), // Mocked creation date
             updatedAt: new Date(), // Mocked update date 
+            image: null,
           },
           cookbook: [],
           communities: [],
@@ -173,15 +183,17 @@ describe('CookbookResolver', () => {
           id: 2,
           name: 'Recipe 2',
           description: 'Description of Recipe 2',
-          directions: 'Step-by-step directions for Recipe 2',
+          directions: ['Step-by-step directions for Recipe 2'],
           ingredients: ['ingredient1', 'ingredient2'],
           prepTime: 20,
           cookTime: 40,
           isPublic: true,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
+          image: null,
           user: { 
             id: 123,
             name: 'user1',
@@ -192,6 +204,7 @@ describe('CookbookResolver', () => {
             role: Role.USER, // Default role
             createdAt: new Date(), // Mocked creation date
             updatedAt: new Date(), // Mocked update date
+            image: null,
           },
           cookbook: [],
           communities: [],
@@ -229,6 +242,7 @@ describe('CookbookResolver', () => {
           isMainCookbook: false,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -240,6 +254,7 @@ describe('CookbookResolver', () => {
           isMainCookbook: false,
           userId: 123,
           rating: null,
+          ratingsCount: 0,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -260,4 +275,188 @@ describe('CookbookResolver', () => {
       );
     });
   });
+
+  describe('deleteRecipeFromCookbook', () => {
+    it('should remove a recipe from the cookbook with valid input', async () => {
+      // Arrange
+      const mockCookbook: Cookbook = {
+        id: 1,
+        name: 'Cookbook 1',
+        description: 'A test cookbook',
+        isPublic: true,
+        isMainCookbook: false,
+        userId: 123,
+        rating: null,
+        ratingsCount: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        recipes: [
+          {
+            id: 1,
+            name: 'Mock Recipe',
+            description: 'A mock recipe description',
+            directions: ['Mock directions'],
+            ingredients: ['Ingredient1', 'Ingredient2'],
+            prepTime: 10,
+            cookTime: 20,
+            isPublic: false,
+            userId: 2,
+            rating: null,
+            ratingsCount: 0,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: null,
+            cookbook: null,
+            communities: null,
+            _count: null,
+            image: null,
+          }, 
+          {
+            id: 2,
+            name: 'Mock Recipe2',
+            description: 'A mock recipe description',
+            directions: ['Mock directions'],
+            ingredients: ['Ingredient1', 'Ingredient2'],
+            prepTime: 10,
+            cookTime: 20,
+            isPublic: false,
+            userId: 2,
+            rating: null,
+            ratingsCount: 0,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: null,
+            cookbook: null,
+            communities: null,
+            _count: null,
+            image: null,
+          }
+        ]
+      };
+      const mockUpdatedCookbook: Cookbook = {
+        ...mockCookbook,
+        recipes: [{
+          id: 2,
+          name: 'Mock Recipe2',
+          description: 'A mock recipe description',
+          directions: ['Mock directions'],
+          ingredients: ['Ingredient1', 'Ingredient2'],
+          prepTime: 10,
+          cookTime: 20,
+          isPublic: false,
+          userId: 2,
+          rating: null,
+          ratingsCount: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: null,
+          cookbook: null,
+          communities: null,
+          _count: null,
+          image: null,
+        }] // Recipe 1 removed
+      };
+      const cookbookId = 1;
+      const recipeId = 2;
+      jest.spyOn(service, 'deleteRecipeFromCookbook').mockResolvedValue(mockUpdatedCookbook);
+      // Act
+      const result = await resolver.deleteRecipeFromCookbook(cookbookId, recipeId);
+      // Assert
+      expect(service.deleteRecipeFromCookbook).toHaveBeenCalledWith(cookbookId, recipeId);
+      expect(result).toEqual(mockUpdatedCookbook);
+    });
+  
+    it('should throw an error if service fails', async () => {
+      const cookbookId = 1;
+      const recipeId = 2;
+      jest.spyOn(service, 'deleteRecipeFromCookbook').mockRejectedValue(new Error('Service Error'));
+      await expect(resolver.deleteRecipeFromCookbook(cookbookId, recipeId)).rejects.toThrow('Failed to remove recipe from cookbook: Service Error');
+    });
+  
+    it('should throw an error if cookbook does not exist', async () => {
+      const cookbookId = 1;
+      const recipeId = 2;
+      jest.spyOn(service, 'deleteRecipeFromCookbook').mockRejectedValue(new Error('Cookbook with ID 1 does not exist'));
+      await expect(resolver.deleteRecipeFromCookbook(cookbookId, recipeId)).rejects.toThrow('Failed to remove recipe from cookbook: Cookbook with ID 1 does not exist');
+    });
+  });
+
+  describe('searchCookbooks', () => {
+    it('should return cookbooks that match the query', async () => {
+      const mockCookbook: Cookbook[] = [
+        {
+          id: 1,
+          name: 'Cookbook1',
+          description: 'description1',
+          isPublic: true,
+          isMainCookbook: false,
+          userId: 123,
+          rating: null,
+          ratingsCount: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+      jest.spyOn(service, 'searchCookbook').mockResolvedValue(mockCookbook);
+      const result = await resolver.searchCookbook('cookbook');
+      expect(service.searchCookbook).toHaveBeenCalledWith('cookbook');
+      expect(result).toEqual(mockCookbook);
+    });
+    
+    it('should throw an error when the service throws an exception', async () => {
+      jest.spyOn(service, 'searchCookbook').mockRejectedValue(new Error('Some internal error'));
+      await expect(resolver.searchCookbook('test')).rejects.toThrow(
+        'Failed to find any cookbooks matching test: Some internal error',
+      );
+      expect(service.searchCookbook).toHaveBeenCalledWith('test');
+    });
+  });
+
+  describe('updateCookbookRating', () => {
+      const mockCookbook: Cookbook = {
+        id: 1,
+        name: 'Cookbook1',
+        description: 'description1',
+        isPublic: true,
+        isMainCookbook: false,
+        userId: 123,
+        rating: new Decimal(4),
+        ratingsCount: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),       
+      };
+  
+      it('should update the cookbook rating successfully', async () => {
+        const cookbookId = 1;
+        const rating = 5;
+        jest.spyOn(service, 'updateCookbookRating').mockResolvedValue(mockCookbook);
+        const result = await resolver.updateCookbookRating(cookbookId, rating);
+        expect(service.updateCookbookRating).toHaveBeenCalledWith(cookbookId, rating);
+        expect(result).toEqual(mockCookbook);
+      });
+  
+      it('should throw an error if the cookbook does not exist', async () => {
+        const cookbookId = 999;
+        const rating = 4.5;
+        jest
+          .spyOn(service, 'updateCookbookRating')
+          .mockRejectedValue(new BadRequestException('Cookbook does not exist'));
+        await expect(resolver.updateCookbookRating(cookbookId, rating)).rejects.toThrow(
+          'Failed to update cookbook rating: Cookbook does not exist',
+        );
+        expect(service.updateCookbookRating).toHaveBeenCalledWith(cookbookId, rating);
+      });
+  
+      it('should handle unexpected service errors', async () => {
+        const cookbookId = 1;
+        const rating = 4.5;
+        jest
+          .spyOn(service, 'updateCookbookRating')
+          .mockRejectedValue(new Error('Unexpected error'));
+        await expect(resolver.updateCookbookRating(cookbookId, rating)).rejects.toThrow(
+          'Failed to update cookbook rating: Unexpected error',
+        );
+        expect(service.updateCookbookRating).toHaveBeenCalledWith(cookbookId, rating);
+      });
+    });
 });

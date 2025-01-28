@@ -64,9 +64,7 @@ export class UserService {
 
     async changeNameUser(userid: number, data :string): Promise<User>{
         try{
-
-            const existingUser = await this.prisma.user.findUnique({where: {id: userid}});
-
+            const existingUser: User = await this.prisma.user.findUnique({where: {id: userid}});
             if (!existingUser) {
                 throw new BadRequestException(`User with ID ${userid} does not exist`);
             }
@@ -76,14 +74,13 @@ export class UserService {
             });
         }
         catch(error){
-            throw(error.message);
+            throw error;
         }
     }
 
     async changeUserPassword(userid: number, password: string): Promise<User>{
         try{
             const existingUser = await this.prisma.user.findUnique({where: {id: userid}});
-
             if(!existingUser) {
                 throw new BadRequestException(`User with ID ${userid} does not exist`);
             }
@@ -93,7 +90,7 @@ export class UserService {
             });
         }
         catch(error){
-            throw(error.message);
+            throw error;
         }
     }
 
@@ -134,4 +131,42 @@ export class UserService {
             throw error;
         }
     }   
+
+    async searchUser(query: string): Promise<User[]> {
+        try {
+            //validate presence of a query
+            if (!query) {
+                throw new BadRequestException('Query is required');
+            }
+            //return users that match query
+            return this.prisma.user.findMany({
+                where: {
+                  OR: [
+                    //search by name
+                    { name: { contains: query, mode: 'insensitive' } }, 
+                    //search by username
+                    { username: { contains: query, mode: 'insensitive' } },
+                  ],
+                },
+            }); 
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async changePictureUser(userId: number, image :string): Promise<User>{
+        try{
+            const existingUser: User = await this.prisma.user.findUnique({where: {id: userId}});
+            if (!existingUser) {
+                throw new BadRequestException(`User with ID ${userId} does not exist`);
+            }
+            return await this.prisma.user.update({
+                where: {id: userId},
+                data: {image: image}
+            });
+        }
+        catch(error){
+            throw error;
+        }
+    }
 }

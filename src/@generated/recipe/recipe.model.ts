@@ -21,8 +21,8 @@ export class Recipe {
     @Field(() => String, {nullable:true})
     description!: string | null;
 
-    @Field(() => String, {nullable:true})
-    directions!: string | null;
+    @Field(() => [String], {nullable:true})
+    directions!: Array<string>;
 
     @Field(() => [String], {nullable:true})
     ingredients!: Array<string>;
@@ -41,6 +41,12 @@ export class Recipe {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     rating!: Decimal | null;
+
+    @Field(() => Int, {nullable:false,defaultValue:0})
+    ratingsCount!: number;
+
+    @Field(() => String, {nullable:true})
+    image!: string | null;
 
     @Field(() => Date, {nullable:false})
     createdAt!: Date;

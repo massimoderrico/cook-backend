@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RecipeUpdateInput } from 'src/@generated/recipe/recipe-update.input';
 import { RecipeUpdateManyMutationInput } from 'src/@generated/recipe/recipe-update-many-mutation.input';
+import { Decimal } from '@prisma/client/runtime/library';
 
 
 @Injectable()
@@ -90,7 +91,7 @@ export class RecipeService {
         }
     }
 
-    async addRecipeToCookbook(data: RecipeUpdateInput, cookbookIds: number[], recipeId: number): Promise<Recipe> {
+    async addRecipeToCookbook(cookbookIds: number[], recipeId: number): Promise<Recipe> {
         //TODO: Handle how we will process the update data. Will it be cookbook id, or whole cookbook object,
         // TBD with frontend work
         // Input: recipeId, CookbookId[], recipe object
@@ -101,28 +102,23 @@ export class RecipeService {
             }
             let recipe = await this.prisma.recipe.findUnique({
                 where: {id: recipeId},
+                include: { cookbook: true, }
             })
-
             if (!recipe){
                 throw new BadRequestException("Recipe does not exist")
-            }
-            //const cookbooks: [Cookbook] = await this.resolver.getCookbooksByIds(cookbookIds)
-            
+            }            
             const cookbooks = await this.prisma.cookbook.findMany({
                 where: {
                     id: { in: cookbookIds },
                 },
-                
             });
-
             const validCookbookIds = cookbooks.map( (c) => c.id)
             const connectCookbooks = validCookbookIds.map((id) => ({ id }))
-
-            data.cookbook = {
-                connect: connectCookbooks,
-                ...(data.cookbook || {})
+            const data: RecipeUpdateInput = {
+                cookbook : {
+                    connect: connectCookbooks,
+                }
             }
-
             const updatedRecipe = await this.prisma.recipe.update({ 
                 where: {
                     id: recipeId,
@@ -132,7 +128,6 @@ export class RecipeService {
                     cookbook: true,
                 }
             })
-
             await Promise.all(
                 validCookbookIds.map((id)=>
                     this.prisma.cookbook.update({
@@ -145,7 +140,6 @@ export class RecipeService {
                     })
                 )
             )
-
             return updatedRecipe
         }
         catch (error) {
@@ -166,6 +160,7 @@ export class RecipeService {
                     ingredients: true,
                     prepTime: true,
                     cookTime: true,
+                    image: true,
                 },
             });
             if (!originalRecipe) {
@@ -175,10 +170,11 @@ export class RecipeService {
             const recipeData: RecipeCreateInput = {
                 name: `${originalRecipe.name}-duplicate`,
                 description: originalRecipe.description,
-                directions: originalRecipe.directions,
+                directions: { set: originalRecipe.directions },
                 ingredients: { set: originalRecipe.ingredients },
                 prepTime: originalRecipe.prepTime,
                 cookTime: originalRecipe.cookTime,
+                image: originalRecipe.image,
                 user: {
                     connect: { id: newUserId },
                 },
@@ -189,6 +185,93 @@ export class RecipeService {
             throw error;
         }
     } 
+
+    async searchRecipes(query: string): Promise<Recipe[]> {
+        try {
+            // Validate the presence of a query
+            if (!query) {
+                throw new BadRequestException('Query is required');
+            }
+            // Return recipes that match the query
+            return this.prisma.recipe.findMany({
+                where: {
+                    OR: [
+                        // Search by name
+                        { name: { contains: query, mode: 'insensitive' } },
+                        // Search in description
+                        { description: { contains: query, mode: 'insensitive' } },
+                        // Search in ingredients
+                        { ingredients: { hasSome: query.split(',').map(ingredient => ingredient.trim()) } },
+                    ],
+                },
+            });
+        } catch (error) {
+          throw error;
+        }
+    }      
+
+    async hpGetTopRecipes(skip: number, first: number): Promise<Recipe[]> {
+        try {
+            // Return top rated recipes
+            return this.prisma.recipe.findMany({
+                orderBy: {
+                  rating: 'desc', // Sort recipes by rating in descending order
+                },
+                skip, // Number of items to skip
+                take: first, // Number of items to fetch
+            });
+        } catch (error) {
+            throw error;
+        }
+    }  
+    
+    async hpGetRecentRecipes(skip: number, first: number): Promise<Recipe[]> {
+        try {
+            // Return top rated recipes
+            return this.prisma.recipe.findMany({
+                orderBy: {
+                  createdAt: 'desc', // Sort recipes by creation in descending order
+                },
+                skip, // Number of items to skip
+                take: first, // Number of items to fetch
+            });
+        } catch (error) {
+            throw error;
+        }
+    }    
+
+    async updateRecipeRating (recipeId: number, rating: number): Promise<Recipe> {
+        try {
+            if (!recipeId) {
+                throw new BadRequestException("Recipe ID is required to update recipe rating");
+            }
+            if (rating < 0 || rating > 5) {
+                throw new BadRequestException("Rating must be between 0 and 5");
+            }
+            const existingRecipe = await this.prisma.recipe.findUnique({
+                where: { id: recipeId},
+                select: { rating: true, ratingsCount: true },
+            })
+            if (!existingRecipe) {
+                throw new BadRequestException("Recipe does not exist");
+            }
+            const currentRating = existingRecipe.rating ? existingRecipe.rating : new Decimal(0);
+            const updatedRatingsCount = existingRecipe.ratingsCount + 1;
+            const newRating= new Decimal(
+                (currentRating.toNumber() * existingRecipe.ratingsCount + rating) / updatedRatingsCount
+            );
+            return await this.prisma.recipe.update({
+                where: { id: recipeId },
+                data: {
+                    rating: newRating,
+                    ratingsCount: updatedRatingsCount,
+                    updatedAt: new Date(),
+                },
+            })
+        } catch (error) {
+            throw error;
+        }
+    }
 }
     
 

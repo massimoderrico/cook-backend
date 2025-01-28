@@ -36,6 +36,12 @@ export class RecipeCountOrderByAggregateInput {
     rating?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
+    ratingsCount?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    image?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
