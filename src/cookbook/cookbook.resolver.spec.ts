@@ -27,6 +27,7 @@ describe('CookbookResolver', () => {
             deleteRecipeFromCookbook: jest.fn(),
             searchCookbook: jest.fn(),
             updateCookbookRating: jest.fn(),
+            addRecipesToCookbook: jest.fn(),
           },
         },
       ],
@@ -457,6 +458,39 @@ describe('CookbookResolver', () => {
           'Failed to update cookbook rating: Unexpected error',
         );
         expect(service.updateCookbookRating).toHaveBeenCalledWith(cookbookId, rating);
+      });
+    });
+
+    describe('addRecipesToCookbook', () => {
+      const mockCookbook: Cookbook = {
+        id: 1,
+        name: 'Test Cookbook',
+        description: null,
+        isPublic: false,
+        isMainCookbook: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        userId: 2,
+        rating: null,
+        ratingsCount: 0,
+      };
+  
+      it('should add recipes to the cookbook successfully', async () => {
+        const recipeIds = [1, 2];
+        const cookbookId = 1;
+        jest.spyOn(service, 'addRecipesToCookbook').mockResolvedValue(mockCookbook);
+        const result = await resolver.addRecipesToCookbook(cookbookId, recipeIds);
+        expect(service.addRecipesToCookbook).toHaveBeenCalledWith(cookbookId, recipeIds);
+        expect(result).toEqual(mockCookbook);
+      });
+  
+      it('should throw an error if the service throws an exception', async () => {
+        const cookbookId = 1;
+        const recipeIds = [1, 2];
+        jest.spyOn(service, 'addRecipesToCookbook').mockRejectedValue(new BadRequestException('Error occurred'));
+        await expect(resolver.addRecipesToCookbook(cookbookId, recipeIds)).rejects.toThrow(
+          'Error occurred'
+        );
       });
     });
 });

@@ -7,6 +7,7 @@ import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { Role } from '../@generated/prisma/role.enum';
 import { Decimal } from '@prisma/client/runtime/library';
+import { Recipe } from 'src/@generated/recipe/recipe.model';
 
 
 describe('CookbookService', () => {
@@ -33,6 +34,7 @@ describe('CookbookService', () => {
             },
             recipe: {
               update: jest.fn(),
+              findMany: jest.fn(),
             },
           },
         },
@@ -629,4 +631,105 @@ describe('CookbookService', () => {
       await expect(service.updateCookbookRating(cookbookId, rating)).rejects.toThrow('Database Error');
     });
   });
+
+  describe('addRecipesToCookbook', () => {
+      it('should throw BadRequestException if cookbookId is not provided', async () => {
+        const recipeIds = [1, 2];
+        await expect(service.addRecipesToCookbook(null, recipeIds)).rejects.toThrow(
+          'Cookbook Id is required'
+        );
+      });
+  
+      it('should throw BadRequestException if cookbook does not exist', async () => {
+        const cookbookId = 1;
+        const recipeIds = [1, 2];
+        jest.spyOn(prisma.cookbook, 'findUnique').mockResolvedValue(null);
+        await expect(service.addRecipesToCookbook(cookbookId, recipeIds)).rejects.toThrow(
+          'Cookbook does not exist'
+        );
+      });
+  
+      it('should successfully add recipes to cookbook', async () => {
+        const cookbookId = 1;
+        const recipeIds = [1, 2];
+        const mockRecipes: Recipe[] = [
+          {
+            id: 1,
+            name: 'Mock Recipe',
+            description: 'A mock recipe description',
+            directions: ['Mock directions'],
+            ingredients: ['Ingredient1', 'Ingredient2'],
+            prepTime: 10,
+            cookTime: 20,
+            isPublic: false,
+            userId: 2,
+            rating: null,
+            ratingsCount: 0,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: null,
+            cookbook: null,
+            communities: null,
+            _count: null,
+            image: null,
+          },
+          {
+            id: 2,
+            name: 'Mock Recipe2',
+            description: 'A mock recipe description2',
+            directions: ['Mock directions2'],
+            ingredients: ['Ingredient1', 'Ingredient2'],
+            prepTime: 10,
+            cookTime: 20,
+            isPublic: false,
+            userId: 2,
+            rating: null,
+            ratingsCount: 0,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            user: null,
+            cookbook: null,
+            communities: null,
+            _count: null,
+            image: null,
+          },
+        ];
+        const mockCookbook: Cookbook = {
+          id: 1,
+          name: 'Test Cookbook',
+          description: null,
+          isPublic: false,
+          isMainCookbook: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          userId: 2,
+          rating: null,
+          ratingsCount: 0,
+        };
+        const updatedCookbook = { ...mockCookbook, recipes: mockRecipes };
+        jest.spyOn(prisma.cookbook, 'findUnique').mockResolvedValue(mockCookbook);
+        jest.spyOn(prisma.recipe, 'findMany').mockResolvedValue(mockRecipes);
+        jest.spyOn(prisma.cookbook, 'update').mockResolvedValue(updatedCookbook);
+        jest.spyOn(prisma.recipe, 'update').mockResolvedValue(mockRecipes[0]);
+        const result = await service.addRecipesToCookbook(cookbookId, recipeIds);
+        expect(prisma.cookbook.findUnique).toHaveBeenCalledWith({
+          where: { id: cookbookId },
+          include: { recipes: true },
+        });
+        expect(prisma.recipe.findMany).toHaveBeenCalledWith({
+          where: { id: { in: recipeIds } },
+        });
+        expect(prisma.cookbook.update).toHaveBeenCalledWith({
+          where: { id: cookbookId },
+          data: {
+            recipes: {
+              connect: mockRecipes.map((c) => ({ id: c.id })),
+            },
+          },
+          include: { recipes: true },
+        });
+        expect(prisma.recipe.update).toHaveBeenCalledTimes(recipeIds.length);
+        expect(result).toEqual(updatedCookbook);
+      });
+    });
 });
