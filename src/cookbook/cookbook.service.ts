@@ -220,4 +220,55 @@ export class CookbookService {
             throw error;
         }
     }
+
+    async addRecipesToCookbook (cookbookId: number, recipeIds: number[]): Promise<Cookbook> {
+        try {
+            if (!cookbookId) {
+                throw new BadRequestException("Cookbook Id is required");
+            }
+            let cookbook: Cookbook = await this.prisma.cookbook.findUnique({
+                where: {id: cookbookId},
+                include: { recipes: true, }
+            });
+            if (!cookbook) {
+                throw new BadRequestException("Cookbook does not exist");
+            }
+            const recipes: Recipe[] = await this.prisma.recipe.findMany({
+                where: {
+                    id: { in: recipeIds },
+                },
+            });
+            const validRecipeIds = recipes.map( (r) => r.id );
+            const connectRecipes = validRecipeIds.map( (id) => ({ id }) );
+            const data: CookbookUpdateInput = {
+                recipes: {
+                    connect: connectRecipes,
+                }
+            }
+            const updatedCookbook: Cookbook = await this.prisma.cookbook.update({
+                where: {
+                    id: cookbookId
+                },
+                data,
+                include: {
+                    recipes: true,
+                }
+            });
+            await Promise.all(
+                validRecipeIds.map( (id) => 
+                    this.prisma.recipe.update({
+                        where: { id: id },
+                        data: {
+                            cookbook: {
+                                connect: { id: cookbookId },
+                            }
+                        }
+                    })
+                )
+            );
+            return updatedCookbook;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
