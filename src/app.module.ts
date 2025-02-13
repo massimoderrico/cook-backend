@@ -11,6 +11,7 @@ import { RecipeModule } from './recipe/recipe.module';
 import { CookbookModule } from './cookbook/cookbook.module';
 import { UserModule } from './user/user.module';
 import { AppResolver } from './app.resolver';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   providers: [PrismaService, AppService, AppResolver],
@@ -28,7 +29,8 @@ import { AppResolver } from './app.resolver';
     CommununityModule,
     RecipeModule,
     CookbookModule,
-    UserModule
+    UserModule,
+    AuthModule
   ],
 })
 export class AppModule {}
