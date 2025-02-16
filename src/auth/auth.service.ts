@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { UserService } from 'src/user/user.service';
-import { UserCreateInput } from 'src/@generated/user/user-create.input';
 
 @Injectable()
 export class AuthService {
@@ -15,30 +14,36 @@ export class AuthService {
 
   async signup(signupInput: { email: string; username: string; password: string }) {
     const { email, username, password } = signupInput;
-
+  
     // Check if user with email already exists
     const existingEmail = await this.prisma.user.findUnique({
       where: { email },
     });
     if (existingEmail) throw new ConflictException('User already exists with that email');
-
+  
     // Check if user with username already exists
     const existingUsername = await this.prisma.user.findUnique({
       where: { username },
     });
     if (existingUsername) throw new ConflictException('Username unavailable');
-
+  
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
-
+  
     // Create the user
-    await this.userService.createUser( 
-      { email: email, 
-        username: username,
-        password: hashedPassword });
-
-    return true;
+    const user = await this.userService.createUser({
+      email,
+      username,
+      password: hashedPassword,
+    });
+  
+    // Generate JWT
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const accessToken = this.jwtService.sign(payload);
+  
+    return { accessToken, userId: user.id, email: user.email };
   }
+  
 
   async login(loginInput: { email: string; password: string }) {
     const { email, password } = loginInput;
