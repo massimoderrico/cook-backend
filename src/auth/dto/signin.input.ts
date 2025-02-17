@@ -22,5 +22,8 @@ export class SignInResponse {
 
   @Field()
   email: string;
+
+  @Field()
+  username: string;
 }
 
