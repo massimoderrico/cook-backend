@@ -3,13 +3,13 @@ import { Prisma, User } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service';
 import { UserCreateInput } from '../@generated/user/user-create.input';
 import { CookbookCreateInput } from 'src/@generated/cookbook/cookbook-create.input';
-import { CookbookResolver } from 'src/cookbook/cookbook.resolver';
 import { Cookbook } from 'src/@generated/cookbook/cookbook.model';
 import { UserUpdateInput } from 'src/@generated/user/user-update.input';
+import { CookbookService } from 'src/cookbook/cookbook.service';
 
 @Injectable()
 export class UserService {
-    constructor(private prisma: PrismaService, private resolver: CookbookResolver){}
+    constructor(private prisma: PrismaService, private cookbook: CookbookService){}
 
     async createUser(data: UserCreateInput){
         try{
@@ -31,9 +31,9 @@ export class UserService {
                 name: 'All Recipes',
                 description: 'Main cookbook containing all saved recipes',
                 isMainCookbook: true,
-                user: { connect: { id: userId } }, // Minimal user input
+                user: { connect: { id: userId } }, 
             };
-            const createdCookbook = await this.resolver.createCookbook(input);
+            const createdCookbook = await this.cookbook.createCookbook(input);
             
             const updatedUser = await this.prisma.user.update({
                 where: {id: userId},

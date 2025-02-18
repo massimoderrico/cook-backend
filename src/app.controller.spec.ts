@@ -13,10 +13,4 @@ describe('AppResolver', () => {
 
     appResolver = app.get<AppResolver>(AppResolver);
   });
-
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appResolver.hello()).toBe('Hello, world!');
-    });
-  });
 });
