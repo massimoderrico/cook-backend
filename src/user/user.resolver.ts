@@ -6,6 +6,7 @@ import { UserCreateInput } from 'src/@generated/user/user-create.input';
 import { UserService } from './user.service';
 import { Cookbook } from 'src/@generated/cookbook/cookbook.model';
 import { UserUpdateInput } from 'src/@generated/user/user-update.input';
+import { Recipe } from 'src/@generated/recipe/recipe.model';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -78,6 +79,15 @@ export class UserResolver {
       return await this.userService.getUserCookbooks(userId);
     } catch (error) {
       throw new Error(`Failed to get cookbooks for user ID ${userId}: ${error.message}`);
+    }
+  }
+
+  @Query(() => [Recipe], { nullable: true })
+  async getUserRecipes(@Args('userId', { type: () => Number }) userId: number): Promise<Recipe[]> {
+    try {
+      return await this.userService.getUserRecipes(userId);
+    } catch (error) {
+      throw new Error(`Failed to get recipes for user ID ${userId}: ${error.message}`);
     }
   }
 
