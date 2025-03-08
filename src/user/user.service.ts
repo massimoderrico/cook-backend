@@ -6,6 +6,7 @@ import { CookbookCreateInput } from 'src/@generated/cookbook/cookbook-create.inp
 import { Cookbook } from 'src/@generated/cookbook/cookbook.model';
 import { UserUpdateInput } from 'src/@generated/user/user-update.input';
 import { CookbookService } from 'src/cookbook/cookbook.service';
+import { Recipe } from 'src/@generated/recipe/recipe.model';
 
 @Injectable()
 export class UserService {
@@ -131,6 +132,30 @@ export class UserService {
             throw error;
         }
     }   
+
+    async getUserRecipes(userId: number): Promise<Recipe[]> {
+        try {
+            //validate presence of a user ID
+            if (!userId) {
+                throw new BadRequestException('User ID is required');
+            }
+            //get the user along with its cookbooks
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { 
+                    recipes: true,
+                }, 
+            });
+            //handle case where the user does not exist
+            if (!user) {
+                throw new BadRequestException(`User with ID ${userId} does not exist`);
+            }
+            //return the cookbooks
+            return user.recipes;
+        } catch (error) {
+            throw error;
+        }
+    }
 
     async searchUser(query: string): Promise<User[]> {
         try {
