@@ -14,19 +14,19 @@ export class AuthService {
 
   async signup(signupInput: { email: string; username: string; password: string }) {
     const { email, username, password } = signupInput;
-  
-    // Check if user with email already exists
-    const existingEmail = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    if (existingEmail) throw new ConflictException('User already exists with that email');
-  
+    
     // Check if user with username already exists
     const existingUsername = await this.prisma.user.findUnique({
       where: { username },
     });
     if (existingUsername) throw new ConflictException('Username unavailable');
   
+    // Check if user with email already exists
+    const existingEmail = await this.prisma.user.findUnique({
+      where: { email },
+    });
+    if (existingEmail) throw new ConflictException('User already exists with that email');
+
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
   
