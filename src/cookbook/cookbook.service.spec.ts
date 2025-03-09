@@ -527,6 +527,7 @@ describe('CookbookService', () => {
       const result = await service.searchCookbook('description');
       expect(prisma.cookbook.findMany).toHaveBeenCalledWith({
         where: {
+          isPublic: true,
           OR: [
             { name: { contains: 'description', mode: 'insensitive' } },
             { description: { contains: 'description', mode: 'insensitive' } },
@@ -545,6 +546,7 @@ describe('CookbookService', () => {
       await expect(service.searchCookbook('description')).rejects.toThrow('Database error');
       expect(prisma.cookbook.findMany).toHaveBeenCalledWith({
         where: {
+          isPublic: true,
           OR: [
             { name: { contains: 'description', mode: 'insensitive' } },
             { description: { contains: 'description', mode: 'insensitive' } },

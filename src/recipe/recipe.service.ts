@@ -195,6 +195,7 @@ export class RecipeService {
             // Return recipes that match the query
             return this.prisma.recipe.findMany({
                 where: {
+                    isPublic: true,
                     OR: [
                         // Search by name
                         { name: { contains: query, mode: 'insensitive' } },
