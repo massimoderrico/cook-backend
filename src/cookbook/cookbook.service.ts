@@ -175,6 +175,7 @@ export class CookbookService {
             //return cookbooks that match query
             return this.prisma.cookbook.findMany({
                 where: {
+                    isPublic: true,
                     OR: [
                         //search by name
                         { name: { contains: query, mode: 'insensitive' } }, 

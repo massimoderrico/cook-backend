@@ -531,7 +531,7 @@ describe('RecipeService', () => {
           ingredients: ['Ingredient1', 'Ingredient2'],
           prepTime: 10,
           cookTime: 20,
-          isPublic: false,
+          isPublic: true,
           userId: 2,
           rating: null,
           ratingsCount: 0,
@@ -548,6 +548,7 @@ describe('RecipeService', () => {
       const result = await service.searchRecipes('Ingredient1');
       expect(prisma.recipe.findMany).toHaveBeenCalledWith({
         where: {
+          isPublic: true,
           OR: [
             { name: { contains: 'Ingredient1', mode: 'insensitive' } },
             { description: { contains: 'Ingredient1', mode: 'insensitive' } },
@@ -567,6 +568,7 @@ describe('RecipeService', () => {
       await expect(service.searchRecipes('description')).rejects.toThrow('Database error');
       expect(prisma.recipe.findMany).toHaveBeenCalledWith({
         where: {
+          isPublic: true,
           OR: [
             { name: { contains: 'description', mode: 'insensitive' } },
             { description: { contains: 'description', mode: 'insensitive' } },
