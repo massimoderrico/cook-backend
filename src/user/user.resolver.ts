@@ -32,6 +32,16 @@ export class UserResolver {
     }
   }
 
+  @Query(() => Number, { nullable: true })
+  async getUserIdByEmail(@Args('email', { type: () => String }) email: string): Promise<Number> {
+    try {
+      return await this.userService.getUserIdByEmail(email);
+    }
+    catch(error){
+      throw new Error(`Failed to get user id: ${error.message}`);
+    }
+  }
+
   @Mutation(() => User)
   async changeNameUser(
     @Args('id', { type: () => Number }) id: number,
