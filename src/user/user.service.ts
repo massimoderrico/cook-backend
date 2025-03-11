@@ -63,6 +63,25 @@ export class UserService {
         }
     }
 
+    async getUserIdByEmail(email: string): Promise<number> {
+        try {
+            const user = await this.prisma.user.findUnique({
+                where: { email: email },
+                select: { id: true }, // Only fetch the id
+            });
+    
+            if (!user) {
+                throw new BadRequestException(`User with email ${email} does not exist`);
+            }
+    
+            return user.id;
+        } 
+        catch (error) {
+            throw error;
+        }
+    }
+    
+
     async changeNameUser(userid: number, data :string): Promise<User>{
         try{
             const existingUser: User = await this.prisma.user.findUnique({where: {id: userid}});
