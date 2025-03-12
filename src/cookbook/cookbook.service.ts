@@ -44,6 +44,9 @@ export class CookbookService {
                 where: {
                     id: { in: ids },
                 },
+                include: {
+                    recipes: true, // Include recipes for each cookbook
+                },
             });
         } catch (error) {
             throw error;
