@@ -186,6 +186,9 @@ export class CookbookService {
                         { description: { contains: query, mode: 'insensitive' } },
                     ],
                 },
+                include: {
+                    recipes: true,
+                },
             }); 
         } catch (error) {
             throw error;
