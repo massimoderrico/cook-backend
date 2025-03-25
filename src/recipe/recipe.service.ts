@@ -215,6 +215,12 @@ export class RecipeService {
         try {
             // Return top rated recipes
             return this.prisma.recipe.findMany({
+                where: {
+                    rating: {
+                        not: null, // Exclude recipes where rating is null
+                    },
+                    isPublic: true,
+                },
                 orderBy: {
                   rating: 'desc', // Sort recipes by rating in descending order
                 },
@@ -230,6 +236,9 @@ export class RecipeService {
         try {
             // Return top rated recipes
             return this.prisma.recipe.findMany({
+                where: {
+                    isPublic: true, // Only return public recipes
+                },
                 orderBy: {
                   createdAt: 'desc', // Sort recipes by creation in descending order
                 },
