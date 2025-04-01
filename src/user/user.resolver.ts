@@ -1,5 +1,5 @@
 // Example in a User Resolver
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { User } from '../@generated/user/user.model';
 import { NotFoundException } from '@nestjs/common';
 import { UserCreateInput } from 'src/@generated/user/user-create.input';
@@ -112,7 +112,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   async changePictureUser(
-    @Args('id', { type: () => Number }) id: number,
+    @Args('id', { type: () => Int }) id: number,
     @Args('image', {type: () => String}) image: string
   ): Promise<User> {
     try{
