@@ -3,7 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
 import { CommunityWhereInput } from './community-where.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
-import { IntFilter } from '../prisma/int-filter.input';
+import { StringFilter } from '../prisma/string-filter.input';
 import { UserRelationFilter } from '../user/user-relation-filter.input';
 import { Type } from 'class-transformer';
 import { RecipeListRelationFilter } from '../recipe/recipe-list-relation-filter.input';
@@ -30,8 +30,8 @@ export class CommunityWhereUniqueInput {
     @Field(() => StringNullableFilter, {nullable:true})
     description?: StringNullableFilter;
 
-    @Field(() => IntFilter, {nullable:true})
-    userId?: IntFilter;
+    @Field(() => StringFilter, {nullable:true})
+    userId?: StringFilter;
 
     @Field(() => UserRelationFilter, {nullable:true})
     @Type(() => UserRelationFilter)

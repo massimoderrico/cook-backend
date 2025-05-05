@@ -25,6 +25,6 @@ export class CommunityScalarWhereWithAggregatesInput {
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     description?: StringNullableWithAggregatesFilter;
 
-    @Field(() => IntWithAggregatesFilter, {nullable:true})
-    userId?: IntWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    userId?: StringWithAggregatesFilter;
 }

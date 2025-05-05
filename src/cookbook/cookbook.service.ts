@@ -3,279 +3,249 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Cookbook, Recipe } from '@prisma/client';
 import { CookbookCreateInput } from '../@generated/cookbook/cookbook-create.input';
 import { CookbookUpdateManyMutationInput } from '../@generated/cookbook/cookbook-update-many-mutation.input';
-import { CookbookUpdateInput } from 'src/@generated/cookbook/cookbook-update.input';
 import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class CookbookService {
-    constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
-    async createCookbook(data: CookbookCreateInput): Promise<Cookbook> {
-        try {
-            //validate presence of cookbook name
-            if (!data.name) {
-                throw new BadRequestException('Cookbook name is required for creation');
-            }
-            let userId: number = data.user.connect.id
-            //ensure user exists in database
-            await this.prisma.user.findUnique({where: {id: userId}})
-            //create cookbook in database
-            return this.prisma.cookbook.create({
-                data: {
-                    ...data,
-                    user: {
-                        connect: { id: userId },
-                    },
-                },
-            });
-        } catch (error) {
-            throw error;
-        }
+  /**
+   * Create a new cookbook.
+   */
+  async createCookbook(data: CookbookCreateInput): Promise<Cookbook> {
+    if (!data.name) {
+      throw new BadRequestException('Cookbook name is required for creation');
     }
 
-    async getCookbooksByIds(ids: number[]): Promise<Cookbook[]> {
-        try {
-            //validate input
-            if (!ids || ids.length === 0) {
-                throw new BadRequestException('Array of cookbook IDs must not be empty');
-            }
-            //get cookbooks from the database
-            return await this.prisma.cookbook.findMany({
-                where: {
-                    id: { in: ids },
-                },
-                include: {
-                    recipes: true, // Include recipes for each cookbook
-                },
-            });
-        } catch (error) {
-            throw error;
-        }
-    }   
-    
-    async getRecipesByCookbookId(cookbookId: number): Promise<Recipe[]> {
-        try {
-            //validate presence of a cookbook ID
-            if (!cookbookId) {
-                throw new BadRequestException('Cookbook ID is required');
-            }
-            //get the cookbook along with its recipes
-            const cookbook = await this.prisma.cookbook.findUnique({
-                where: { id: cookbookId },
-                include: { 
-                    recipes: {
-                        include: {
-                            cookbook: true, // Include cookbook for each recipe
-                            communities: true,
-                        },
-                    } 
-                }, //include the related recipes
-            });
-            //handle case where the cookbook does not exist
-            if (!cookbook) {
-                throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
-            }
-            //return the recipes
-            return cookbook.recipes;
-        } catch (error) {
-            throw error;
-        }
-    }    
+    const userId = data.user.connect.id;
 
-    async deleteCookbook(cookbookId: number, userId: number): Promise<boolean> {
-        try {
-            if (!cookbookId || !userId) {
-                throw new BadRequestException('Cookbook ID and User ID are required to delete a cookbook.');
-            }
-      
-            //get the cookbook and validate ownership
-            const cookbook = await this.prisma.cookbook.findUnique({
-                where: { id: cookbookId },
-                select: { userId: true },
-            });
-            if (!cookbook) {
-                throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist.`);
-            }
-            if (cookbook.userId !== userId) {
-                throw new BadRequestException('User does not have permission to delete this cookbook.');
-            }
-            //delete cookbook from database
-            await this.prisma.cookbook.delete({
-                where: { id: cookbookId },
-            });
-            //succesfully deleted
-            return true;
-        } catch (error) {
-            throw error;
-        }
+    // Ensure the user exists
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestException(`User with ID ${userId} does not exist`);
     }
 
-    async editCookbook(cookbookId: number, data: CookbookUpdateManyMutationInput,): Promise<Cookbook> {
-        try {
-            //validate input
-            if (!cookbookId) {
-                throw new BadRequestException('Cookbook ID is required');
-            }
-            //get the cookbook to ensure it exists in the database
-            const existingCookbook = await this.prisma.cookbook.findUnique({
-                where: { id: cookbookId },
-            });
-            if (!existingCookbook) {
-                throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
-            }
-            //edit the cookbook in the database
-            return await this.prisma.cookbook.update({
-                where: { id: cookbookId },
-                data,
-            });
-        } catch (error) {
-            throw error;
-        }
+    // Create the cookbook
+    return this.prisma.cookbook.create({
+      data: {
+        ...data,
+        user: { connect: { id: userId } },
+      },
+    });
+  }
+
+  /**
+   * Get cookbooks by their IDs.
+   */
+  async getCookbooksByIds(ids: number[]): Promise<Cookbook[]> {
+    if (!ids || ids.length === 0) {
+      throw new BadRequestException('Array of cookbook IDs must not be empty');
     }
 
-    async deleteRecipeFromCookbook(cookbookId: number, recipeId: number): Promise<Cookbook>{
-        try {
-            //validate input
-            if (!cookbookId) {
-                throw new BadRequestException('Cookbook ID is required');
-            }
-            //get the cookbook to ensure it exists in the database
-            const existingCookbook = await this.prisma.cookbook.findUnique({
-                where: { id: cookbookId },
-            });
-            if (!existingCookbook) {
-                throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
-            }
-            const updatedCookbook = await this.prisma.cookbook.update({
-                where: {id: cookbookId},
-                data: {
-                    recipes: {
-                        disconnect: { id: recipeId}
-                    }
-                },
-                include: {recipes: true}
-            })
-            await this.prisma.recipe.update({
-                where : {id: recipeId},
-                data: {
-                    cookbook: {
-                        disconnect: {id: cookbookId}
-                    }
-                }
-            })
-            return updatedCookbook
-        } catch (error) {
-            throw error
-        }
+    return this.prisma.cookbook.findMany({
+      where: { id: { in: ids } },
+      include: { recipes: true },
+    });
+  }
+
+  /**
+   * Get recipes by cookbook ID.
+   */
+  async getRecipesByCookbookId(cookbookId: number): Promise<Recipe[]> {
+    if (!cookbookId) {
+      throw new BadRequestException('Cookbook ID is required');
     }
 
-    async searchCookbook(query: string): Promise<Cookbook[]> {
-        try {
-            //validate presence of a query
-            if (!query) {
-                throw new BadRequestException('Query is required');
-            }
-            //return cookbooks that match query
-            return this.prisma.cookbook.findMany({
-                where: {
-                    isPublic: true,
-                    OR: [
-                        //search by name
-                        { name: { contains: query, mode: 'insensitive' } }, 
-                        //search in description
-                        { description: { contains: query, mode: 'insensitive' } },
-                    ],
-                },
-                include: {
-                    recipes: true,
-                },
-            }); 
-        } catch (error) {
-            throw error;
-        }
+    const cookbook = await this.prisma.cookbook.findUnique({
+      where: { id: cookbookId },
+      include: {
+        recipes: {
+          include: {
+            cookbook: true,
+            communities: true,
+          },
+        },
+      },
+    });
+
+    if (!cookbook) {
+      throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
     }
 
-    async updateCookbookRating (cookbookId: number, rating: number): Promise<Cookbook> {
-        try {
-            if (!cookbookId) {
-                throw new BadRequestException("Cookbook ID is required to update cookbook rating");
-            }
-            if (rating < 0 || rating > 5) {
-               throw new BadRequestException("Rating must be between 0 and 5");
-            }
-            const existingCookbook = await this.prisma.cookbook.findUnique({
-                where: { id: cookbookId},
-                select: { rating: true, ratingsCount: true },
-            })
-            if (!existingCookbook) {
-                throw new BadRequestException("Cookbook does not exist");
-            }
-            const currentRating = existingCookbook.rating ? existingCookbook.rating : new Decimal(0);
-            const updatedRatingsCount = existingCookbook.ratingsCount + 1;
-            const newRating= new Decimal(
-                (currentRating.toNumber() * existingCookbook.ratingsCount + rating) / updatedRatingsCount
-            );
-            return await this.prisma.cookbook.update({
-                where: { id: cookbookId },
-                data: {
-                    rating: newRating,
-                    ratingsCount: updatedRatingsCount,
-                    updatedAt: new Date(),
-                },
-            })
-        } catch (error) {
-            throw error;
-        }
+    return cookbook.recipes;
+  }
+
+  /**
+   * Delete a cookbook.
+   */
+  async deleteCookbook(cookbookId: number, userId: string): Promise<boolean> {
+    if (!cookbookId || !userId) {
+      throw new BadRequestException('Cookbook ID and User ID are required to delete a cookbook.');
     }
 
-    async addRecipesToCookbook (cookbookId: number, recipeIds: number[]): Promise<Cookbook> {
-        try {
-            if (!cookbookId) {
-                throw new BadRequestException("Cookbook Id is required");
-            }
-            let cookbook: Cookbook = await this.prisma.cookbook.findUnique({
-                where: {id: cookbookId},
-                include: { recipes: true, }
-            });
-            if (!cookbook) {
-                throw new BadRequestException("Cookbook does not exist");
-            }
-            const recipes: Recipe[] = await this.prisma.recipe.findMany({
-                where: {
-                    id: { in: recipeIds },
-                },
-            });
-            const validRecipeIds = recipes.map( (r) => r.id );
-            const connectRecipes = validRecipeIds.map( (id) => ({ id }) );
-            const data: CookbookUpdateInput = {
-                recipes: {
-                    connect: connectRecipes,
-                }
-            }
-            const updatedCookbook: Cookbook = await this.prisma.cookbook.update({
-                where: {
-                    id: cookbookId
-                },
-                data,
-                include: {
-                    recipes: true,
-                }
-            });
-            await Promise.all(
-                validRecipeIds.map( (id) => 
-                    this.prisma.recipe.update({
-                        where: { id: id },
-                        data: {
-                            cookbook: {
-                                connect: { id: cookbookId },
-                            }
-                        }
-                    })
-                )
-            );
-            return updatedCookbook;
-        } catch (error) {
-            throw error;
-        }
+    const cookbook = await this.prisma.cookbook.findUnique({
+      where: { id: cookbookId },
+      select: { userId: true },
+    });
+
+    if (!cookbook) {
+      throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist.`);
     }
+
+    if (cookbook.userId !== userId) {
+      throw new BadRequestException('User does not have permission to delete this cookbook.');
+    }
+
+    await this.prisma.cookbook.delete({ where: { id: cookbookId } });
+    return true;
+  }
+
+  /**
+   * Edit a cookbook.
+   */
+  async editCookbook(cookbookId: number, data: CookbookUpdateManyMutationInput): Promise<Cookbook> {
+    if (!cookbookId) {
+      throw new BadRequestException('Cookbook ID is required');
+    }
+
+    const existingCookbook = await this.prisma.cookbook.findUnique({ where: { id: cookbookId } });
+    if (!existingCookbook) {
+      throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
+    }
+
+    return this.prisma.cookbook.update({
+      where: { id: cookbookId },
+      data,
+    });
+  }
+
+  /**
+   * Delete a recipe from a cookbook.
+   */
+  async deleteRecipeFromCookbook(cookbookId: number, recipeId: number): Promise<Cookbook> {
+    if (!cookbookId) {
+      throw new BadRequestException('Cookbook ID is required');
+    }
+
+    const existingCookbook = await this.prisma.cookbook.findUnique({ where: { id: cookbookId } });
+    if (!existingCookbook) {
+      throw new BadRequestException(`Cookbook with ID ${cookbookId} does not exist`);
+    }
+
+    const updatedCookbook = await this.prisma.cookbook.update({
+      where: { id: cookbookId },
+      data: {
+        recipes: { disconnect: { id: recipeId } },
+      },
+      include: { recipes: true },
+    });
+
+    await this.prisma.recipe.update({
+      where: { id: recipeId },
+      data: {
+        cookbook: { disconnect: { id: cookbookId } },
+      },
+    });
+
+    return updatedCookbook;
+  }
+
+  /**
+   * Search for cookbooks by query.
+   */
+  async searchCookbook(query: string): Promise<Cookbook[]> {
+    if (!query) {
+      throw new BadRequestException('Query is required');
+    }
+
+    return this.prisma.cookbook.findMany({
+      where: {
+        isPublic: true,
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
+          { description: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      include: { recipes: true },
+    });
+  }
+
+  /**
+   * Update a cookbook's rating.
+   */
+  async updateCookbookRating(cookbookId: number, rating: number): Promise<Cookbook> {
+    if (!cookbookId) {
+      throw new BadRequestException('Cookbook ID is required to update cookbook rating');
+    }
+
+    if (rating < 0 || rating > 5) {
+      throw new BadRequestException('Rating must be between 0 and 5');
+    }
+
+    const existingCookbook = await this.prisma.cookbook.findUnique({
+      where: { id: cookbookId },
+      select: { rating: true, ratingsCount: true },
+    });
+
+    if (!existingCookbook) {
+      throw new BadRequestException('Cookbook does not exist');
+    }
+
+    const currentRating = existingCookbook.rating || new Decimal(0);
+    const updatedRatingsCount = existingCookbook.ratingsCount + 1;
+    const newRating = new Decimal(
+      (currentRating.toNumber() * existingCookbook.ratingsCount + rating) / updatedRatingsCount,
+    );
+
+    return this.prisma.cookbook.update({
+      where: { id: cookbookId },
+      data: {
+        rating: newRating,
+        ratingsCount: updatedRatingsCount,
+        updatedAt: new Date(),
+      },
+    });
+  }
+
+  /**
+   * Add recipes to a cookbook.
+   */
+  async addRecipesToCookbook(cookbookId: number, recipeIds: number[]): Promise<Cookbook> {
+    if (!cookbookId) {
+      throw new BadRequestException('Cookbook ID is required');
+    }
+
+    const cookbook = await this.prisma.cookbook.findUnique({
+      where: { id: cookbookId },
+      include: { recipes: true },
+    });
+
+    if (!cookbook) {
+      throw new BadRequestException('Cookbook does not exist');
+    }
+
+    const recipes = await this.prisma.recipe.findMany({
+      where: { id: { in: recipeIds } },
+    });
+
+    const validRecipeIds = recipes.map((r) => r.id);
+    const connectRecipes = validRecipeIds.map((id) => ({ id }));
+
+    const updatedCookbook = await this.prisma.cookbook.update({
+      where: { id: cookbookId },
+      data: { recipes: { connect: connectRecipes } },
+      include: { recipes: true },
+    });
+
+    await Promise.all(
+      validRecipeIds.map((id) =>
+        this.prisma.recipe.update({
+          where: { id },
+          data: { cookbook: { connect: { id: cookbookId } } },
+        }),
+      ),
+    );
+
+    return updatedCookbook;
+  }
 }

@@ -1,13 +1,13 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { JwtAuthGuard } from './auth/jwt/jwt-auth.guard';
+import { SupabaseAuthGuard } from './auth/auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Apply global JWT guard
+  // Apply global Supabase Auth guard
   const reflector = app.get(Reflector);
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
+  app.useGlobalGuards(new SupabaseAuthGuard(reflector));
 
   await app.listen(4000);
 }

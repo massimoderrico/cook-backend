@@ -14,8 +14,5 @@ export class CommentAvgAggregate {
     rating?: Decimal;
 
     @Field(() => Float, {nullable:true})
-    userId?: number;
-
-    @Field(() => Float, {nullable:true})
     resourceId?: number;
 }

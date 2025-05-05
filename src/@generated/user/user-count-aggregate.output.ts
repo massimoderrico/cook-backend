@@ -9,19 +9,13 @@ export class UserCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
-    name!: number;
-
-    @Field(() => Int, {nullable:false})
     email!: number;
 
     @Field(() => Int, {nullable:false})
     username!: number;
 
     @Field(() => Int, {nullable:false})
-    password!: number;
-
-    @Field(() => Int, {nullable:false})
-    mainCookbookId!: number;
+    name!: number;
 
     @Field(() => Int, {nullable:false})
     image!: number;
@@ -34,6 +28,9 @@ export class UserCountAggregate {
 
     @Field(() => Int, {nullable:false})
     updatedAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    mainCookbookId!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

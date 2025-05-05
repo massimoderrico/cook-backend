@@ -12,8 +12,5 @@ export class CommentAvgOrderByAggregateInput {
     rating?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    userId?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     resourceId?: keyof typeof SortOrder;
 }

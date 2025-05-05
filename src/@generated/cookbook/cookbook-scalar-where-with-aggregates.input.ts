@@ -38,8 +38,8 @@ export class CookbookScalarWhereWithAggregatesInput {
     @Field(() => BoolWithAggregatesFilter, {nullable:true})
     isMainCookbook?: BoolWithAggregatesFilter;
 
-    @Field(() => IntWithAggregatesFilter, {nullable:true})
-    userId?: IntWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    userId?: StringWithAggregatesFilter;
 
     @Field(() => DecimalNullableWithAggregatesFilter, {nullable:true})
     @Type(() => DecimalNullableWithAggregatesFilter)

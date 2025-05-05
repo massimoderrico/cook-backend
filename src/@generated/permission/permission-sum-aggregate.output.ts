@@ -9,8 +9,5 @@ export class PermissionSumAggregate {
     id?: number;
 
     @Field(() => Int, {nullable:true})
-    userId?: number;
-
-    @Field(() => Int, {nullable:true})
     resourceId?: number;
 }

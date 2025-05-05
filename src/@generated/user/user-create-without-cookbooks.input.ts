@@ -1,7 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { Int } from '@nestjs/graphql';
 import { Role } from '../prisma/role.enum';
+import { Int } from '@nestjs/graphql';
 import { RecipeCreateNestedManyWithoutUserInput } from '../recipe/recipe-create-nested-many-without-user.input';
 import { Type } from 'class-transformer';
 import { CommunityCreateNestedManyWithoutUserInput } from '../community/community-create-nested-many-without-user.input';
@@ -11,7 +11,7 @@ import { CommentCreateNestedManyWithoutUserInput } from '../comment/comment-crea
 export class UserCreateWithoutCookbooksInput {
 
     @Field(() => String, {nullable:true})
-    name?: string;
+    id?: string;
 
     @Field(() => String, {nullable:false})
     email!: string;
@@ -19,11 +19,8 @@ export class UserCreateWithoutCookbooksInput {
     @Field(() => String, {nullable:false})
     username!: string;
 
-    @Field(() => String, {nullable:false})
-    password!: string;
-
-    @Field(() => Int, {nullable:true})
-    mainCookbookId?: number;
+    @Field(() => String, {nullable:true})
+    name?: string;
 
     @Field(() => String, {nullable:true})
     image?: string;
@@ -36,6 +33,9 @@ export class UserCreateWithoutCookbooksInput {
 
     @Field(() => Date, {nullable:true})
     updatedAt?: Date | string;
+
+    @Field(() => Int, {nullable:true})
+    mainCookbookId?: number;
 
     @Field(() => RecipeCreateNestedManyWithoutUserInput, {nullable:true})
     @Type(() => RecipeCreateNestedManyWithoutUserInput)

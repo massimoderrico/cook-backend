@@ -9,19 +9,13 @@ export class UserMinOrderByAggregateInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    name?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     email?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     username?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    password?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    mainCookbookId?: keyof typeof SortOrder;
+    name?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     image?: keyof typeof SortOrder;
@@ -34,4 +28,7 @@ export class UserMinOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     updatedAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    mainCookbookId?: keyof typeof SortOrder;
 }

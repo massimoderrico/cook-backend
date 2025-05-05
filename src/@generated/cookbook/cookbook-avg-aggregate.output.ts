@@ -10,9 +10,6 @@ export class CookbookAvgAggregate {
     @Field(() => Float, {nullable:true})
     id?: number;
 
-    @Field(() => Float, {nullable:true})
-    userId?: number;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
 

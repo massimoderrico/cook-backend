@@ -17,8 +17,8 @@ export class CommentMaxAggregate {
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
 
-    @Field(() => Int, {nullable:true})
-    userId?: number;
+    @Field(() => String, {nullable:true})
+    userId?: string;
 
     @Field(() => Int, {nullable:true})
     resourceId?: number;

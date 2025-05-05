@@ -26,8 +26,8 @@ export class CookbookUncheckedUpdateManyWithoutCommunitiesInput {
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     isMainCookbook?: BoolFieldUpdateOperationsInput;
 
-    @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
-    userId?: IntFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    userId?: StringFieldUpdateOperationsInput;
 
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)

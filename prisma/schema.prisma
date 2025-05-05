@@ -8,26 +8,29 @@ generator nestgraphql {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id             Int         @id @default(autoincrement())
-  name           String?
+  id             String      @id @default(cuid())  // Match Supabase UUID if you want 1:1 mapping
   email          String      @unique
   username       String      @unique
-  password       String
+  name           String?
+  image          String?
+  role           Role        @default(USER)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  // Relations
   recipes        Recipe[]
   cookbooks      Cookbook[]
   communities    Community[]
   comments       Comment[]
   mainCookbookId Int?
-  image          String?
-  role           Role        @default(USER)
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  @@index([username, email]) 
+
+  @@index([username, email])
 }
 
 model Cookbook {
@@ -36,7 +39,7 @@ model Cookbook {
   description    String?
   isPublic       Boolean     @default(false)
   isMainCookbook Boolean     @default(false)
-  userId         Int         
+  userId         String         
   user           User        @relation(fields: [userId], references: [id])
   recipes        Recipe[]
   communities    Community[]
@@ -56,7 +59,7 @@ model Recipe {
   prepTime    Int?
   cookTime    Int?
   isPublic    Boolean     @default(false)
-  userId      Int
+  userId      String
   user        User        @relation(fields: [userId], references: [id]) 
   cookbook    Cookbook[]
   communities Community[]
@@ -72,7 +75,7 @@ model Community {
   id          Int        @id @default(autoincrement())
   name        String     @unique
   description String?
-  userId      Int
+  userId      String
   user        User       @relation(fields: [userId], references: [id]) 
   recipes     Recipe[]
   cookbooks   Cookbook[]
@@ -83,7 +86,7 @@ model Comment {
   id           Int          @id @default(autoincrement())
   description  String
   rating       Decimal?     @db.Decimal(2, 1)
-  userId       Int
+  userId       String
   user         User         @relation(fields: [userId], references: [id])
   resourceId   Int
   resourceType ResourceType
@@ -95,7 +98,7 @@ model Comment {
 model Permission {
   id              Int             @id @default(autoincrement())
   permissionLevel PermissionLevel
-  userId          Int
+  userId          String
   resourceId      Int
   resourceType    ResourceType
   createdAt       DateTime        @default(now())

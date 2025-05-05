@@ -121,7 +121,7 @@ export class PermissionService {
         }
     }
 
-    async editPermission(userId: number, resourceId: number, resourceType: ResourceType, permissionLevel: PermissionLevel): Promise<Permission> {
+    async editPermission(userId: string, resourceId: number, resourceType: ResourceType, permissionLevel: PermissionLevel): Promise<Permission> {
         try {
             //ensure user ID, resource ID, resource type, and permission level are not null
             if (!userId || !resourceId || !resourceType || !permissionLevel) {

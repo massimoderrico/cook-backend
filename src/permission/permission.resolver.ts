@@ -39,7 +39,7 @@ export class PermissionResolver {
 
     @Mutation(() => Permission)
     async editPermission( 
-        @Args('userId', { type: () => Int }) userId: number,
+        @Args('userId', { type: () => Int }) userId: string,
         @Args('resourceId', { type: () => Int }) resourceId: number,
         @Args('resourceType', { type: () => ResourceType }) resourceType: ResourceType,
         @Args('permissionLevel', { type: () => PermissionLevel }) permissionLevel: PermissionLevel,

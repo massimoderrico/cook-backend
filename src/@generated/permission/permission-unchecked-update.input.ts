@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operations.input';
 import { EnumPermissionLevelFieldUpdateOperationsInput } from '../prisma/enum-permission-level-field-update-operations.input';
+import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
 import { EnumResourceTypeFieldUpdateOperationsInput } from '../prisma/enum-resource-type-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 
@@ -14,8 +15,8 @@ export class PermissionUncheckedUpdateInput {
     @Field(() => EnumPermissionLevelFieldUpdateOperationsInput, {nullable:true})
     permissionLevel?: EnumPermissionLevelFieldUpdateOperationsInput;
 
-    @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
-    userId?: IntFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    userId?: StringFieldUpdateOperationsInput;
 
     @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
     resourceId?: IntFieldUpdateOperationsInput;

@@ -20,7 +20,7 @@ export class RecipeResolver {
     @Mutation(() => Boolean)
     async deleteRecipe(
         @Args('recipeId', { type: () => Int }) recipeId: number,
-        @Args('userId', { type: () => Int }) userId: number,
+        @Args('userId', { type: () => Int }) userId: string,
     ): Promise<boolean> {
         try {
             return await this.recipeService.deleteRecipe(recipeId, userId);
@@ -56,7 +56,7 @@ export class RecipeResolver {
     @Mutation(() => Recipe, { nullable: true })
     async duplicateRecipe(
         @Args('recipeId', { type: () => Int }) recipeId: number,
-        @Args('newUserId', { type: () => Int }) newUserId: number,
+        @Args('newUserId', { type: () => Int }) newUserId: string,
     ): Promise<Recipe> {
         try {
             return await this.recipeService.duplicateRecipe(recipeId, newUserId);

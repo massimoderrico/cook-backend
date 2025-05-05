@@ -14,20 +14,14 @@ export class UserOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     id?: keyof typeof SortOrder;
 
-    @Field(() => SortOrderInput, {nullable:true})
-    name?: SortOrderInput;
-
     @Field(() => SortOrder, {nullable:true})
     email?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     username?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    password?: keyof typeof SortOrder;
-
     @Field(() => SortOrderInput, {nullable:true})
-    mainCookbookId?: SortOrderInput;
+    name?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
     image?: SortOrderInput;
@@ -40,6 +34,9 @@ export class UserOrderByWithAggregationInput {
 
     @Field(() => SortOrder, {nullable:true})
     updatedAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    mainCookbookId?: SortOrderInput;
 
     @Field(() => UserCountOrderByAggregateInput, {nullable:true})
     _count?: UserCountOrderByAggregateInput;

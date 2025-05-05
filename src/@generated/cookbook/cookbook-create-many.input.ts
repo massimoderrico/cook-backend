@@ -25,8 +25,8 @@ export class CookbookCreateManyInput {
     @Field(() => Boolean, {nullable:true})
     isMainCookbook?: boolean;
 
-    @Field(() => Int, {nullable:false})
-    userId!: number;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)

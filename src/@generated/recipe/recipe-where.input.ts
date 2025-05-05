@@ -52,8 +52,8 @@ export class RecipeWhereInput {
     @Field(() => BoolFilter, {nullable:true})
     isPublic?: BoolFilter;
 
-    @Field(() => IntFilter, {nullable:true})
-    userId?: IntFilter;
+    @Field(() => StringFilter, {nullable:true})
+    userId?: StringFilter;
 
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)

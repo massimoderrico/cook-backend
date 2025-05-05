@@ -20,8 +20,8 @@ export class CommentUncheckedUpdateManyInput {
     @Type(() => NullableDecimalFieldUpdateOperationsInput)
     rating?: NullableDecimalFieldUpdateOperationsInput;
 
-    @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
-    userId?: IntFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    userId?: StringFieldUpdateOperationsInput;
 
     @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
     resourceId?: IntFieldUpdateOperationsInput;

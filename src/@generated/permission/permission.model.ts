@@ -14,8 +14,8 @@ export class Permission {
     @Field(() => PermissionLevel, {nullable:false})
     permissionLevel!: keyof typeof PermissionLevel;
 
-    @Field(() => Int, {nullable:false})
-    userId!: number;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
     @Field(() => Int, {nullable:false})
     resourceId!: number;

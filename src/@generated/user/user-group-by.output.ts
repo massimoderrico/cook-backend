@@ -1,7 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
-import { Int } from '@nestjs/graphql';
 import { Role } from '../prisma/role.enum';
+import { Int } from '@nestjs/graphql';
 import { UserCountAggregate } from './user-count-aggregate.output';
 import { UserAvgAggregate } from './user-avg-aggregate.output';
 import { UserSumAggregate } from './user-sum-aggregate.output';
@@ -11,11 +11,8 @@ import { UserMaxAggregate } from './user-max-aggregate.output';
 @ObjectType()
 export class UserGroupBy {
 
-    @Field(() => Int, {nullable:false})
-    id!: number;
-
-    @Field(() => String, {nullable:true})
-    name?: string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
     @Field(() => String, {nullable:false})
     email!: string;
@@ -23,11 +20,8 @@ export class UserGroupBy {
     @Field(() => String, {nullable:false})
     username!: string;
 
-    @Field(() => String, {nullable:false})
-    password!: string;
-
-    @Field(() => Int, {nullable:true})
-    mainCookbookId?: number;
+    @Field(() => String, {nullable:true})
+    name?: string;
 
     @Field(() => String, {nullable:true})
     image?: string;
@@ -40,6 +34,9 @@ export class UserGroupBy {
 
     @Field(() => Date, {nullable:false})
     updatedAt!: Date | string;
+
+    @Field(() => Int, {nullable:true})
+    mainCookbookId?: number;
 
     @Field(() => UserCountAggregate, {nullable:true})
     _count?: UserCountAggregate;

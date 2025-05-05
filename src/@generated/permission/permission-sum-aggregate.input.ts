@@ -8,8 +8,5 @@ export class PermissionSumAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    userId?: true;
-
-    @Field(() => Boolean, {nullable:true})
     resourceId?: true;
 }

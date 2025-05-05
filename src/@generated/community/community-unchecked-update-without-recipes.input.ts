@@ -18,8 +18,8 @@ export class CommunityUncheckedUpdateWithoutRecipesInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     description?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => IntFieldUpdateOperationsInput, {nullable:true})
-    userId?: IntFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    userId?: StringFieldUpdateOperationsInput;
 
     @Field(() => CookbookUncheckedUpdateManyWithoutCommunitiesNestedInput, {nullable:true})
     @Type(() => CookbookUncheckedUpdateManyWithoutCommunitiesNestedInput)

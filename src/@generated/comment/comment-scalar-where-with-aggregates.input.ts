@@ -32,8 +32,8 @@ export class CommentScalarWhereWithAggregatesInput {
     @Type(() => DecimalNullableWithAggregatesFilter)
     rating?: DecimalNullableWithAggregatesFilter;
 
-    @Field(() => IntWithAggregatesFilter, {nullable:true})
-    userId?: IntWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    userId?: StringWithAggregatesFilter;
 
     @Field(() => IntWithAggregatesFilter, {nullable:true})
     resourceId?: IntWithAggregatesFilter;

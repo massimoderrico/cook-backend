@@ -1,8 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
-import { Int } from '@nestjs/graphql';
 import { Role } from '../prisma/role.enum';
+import { Int } from '@nestjs/graphql';
 import { Recipe } from '../recipe/recipe.model';
 import { Cookbook } from '../cookbook/cookbook.model';
 import { Community } from '../community/community.model';
@@ -13,10 +13,7 @@ import { UserCount } from './user-count.output';
 export class User {
 
     @Field(() => ID, {nullable:false})
-    id!: number;
-
-    @Field(() => String, {nullable:true})
-    name!: string | null;
+    id!: string;
 
     @Field(() => String, {nullable:false})
     email!: string;
@@ -24,11 +21,8 @@ export class User {
     @Field(() => String, {nullable:false})
     username!: string;
 
-    @Field(() => String, {nullable:false})
-    password!: string;
-
-    @Field(() => Int, {nullable:true})
-    mainCookbookId!: number | null;
+    @Field(() => String, {nullable:true})
+    name!: string | null;
 
     @Field(() => String, {nullable:true})
     image!: string | null;
@@ -41,6 +35,9 @@ export class User {
 
     @Field(() => Date, {nullable:false})
     updatedAt!: Date;
+
+    @Field(() => Int, {nullable:true})
+    mainCookbookId!: number | null;
 
     @Field(() => [Recipe], {nullable:true})
     recipes?: Array<Recipe>;

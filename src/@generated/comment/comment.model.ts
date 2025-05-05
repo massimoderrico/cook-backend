@@ -19,8 +19,8 @@ export class Comment {
     @Field(() => GraphQLDecimal, {nullable:true})
     rating!: Decimal | null;
 
-    @Field(() => Int, {nullable:false})
-    userId!: number;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
     @Field(() => Int, {nullable:false})
     resourceId!: number;

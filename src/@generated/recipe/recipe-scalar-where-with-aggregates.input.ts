@@ -49,8 +49,8 @@ export class RecipeScalarWhereWithAggregatesInput {
     @Field(() => BoolWithAggregatesFilter, {nullable:true})
     isPublic?: BoolWithAggregatesFilter;
 
-    @Field(() => IntWithAggregatesFilter, {nullable:true})
-    userId?: IntWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    userId?: StringWithAggregatesFilter;
 
     @Field(() => DecimalNullableWithAggregatesFilter, {nullable:true})
     @Type(() => DecimalNullableWithAggregatesFilter)

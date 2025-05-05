@@ -33,8 +33,8 @@ export class CommentWhereInput {
     @Type(() => DecimalNullableFilter)
     rating?: DecimalNullableFilter;
 
-    @Field(() => IntFilter, {nullable:true})
-    userId?: IntFilter;
+    @Field(() => StringFilter, {nullable:true})
+    userId?: StringFilter;
 
     @Field(() => IntFilter, {nullable:true})
     resourceId?: IntFilter;

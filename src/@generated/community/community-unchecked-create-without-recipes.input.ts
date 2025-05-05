@@ -16,8 +16,8 @@ export class CommunityUncheckedCreateWithoutRecipesInput {
     @Field(() => String, {nullable:true})
     description?: string;
 
-    @Field(() => Int, {nullable:false})
-    userId!: number;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
     @Field(() => CookbookUncheckedCreateNestedManyWithoutCommunitiesInput, {nullable:true})
     @Type(() => CookbookUncheckedCreateNestedManyWithoutCommunitiesInput)

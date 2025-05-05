@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { IntFilter } from '../prisma/int-filter.input';
 import { EnumPermissionLevelFilter } from '../prisma/enum-permission-level-filter.input';
+import { StringFilter } from '../prisma/string-filter.input';
 import { EnumResourceTypeFilter } from '../prisma/enum-resource-type-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 
@@ -23,8 +24,8 @@ export class PermissionWhereInput {
     @Field(() => EnumPermissionLevelFilter, {nullable:true})
     permissionLevel?: EnumPermissionLevelFilter;
 
-    @Field(() => IntFilter, {nullable:true})
-    userId?: IntFilter;
+    @Field(() => StringFilter, {nullable:true})
+    userId?: StringFilter;
 
     @Field(() => IntFilter, {nullable:true})
     resourceId?: IntFilter;

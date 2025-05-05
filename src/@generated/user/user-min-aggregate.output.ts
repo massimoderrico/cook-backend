@@ -1,16 +1,13 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
-import { Int } from '@nestjs/graphql';
 import { Role } from '../prisma/role.enum';
+import { Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class UserMinAggregate {
 
-    @Field(() => Int, {nullable:true})
-    id?: number;
-
     @Field(() => String, {nullable:true})
-    name?: string;
+    id?: string;
 
     @Field(() => String, {nullable:true})
     email?: string;
@@ -19,10 +16,7 @@ export class UserMinAggregate {
     username?: string;
 
     @Field(() => String, {nullable:true})
-    password?: string;
-
-    @Field(() => Int, {nullable:true})
-    mainCookbookId?: number;
+    name?: string;
 
     @Field(() => String, {nullable:true})
     image?: string;
@@ -35,4 +29,7 @@ export class UserMinAggregate {
 
     @Field(() => Date, {nullable:true})
     updatedAt?: Date | string;
+
+    @Field(() => Int, {nullable:true})
+    mainCookbookId?: number;
 }

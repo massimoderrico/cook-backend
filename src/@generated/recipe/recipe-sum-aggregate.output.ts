@@ -16,9 +16,6 @@ export class RecipeSumAggregate {
     @Field(() => Int, {nullable:true})
     cookTime?: number;
 
-    @Field(() => Int, {nullable:true})
-    userId?: number;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
 

@@ -19,8 +19,8 @@ export class CommunityGroupBy {
     @Field(() => String, {nullable:true})
     description?: string;
 
-    @Field(() => Int, {nullable:false})
-    userId!: number;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
     @Field(() => CommunityCountAggregate, {nullable:true})
     _count?: CommunityCountAggregate;

@@ -14,8 +14,5 @@ export class CommentSumAggregate {
     rating?: Decimal;
 
     @Field(() => Int, {nullable:true})
-    userId?: number;
-
-    @Field(() => Int, {nullable:true})
     resourceId?: number;
 }

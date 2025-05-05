@@ -10,9 +10,6 @@ export class CookbookSumAggregate {
     @Field(() => Int, {nullable:true})
     id?: number;
 
-    @Field(() => Int, {nullable:true})
-    userId?: number;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
 

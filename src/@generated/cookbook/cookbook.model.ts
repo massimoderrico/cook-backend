@@ -1,9 +1,9 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
-import { Int } from '@nestjs/graphql';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
+import { Int } from '@nestjs/graphql';
 import { User } from '../user/user.model';
 import { Recipe } from '../recipe/recipe.model';
 import { Community } from '../community/community.model';
@@ -27,8 +27,8 @@ export class Cookbook {
     @Field(() => Boolean, {nullable:false,defaultValue:false})
     isMainCookbook!: boolean;
 
-    @Field(() => Int, {nullable:false})
-    userId!: number;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     rating!: Decimal | null;

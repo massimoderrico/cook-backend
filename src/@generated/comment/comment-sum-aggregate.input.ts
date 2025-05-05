@@ -11,8 +11,5 @@ export class CommentSumAggregateInput {
     rating?: true;
 
     @Field(() => Boolean, {nullable:true})
-    userId?: true;
-
-    @Field(() => Boolean, {nullable:true})
     resourceId?: true;
 }

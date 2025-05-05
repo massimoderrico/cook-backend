@@ -16,9 +16,6 @@ export class RecipeAvgAggregate {
     @Field(() => Float, {nullable:true})
     cookTime?: number;
 
-    @Field(() => Float, {nullable:true})
-    userId?: number;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;
 

@@ -25,6 +25,6 @@ export class CommunityScalarWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     description?: StringNullableFilter;
 
-    @Field(() => IntFilter, {nullable:true})
-    userId?: IntFilter;
+    @Field(() => StringFilter, {nullable:true})
+    userId?: StringFilter;
 }

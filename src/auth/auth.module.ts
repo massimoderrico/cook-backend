@@ -4,7 +4,6 @@ import { AuthResolver } from './auth.resolver';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from '../prisma/prisma.module';
-import { JwtStrategy } from './jwt/jwt.strategy';
 import { UserService } from 'src/user/user.service';
 import { CookbookService } from 'src/cookbook/cookbook.service';
 
@@ -17,7 +16,7 @@ import { CookbookService } from 'src/cookbook/cookbook.service';
     }),
     PrismaModule,
   ],
-  providers: [AuthService, AuthResolver, JwtStrategy, UserService, CookbookService],
+  providers: [AuthService, AuthResolver, UserService, CookbookService],
   exports: [AuthService],
 })
 export class AuthModule {}

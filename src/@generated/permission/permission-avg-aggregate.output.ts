@@ -9,8 +9,5 @@ export class PermissionAvgAggregate {
     id?: number;
 
     @Field(() => Float, {nullable:true})
-    userId?: number;
-
-    @Field(() => Float, {nullable:true})
     resourceId?: number;
 }

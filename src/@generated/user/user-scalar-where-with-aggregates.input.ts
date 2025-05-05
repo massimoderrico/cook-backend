@@ -1,11 +1,10 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { IntWithAggregatesFilter } from '../prisma/int-with-aggregates-filter.input';
-import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
-import { IntNullableWithAggregatesFilter } from '../prisma/int-nullable-with-aggregates-filter.input';
+import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
 import { EnumRoleWithAggregatesFilter } from '../prisma/enum-role-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
+import { IntNullableWithAggregatesFilter } from '../prisma/int-nullable-with-aggregates-filter.input';
 
 @InputType()
 export class UserScalarWhereWithAggregatesInput {
@@ -19,11 +18,8 @@ export class UserScalarWhereWithAggregatesInput {
     @Field(() => [UserScalarWhereWithAggregatesInput], {nullable:true})
     NOT?: Array<UserScalarWhereWithAggregatesInput>;
 
-    @Field(() => IntWithAggregatesFilter, {nullable:true})
-    id?: IntWithAggregatesFilter;
-
-    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
-    name?: StringNullableWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    id?: StringWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     email?: StringWithAggregatesFilter;
@@ -31,11 +27,8 @@ export class UserScalarWhereWithAggregatesInput {
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     username?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    password?: StringWithAggregatesFilter;
-
-    @Field(() => IntNullableWithAggregatesFilter, {nullable:true})
-    mainCookbookId?: IntNullableWithAggregatesFilter;
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    name?: StringNullableWithAggregatesFilter;
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     image?: StringNullableWithAggregatesFilter;
@@ -48,4 +41,7 @@ export class UserScalarWhereWithAggregatesInput {
 
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     updatedAt?: DateTimeWithAggregatesFilter;
+
+    @Field(() => IntNullableWithAggregatesFilter, {nullable:true})
+    mainCookbookId?: IntNullableWithAggregatesFilter;
 }

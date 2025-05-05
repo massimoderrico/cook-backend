@@ -22,8 +22,8 @@ export class CookbookMinAggregate {
     @Field(() => Boolean, {nullable:true})
     isMainCookbook?: boolean;
 
-    @Field(() => Int, {nullable:true})
-    userId?: number;
+    @Field(() => String, {nullable:true})
+    userId?: string;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;

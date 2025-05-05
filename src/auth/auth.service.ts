@@ -1,65 +1,59 @@
 import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../prisma/prisma.service';
-import * as bcrypt from 'bcryptjs';
-import { UserService } from 'src/user/user.service';
+import { createClient } from '@supabase/supabase-js';
+import { PrismaService } from 'src/prisma/prisma.service';
+
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!; // Use service role key only on the backend
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async signup(signupInput: { email: string; username: string; password: string }) {
-    const { email, username, password } = signupInput;
-    
-    // Check if user with username already exists
-    const existingUsername = await this.prisma.user.findUnique({
-      where: { username },
-    });
-    if (existingUsername) throw new ConflictException('Username unavailable');
-  
-    // Check if user with email already exists
-    const existingEmail = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    if (existingEmail) throw new ConflictException('User already exists with that email');
+  async signup(email: string, password: string) {
+    const { data, error } = await supabase.auth.signUp({ email, password });
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-  
-    // Create the user
-    const user = await this.userService.createUser({
-      email,
-      username,
-      password: hashedPassword,
-    });
-  
-    // Generate JWT
-    const payload = { sub: user.id, email: user.email, role: user.role };
-    const accessToken = this.jwtService.sign(payload);
-  
-    return { accessToken, userId: user.id, email: user.email, username: user.username };
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data.user;
   }
-  
 
-  async login(loginInput: { email: string; password: string }) {
-    const { email, password } = loginInput;
+  async login(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    // Find the user by email
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (error) {
+      throw new Error(error.message);
+    }
 
-    // Compare passwords
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
+    return data.session;
+  }
 
-    // Generate JWT
-    const payload = { sub: user.id, email: user.email, role: user.role };
-    const accessToken = this.jwtService.sign(payload);
+  async getUserFromToken(token: string) {
+    const { data, error } = await supabase.auth.getUser(token);
+    if (error) throw new Error(error.message);
+    return data.user;
+  }
 
-    return { accessToken, userId: user.id, email: user.email, username: user.username };
+  async validateUserWithToken(token: string) {
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      throw new UnauthorizedException('Invalid Supabase token');
+    }
+
+    // 👇 Upsert user into your local DB
+    const localUser = await this.prisma.user.upsert({
+      where: { id: user.id },
+      update: {},
+      create: {
+        id: user.id, // Use `user.id` as a string
+        email: user.email!,
+        username: user.email!.split('@')[0],
+      },
+    });
+
+    return localUser;
   }
 }

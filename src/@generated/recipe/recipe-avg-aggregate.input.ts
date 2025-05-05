@@ -14,9 +14,6 @@ export class RecipeAvgAggregateInput {
     cookTime?: true;
 
     @Field(() => Boolean, {nullable:true})
-    userId?: true;
-
-    @Field(() => Boolean, {nullable:true})
     rating?: true;
 
     @Field(() => Boolean, {nullable:true})

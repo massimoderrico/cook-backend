@@ -1,10 +1,10 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { NullableIntFieldUpdateOperationsInput } from '../prisma/nullable-int-field-update-operations.input';
+import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { EnumRoleFieldUpdateOperationsInput } from '../prisma/enum-role-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
+import { NullableIntFieldUpdateOperationsInput } from '../prisma/nullable-int-field-update-operations.input';
 import { RecipeUpdateManyWithoutUserNestedInput } from '../recipe/recipe-update-many-without-user-nested.input';
 import { Type } from 'class-transformer';
 import { CookbookUpdateManyWithoutUserNestedInput } from '../cookbook/cookbook-update-many-without-user-nested.input';
@@ -13,8 +13,8 @@ import { CommentUpdateManyWithoutUserNestedInput } from '../comment/comment-upda
 @InputType()
 export class UserUpdateWithoutCommunitiesInput {
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    name?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     email?: StringFieldUpdateOperationsInput;
@@ -22,11 +22,8 @@ export class UserUpdateWithoutCommunitiesInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     username?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    password?: StringFieldUpdateOperationsInput;
-
-    @Field(() => NullableIntFieldUpdateOperationsInput, {nullable:true})
-    mainCookbookId?: NullableIntFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    name?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     image?: NullableStringFieldUpdateOperationsInput;
@@ -39,6 +36,9 @@ export class UserUpdateWithoutCommunitiesInput {
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     updatedAt?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => NullableIntFieldUpdateOperationsInput, {nullable:true})
+    mainCookbookId?: NullableIntFieldUpdateOperationsInput;
 
     @Field(() => RecipeUpdateManyWithoutUserNestedInput, {nullable:true})
     @Type(() => RecipeUpdateManyWithoutUserNestedInput)

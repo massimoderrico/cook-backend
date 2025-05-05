@@ -14,6 +14,6 @@ export class CommunityMaxAggregate {
     @Field(() => String, {nullable:true})
     description?: string;
 
-    @Field(() => Int, {nullable:true})
-    userId?: number;
+    @Field(() => String, {nullable:true})
+    userId?: string;
 }

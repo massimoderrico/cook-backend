@@ -22,8 +22,8 @@ export class CommentUncheckedCreateInput {
     @Transform(transformToDecimal)
     rating?: Decimal;
 
-    @Field(() => Int, {nullable:false})
-    userId!: number;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
     @Field(() => Int, {nullable:false})
     resourceId!: number;

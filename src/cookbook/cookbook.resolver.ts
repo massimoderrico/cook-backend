@@ -40,7 +40,7 @@ export class CookbookResolver {
   @Mutation(() => Boolean)
   async deleteCookbook(
     @Args('cookbookId', { type: () => Int }) cookbookId: number,
-    @Args('userId', { type: () => Int }) userId: number,
+    @Args('userId', { type: () => Int }) userId: string,
   ): Promise<boolean> {
     try {
       return await this.cookbookService.deleteCookbook(cookbookId, userId);

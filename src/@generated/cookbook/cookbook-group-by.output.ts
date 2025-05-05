@@ -27,8 +27,8 @@ export class CookbookGroupBy {
     @Field(() => Boolean, {nullable:false})
     isMainCookbook!: boolean;
 
-    @Field(() => Int, {nullable:false})
-    userId!: number;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     rating?: Decimal;

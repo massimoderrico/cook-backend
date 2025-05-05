@@ -6,8 +6,8 @@ import { Type } from 'class-transformer';
 import { StringFilter } from '../prisma/string-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
-import { IntFilter } from '../prisma/int-filter.input';
 import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
+import { IntFilter } from '../prisma/int-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { UserRelationFilter } from '../user/user-relation-filter.input';
 import { RecipeListRelationFilter } from '../recipe/recipe-list-relation-filter.input';
@@ -43,8 +43,8 @@ export class CookbookWhereUniqueInput {
     @Field(() => BoolFilter, {nullable:true})
     isMainCookbook?: BoolFilter;
 
-    @Field(() => IntFilter, {nullable:true})
-    userId?: IntFilter;
+    @Field(() => StringFilter, {nullable:true})
+    userId?: StringFilter;
 
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)

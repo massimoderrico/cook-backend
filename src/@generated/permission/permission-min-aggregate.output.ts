@@ -13,8 +13,8 @@ export class PermissionMinAggregate {
     @Field(() => PermissionLevel, {nullable:true})
     permissionLevel?: keyof typeof PermissionLevel;
 
-    @Field(() => Int, {nullable:true})
-    userId?: number;
+    @Field(() => String, {nullable:true})
+    userId?: string;
 
     @Field(() => Int, {nullable:true})
     resourceId?: number;
